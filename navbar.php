@@ -28,7 +28,7 @@
                                     <span>Almuni</span>
                                  </a>
                               </li>
-                              <li class="col"><a class="dropdown-item" href="./docs/blocks/call-to-action.html">
+                              <li class="col"><a class="dropdown-item" href="./karir/">
                                     <div class="rounded img-svg d-none d-lg-block p-4 mb-lg-2"><img class="rounded-0" src="./assets/img/demos/block3.svg" alt=""></div>
                                     <span>Karir</span>
                                  </a>
