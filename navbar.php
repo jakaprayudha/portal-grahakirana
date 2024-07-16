@@ -33,12 +33,12 @@
                                     <span>Karir</span>
                                  </a>
                               </li>
-                              <li class="col"><a class="dropdown-item" href="./docs/blocks/clients.html">
+                              <li class="col"><a class="dropdown-item" href="./cbt/">
                                     <div class="rounded img-svg d-none d-lg-block p-4 mb-lg-2"><img class="rounded-0" src="./assets/img/demos/block4.svg" alt=""></div>
                                     <span>CBT</span>
                                  </a>
                               </li>
-                              <li class="col"><a class="dropdown-item" href="./docs/blocks/contact.html">
+                              <li class="col"><a class="dropdown-item" href="./perpustakaan/">
                                     <div class="rounded img-svg d-none d-lg-block p-4 mb-lg-2"><img class="rounded-0" src="./assets/img/demos/block5.svg" alt=""></div>
                                     <span>E-Perpustakaan</span>
                                  </a>
