@@ -23,7 +23,7 @@
                                     <span>PMB</span>
                                  </a>
                               </li>
-                              <li class="col"><a class="dropdown-item" href="./docs/blocks/blog.html">
+                              <li class="col"><a class="dropdown-item" href="./alumni/">
                                     <div class="rounded img-svg d-none d-lg-block p-4 mb-lg-2"><img class="rounded-0" src="./assets/img/demos/block2.svg" alt=""></div>
                                     <span>Almuni</span>
                                  </a>
