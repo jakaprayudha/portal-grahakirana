@@ -159,7 +159,7 @@
                               <!--/.card-header -->
                               <div id="collapseIconOne" class="accordion-collapse collapse show" aria-labelledby="headingIconOne" data-bs-parent="#accordionIconExample">
                                  <div class="card-body">
-                                    <p>Melalui ATM Bank Bersama, Anda dapat dengan mudah mengakses layanan perbankan, melakukan transaksi seperti penarikan tunai, transfer dana, dan pembayaran tagihan secara praktis dan aman di seluruh Indonesia.</p> <span class="text-danger"><strong>BCA : 872912292</strong></span> <span>Universitas Graha Kirana</span>
+                                    <p>Melalui ATM Bank Bersama, Anda dapat dengan mudah mengakses layanan perbankan, melakukan transaksi seperti penarikan tunai, transfer dana, dan pembayaran tagihan secara praktis dan aman di seluruh Indonesia.</p> <span>Universitas Graha Kirana</span> <span class="text-danger"><strong> Bank Central Asia (BCA) : 872912292 </strong> <a onclick="copyToClipboard('Teks yang akan disalin')" class="btn btn-circle btn-gradient gradient-1 btn-sm"><i class="uil uil-copy"></i></a></span>
                                  </div>
                                  <!--/.card-body -->
                               </div>
@@ -215,7 +215,7 @@
       function copyToClipboard(text) {
          navigator.clipboard.writeText(text)
             .then(() => {
-               alert('Teks berhasil disalin ke clipboard!');
+               alert('No.Rekening berhasil disalin ke clipboard!');
             })
             .catch(err => {
                console.error('Gagal menyalin teks: ', err);
