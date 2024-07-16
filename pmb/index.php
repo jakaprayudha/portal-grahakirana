@@ -21,7 +21,7 @@
                <div class="col-sm-6 col-xxl-5 text-center text-sm-start" data-cues="slideInDown" data-group="page-title" data-interval="-200" data-delay="500">
                   <h2 class="display-1 fs-56 mb-4 mt-0 mt-lg-5 ls-xs pe-xl-5 pe-xxl-0">Bergabung bersama <span class="underline-3 style-3 yellow">Graha Kirana</span></h2>
                   <p class="lead fs-23 lh-sm mb-7 pe-lg-5 pe-xl-5 pe-xxl-0">Kampus dengan ekosistem pendidikan yang relevan dengan kebutuhan karir masa depan anda</p>
-                  <div><a href="#" class="btn btn-lg btn-primary rounded">Daftar Sekarang</a></div>
+                  <div><a href="pmb/register" class="btn btn-lg btn-primary rounded">Daftar Sekarang</a></div>
                </div>
                <!--/column -->
             </div>
