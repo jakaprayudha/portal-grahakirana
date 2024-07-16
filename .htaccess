@@ -1,0 +1,16 @@
+<IfModule mod_rewrite.c>
+RewriteEngine on
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}.php -f
+RewriteRule ^(.*)$ $1.php
+Options -Indexes
+ErrorDocument 403 localhost/portal-grahakirana
+
+php_value display_errors 1
+php_value memory_limit 512M
+
+# Redirect to HTTP when accessing via IP address
+RewriteCond %{HTTP_HOST} ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$
+RewriteCond %{HTTPS} on
+RewriteRule ^ http://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+</IfModule>
