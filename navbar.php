@@ -43,7 +43,7 @@
                                     <span>E-Perpustakaan</span>
                                  </a>
                               </li>
-                              <li class="col"><a class="dropdown-item" href="./docs/blocks/facts.html">
+                              <li class="col"><a class="dropdown-item" href="./forum/">
                                     <div class="rounded img-svg d-none d-lg-block p-4 mb-lg-2"><img class="rounded-0" src="./assets/img/demos/block6.svg" alt=""></div>
                                     <span>Forum</span>
                                  </a>

@@ -141,7 +141,7 @@
                         <li class="mb-1">
                            <a href="#" class="align-items-center rounded link-body" data-bs-toggle="collapse" data-bs-target="#clothing-collapse" aria-expanded="true"> Komputer <span class="fs-sm text-muted ms-1">(21)</span>
                            </a>
-                           <div class="collapse show mt-1" id="clothing-collapse" style="">
+                           <div class="collapse show mt-1" id="clothing-collapse">
                               <ul class="btn-toggle-nav list-unstyled ps-2">
                                  <li><a href="#" class="link-body">Bahasa Pemrograman</a></li>
                                  <li><a href="#" class="link-body">Android</a></li>
@@ -152,7 +152,7 @@
                         <li class="mb-1">
                            <a href="#" class="align-items-center rounded collapsed link-body" data-bs-toggle="collapse" data-bs-target="#electronics-collapse" aria-expanded="false"> Ekonomi Bisnis <span class="fs-sm text-muted ms-1">(19)</span>
                            </a>
-                           <div class="collapse mt-1" id="electronics-collapse" style="">
+                           <div class="collapse mt-1" id="electronics-collapse">
                               <ul class="btn-toggle-nav list-unstyled ps-2">
                                  <li><a href="#" class="link-body">Akuntansi</a></li>
                                  <li><a href="#" class="link-body">Bisnis Digital</a></li>
@@ -162,7 +162,7 @@
                         <li class="mb-1">
                            <a href="#" class="align-items-center rounded collapsed link-body" data-bs-toggle="collapse" data-bs-target="#shoes-collapse" aria-expanded="false"> Hukum <span class="fs-sm text-muted ms-1">(12)</span>
                            </a>
-                           <div class="collapse mt-1" id="shoes-collapse" style="">
+                           <div class="collapse mt-1" id="shoes-collapse">
                               <ul class="btn-toggle-nav list-unstyled ps-2">
                                  <li><a href="#" class="link-body">Hak Asasi Manusia</a></li>
                                  <li><a href="#" class="link-body">Perdata</a></li>
