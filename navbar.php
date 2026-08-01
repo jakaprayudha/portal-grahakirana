@@ -1,9 +1,34 @@
+<style>
+   .logo-navbar {
+      height: 60px;
+      width: auto;
+      display: block;
+   }
+
+   @media (max-width:991px) {
+
+      .logo-navbar {
+         height: 50px;
+      }
+
+   }
+
+   .nav.social {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: nowrap;
+   }
+</style>
 <header class="wrapper">
    <nav class="navbar navbar-expand-lg center-nav transparent navbar-light caret-none">
       <div class="container flex-lg-row flex-nowrap align-items-center">
-         <div class="navbar-brand w-100">
-            <a href="./index.html">
-               <img src="./assets/img/logo-dark.png" srcset="./assets/img/logo-dark@2x.png 2x" alt="" />
+         <div class="navbar-brand">
+            <a href="./index">
+               <img src="./assets/img/logo-stih.png"
+                  alt="STIH Graha Kirana"
+                  class="logo-navbar">
             </a>
          </div>
          <div class="navbar-collapse offcanvas offcanvas-nav offcanvas-start">
@@ -13,8 +38,93 @@
             </div>
             <div class="offcanvas-body ms-lg-auto d-flex flex-column h-100">
                <ul class="navbar-nav">
+                  <li class="nav-item dropdown">
+                     <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Tentang</a>
+                     <ul class="dropdown-menu">
+                        <li class="dropdown dropdown-submenu dropend"><a class="dropdown-item dropdown-toggle" href="#" data-bs-toggle="dropdown">Kata Sambutan</a>
+                           <ul class="dropdown-menu">
+                              <li class="nav-item"><a class="dropdown-item" href="./sambutan-yayasan">Sambutan Yayasan </a></li>
+                              <li class="nav-item"><a class="dropdown-item" href="./sambutan-ketua">Sambutan Ketua Sekolah Tinggi</a></li>
+                           </ul>
+                        </li>
+                        <li class="dropdown dropdown-submenu dropend"><a class="dropdown-item dropdown-toggle" href="#" data-bs-toggle="dropdown">Graha Kirana</a>
+                           <ul class="dropdown-menu">
+                              <li class="nav-item"><a class="dropdown-item" href="./about-pendiri">Pendiri</a></li>
+                              <li class="nav-item"><a class="dropdown-item" href="./about-pengurus">Pengurus</a></li>
+                              <li class="nav-item"><a class="dropdown-item" href="./about-struktur">Struktur Organisasi</a></li>
+                              <li class="nav-item"><a class="dropdown-item" href="./about-identitas">Identitas Kampus</a></li>
+                           </ul>
+                        </li>
+                        <li class="nav-item"><a class="dropdown-item" href="./dokumentasi">Dokumentasi</a></li>
+                        <li class="nav-item"><a class="dropdown-item" href="./laporan-tahunan">Laporan Tahunan</a></li>
+                     </ul>
+                  </li>
+
+
+                  <li class="nav-item dropdown">
+                     <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Akademik</a>
+                     <div class="dropdown-menu dropdown-lg">
+                        <div class="dropdown-lg-content">
+                           <div>
+                              <h6 class="dropdown-header">STIH</h6>
+                              <ul class="list-unstyled">
+                                 <li><a class="dropdown-item" href="./program-studi">Program Studi</a></li>
+                                 <li><a class="dropdown-item" href="./pengajar">Pengajar</a></li>
+                                 <li><a class="dropdown-item" href="./kurikulum">Kurikulum & Matakuliah</a></li>
+                                 <li><a class="dropdown-item" href="./layanan-kemahasiswaan">Layanan Kemahasiswaan</a></li>
+                                 <li><a class="dropdown-item" href="./metode-belajar">Metode Belajar</a></li>
+                                 <li><a class="dropdown-item" href="./kalender-akademik">Kalender Akademik</a></li>
+                                 <li><a class="dropdown-item" href="./pedoman-akademik">Pedoman Akademik</a></li>
+                              </ul>
+                           </div>
+                        </div>
+                        <!-- /auto-column -->
+                     </div>
+                  </li>
+                  <li class="nav-item dropdown">
+                     <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Kehidupan Kampus</a>
+                     <ul class="dropdown-menu">
+                        <li class="nav-item"><a class="dropdown-item" href="./fasilitas-layanan">Fasilitas & Layanan</a></li>
+                        <li class="nav-item"><a class="dropdown-item" href="./organisasi-kemahasiswaan">Organisasi Kemahasiswaan</a></li>
+                        <li class="nav-item"><a class="dropdown-item" href="./kabar-mahasiswa-alumni">Kabar Mahasiswa & Alumni</a></li>
+                     </ul>
+                  </li>
+                  <li class="nav-item dropdown">
+                     <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">P2M</a>
+                     <ul class="dropdown-menu">
+                        <li class="nav-item"><a class="dropdown-item" href="./ojs-jurnal">OJS Jurnal</a></li>
+                        <li class="nav-item"><a class="dropdown-item" href="./kabar-penelitian">Kabar Penelitian</a></li>
+                        <li class="nav-item"><a class="dropdown-item" href="./kabar-pengmas">Kabar Pengmas </a></li>
+                     </ul>
+                  </li>
+                  <li class="nav-item dropdown">
+                     <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">PMB</a>
+                     <ul class="dropdown-menu">
+                        <li class="nav-item"><a class="dropdown-item" href="./jalur-pendaftaran">Jalur Pendaftaran</a></li>
+                        <li class="nav-item"><a class="dropdown-item" href="./syarat-ketentuan">Syarat & Ketentuan</a></li>
+                        <li class="nav-item"><a class="dropdown-item" href="./biaya-kuliah-beasiswa">Biaya Kuliah & Beasiswa </a></li>
+                        <li class="nav-item"><a class="dropdown-item" href="./jadwal-alur-pendaftaran">Jadwal & Alur Pendaftaran </a></li>
+                     </ul>
+                  </li>
+                  <li class="nav-item dropdown">
+                     <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Penjamin Mutu</a>
+                     <ul class="dropdown-menu">
+                        <li class="nav-item"><a class="dropdown-item" href="./status-akreditasi">Status Akreditasi</a></li>
+                        <li class="nav-item"><a class="dropdown-item" href="./spmi">SPMI</a></li>
+                        <li class="nav-item"><a class="dropdown-item" href="./fakta-angka-kinerja">Fakta & Angka Kinerja</a></li>
+                        <li class="nav-item"><a class="dropdown-item" href="./survey-kepuasan">Survey Kepuasan</a></li>
+                     </ul>
+                  </li>
+                  <li class="nav-item dropdown">
+                     <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Berita</a>
+                     <ul class="dropdown-menu">
+                        <li class="nav-item"><a class="dropdown-item" href="./berita-umum">Berita Umum</a></li>
+                        <li class="nav-item"><a class="dropdown-item" href="./berita-kampus">Berita Kampus </a></li>
+                        <li class="nav-item"><a class="dropdown-item" href="./berita-pengumuman">Pengumuman </a></li>
+                     </ul>
+                  </li>
                   <li class="nav-item dropdown dropdown-mega">
-                     <a class="nav-link dropdown-toggle" href="javascripr:;" data-bs-toggle="dropdown">Layanan Integrasi</a>
+                     <a class="nav-link dropdown-toggle" href="javascripr:;" data-bs-toggle="dropdown">Layanan</a>
                      <ul class="dropdown-menu mega-menu mega-menu-dark mega-menu-img">
                         <li class="mega-menu-content">
                            <ul class="row row-cols-1 row-cols-lg-6 gx-0 gx-lg-6 gy-lg-4 list-unstyled">
@@ -80,95 +190,12 @@
                      </ul>
                      <!--/.dropdown-menu -->
                   </li>
-                  <li class="nav-item dropdown">
-                     <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Tentang</a>
-                     <ul class="dropdown-menu">
-                        <li class="dropdown dropdown-submenu dropend"><a class="dropdown-item dropdown-toggle" href="#" data-bs-toggle="dropdown">Kata Sambutan</a>
-                           <ul class="dropdown-menu">
-                              <li class="nav-item"><a class="dropdown-item" href="./services.html">Sambutan Yayasan </a></li>
-                              <li class="nav-item"><a class="dropdown-item" href="./services2.html">Sambutan Ketua Sekolah Tinggi</a></li>
-                           </ul>
-                        </li>
-                        <li class="dropdown dropdown-submenu dropend"><a class="dropdown-item dropdown-toggle" href="#" data-bs-toggle="dropdown">Graha Kirana</a>
-                           <ul class="dropdown-menu">
-                              <li class="nav-item"><a class="dropdown-item" href="./about.html">Sejarah</a></li>
-                              <li class="nav-item"><a class="dropdown-item" href="./about2.html">Visi Misi</a></li>
-                              <li class="nav-item"><a class="dropdown-item" href="./about2.html">Status Akreditasi</a></li>
-                              <li class="nav-item"><a class="dropdown-item" href="./about2.html">Identitas Kampus</a></li>
-                           </ul>
-                        </li>
-                        <li class="dropdown dropdown-submenu dropend"><a class="dropdown-item dropdown-toggle" href="#" data-bs-toggle="dropdown">Struktur</a>
-                           <ul class="dropdown-menu">
-                              <li class="nav-item"><a class="dropdown-item" href="./shop.html">STIE</a></li>
-                              <li class="nav-item"><a class="dropdown-item" href="./shop2.html">STIH</a></li>
-                           </ul>
-                        </li>
-                        <li class="nav-item"><a class="dropdown-item" href="./pricing.html">Dokumentasi</a></li>
-                        <li class="nav-item"><a class="dropdown-item" href="./onepage.html">Kepegawaian</a></li>
-                     </ul>
-                  </li>
-                  <li class="nav-item dropdown">
-                     <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Akademik</a>
-                     <div class="dropdown-menu dropdown-lg">
-                        <div class="dropdown-lg-content">
-                           <div>
-                              <h6 class="dropdown-header">STIH</h6>
-                              <ul class="list-unstyled">
-                                 <li><a class="dropdown-item" href="./projects.html">Program Studi</a></li>
-                                 <li><a class="dropdown-item" href="./projects2.html">Dosen</a></li>
-                                 <li><a class="dropdown-item" href="./projects3.html">Layanan Kemahasiswaan</a></li>
-                                 <li><a class="dropdown-item" href="./projects3.html">Kalender Akademik</a></li>
-                                 <li><a class="dropdown-item" href="./projects3.html">Panduan</a></li>
-                              </ul>
-                           </div>
-                           <!-- /.column -->
-                           <div>
-                              <h6 class="dropdown-header">STIE</h6>
-                              <ul class="list-unstyled">
-                                 <li><a class="dropdown-item" href="./projects.html">Program Studi</a></li>
-                                 <li><a class="dropdown-item" href="./projects2.html">Dosen</a></li>
-                                 <li><a class="dropdown-item" href="./projects3.html">Layanan Kemahasiswaan</a></li>
-                                 <li><a class="dropdown-item" href="./projects3.html">Kalender Akademik</a></li>
-                                 <li><a class="dropdown-item" href="./projects3.html">Panduan</a></li>
-                              </ul>
-                           </div>
-                           <!-- /.column -->
-                        </div>
-                        <!-- /auto-column -->
-                     </div>
-                  </li>
-                  <li class="nav-item dropdown">
-                     <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Riset & Pengabdian</a>
-                     <ul class="dropdown-menu">
-                        <li class="nav-item"><a class="dropdown-item" href="./blog.html">Publikasi</a></li>
-                        <li class="nav-item"><a class="dropdown-item" href="./blog2.html">Pengabdian Masyarakat</a></li>
-                        <li class="nav-item"><a class="dropdown-item" href="./blog2.html">Kemahasiswaan </a></li>
-                        <li class="nav-item"><a class="dropdown-item" href="./blog2.html">Prestasi </a></li>
-                        <li class="nav-item"><a class="dropdown-item" href="./blog2.html">Traning Kompetensi </a></li>
-                     </ul>
-                  </li>
-                  <li class="nav-item dropdown">
-                     <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Berita</a>
-                     <ul class="dropdown-menu">
-                        <li class="nav-item"><a class="dropdown-item" href="./blog.html">Berita Umum</a></li>
-                        <li class="nav-item"><a class="dropdown-item" href="./blog2.html">Berita Kampus </a></li>
-                        <li class="nav-item"><a class="dropdown-item" href="./blog2.html">Pengumuman </a></li>
-                     </ul>
-                  </li>
-                  <li class="nav-item dropdown">
-                     <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Hubungi Kami</a>
-                     <ul class="dropdown-menu">
-                        <li class="nav-item"><a class="dropdown-item" href="./blog.html">Layanan Umum</a></li>
-                        <li class="nav-item"><a class="dropdown-item" href="./blog2.html">Layanan Mahasiswa</a></li>
-                     </ul>
-                  </li>
                </ul>
-
                <!-- /.navbar-nav -->
                <div class="offcanvas-footer d-lg-none">
                   <div>
-                     <a href="mailto:first.last@email.com" class="link-inverse">info@email.com</a>
-                     <br /> 00 (123) 456 78 90 <br />
+                     <a href="mailto:info@grahakirana-stih.ac.id" class="link-inverse">info@grahakirana-stih.ac.id</a>
+                     <br /> 62 821-6652-4717 <br />
                      <nav class="nav social social-white mt-4">
                         <a href="#"><i class="uil uil-twitter"></i></a>
                         <a href="#"><i class="uil uil-facebook-f"></i></a>

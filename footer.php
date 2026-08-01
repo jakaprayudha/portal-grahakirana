@@ -5,10 +5,14 @@
             <div class="container">
                <div class="row text-center">
                   <div class="col-xl-11 col-xxl-9 mx-auto">
-                     <h2 class="fs-16 text-uppercase text-gradient gradient-1 mb-3">Bergabung Bersama Graha Kirana</h2>
-                     <h3 class="display-4 mb-7 px-lg-17">We are trusted by over 5000+ clients. Join them now and grow your business.</h3>
+                     <h2 class="fs-16 text-uppercase text-gradient gradient-1 mb-3">
+                        Bergabung Bersama STIH Graha Kirana
+                     </h2>
+
+                     <h3 class="display-4 mb-7 px-lg-17">
+                        Wujudkan masa depan Anda bersama STIH Graha Kirana
+                     </h3>
                   </div>
-                  <!-- /column -->
                </div>
                <!-- /.row -->
                <div class="d-flex justify-content-center">
@@ -26,8 +30,12 @@
         <div class=" row gy-6 gy-lg-0">
       <div class="col-md-4 col-lg-3">
          <div class="widget">
-            <img class="mb-4" src="./assets/img/logo-dark.png" srcset="./assets/img/logo-dark@2x.png 2x" alt="" />
-            <p class="mb-4">© 2024 Graha Kirana. <br class="d-none d-lg-block" />All rights reserved.</p>
+            <img src="./assets/img/logo-stih.png"
+               srcset="./assets/img/logo-stih@10x.png 10x"
+               alt="Logo STIH Graha Kirana"
+               class="mb-4"
+               style="width: 150px; height: auto;">
+            <p class="mb-4">© 2025 Graha Kirana. <br class="d-none d-lg-block" />All rights reserved.</p>
             <nav class="nav social ">
                <a href="#"><i class="uil uil-twitter"></i></a>
                <a href="#"><i class="uil uil-facebook-f"></i></a>
@@ -44,7 +52,7 @@
             <h4 class="widget-title  mb-3">Alamat Kampus</h4>
             <address class="pe-xl-15 pe-xxl-17">Kampus Ringroad - JL. Tasbih 2, Medan</address>
             <address class="pe-xl-15 pe-xxl-17">Kampus Petisah - Jl. Kirana No.20-22, Medan</address>
-            <a href="mailto:#" class="link-body">info@stihgrahakirana.ac.id</a><br /> 62 2976 2969
+            <a href="mailto:#" class="link-body">info@grahakirana-stih.ac.id</a><br /> 62 2976 2969
          </div>
          <!-- /.widget -->
       </div>
@@ -65,8 +73,8 @@
       <!-- /column -->
       <div class="col-md-12 col-lg-3">
          <div class="widget">
-            <h4 class="widget-title  mb-3">Our Newsletter</h4>
-            <p class="mb-5">Subscribe to our newsletter to get our news & deals delivered to you.</p>
+            <h4 class="widget-title  mb-3">Informasi Kampus</h4>
+            <p class="mb-5">Daftarkan email Anda untuk mendapatkan informasi terbaru</p>
             <div class="newsletter-wrapper">
                <!-- Begin Mailchimp Signup Form -->
                <div id="mc_embed_signup2">

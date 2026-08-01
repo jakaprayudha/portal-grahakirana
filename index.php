@@ -25,7 +25,7 @@ require 'head.php';
                 </div>
                 <!--/column -->
                 <div class="col-lg-6">
-                  <img class="img-fluid mb-n18" src="./assets/img/illustrations/3d6.png" srcset="./assets/img/illustrations/3d6@2x.png 2x" data-cue="fadeIn" data-delay="300" alt="" />
+                  <img class="img-fluid mb-n18" src="./assets/img/hero/stih.svg" srcset="./assets/img/hero/stih.svg2x.svg 2x" data-cue="fadeIn" data-delay="300" alt="" />
                 </div>
                 <!--/column -->
               </div>
@@ -50,123 +50,134 @@ require 'head.php';
           <!-- /column -->
         </div>
         <!-- /.row -->
-        <div class="row gy-8 mb-17">
+        <div class="row gy-7 mb-17">
+
           <div class="col-md-6 col-lg-4">
-            <div class="d-flex flex-row">
+            <div class="facility-item">
+              <div class="facility-icon">🏛️</div>
               <div>
-                <img src="./assets/img/icons/solid/script.svg" class="svg-inject icon-svg icon-svg-sm solid-duo text-grape-fuchsia me-4" alt="" />
-              </div>
-              <div>
-                <h3 class="fs-22 mb-1">Gedung Perkuliahn</h3>
-                <p class="mb-0">Duis mollis gravida commodo id luctus erat porttitor ligula, eget lacinia odio sem aget elit nullam quis risus eget.</p>
+                <h3 class="fs-22">Gedung Perkuliahan</h3>
+                <p>
+                  Gedung modern dengan ruang kelas nyaman, multimedia interaktif,
+                  serta lingkungan belajar yang mendukung prestasi mahasiswa.
+                </p>
               </div>
             </div>
           </div>
-          <!--/column -->
+
           <div class="col-md-6 col-lg-4">
-            <div class="d-flex flex-row">
+            <div class="facility-item">
+              <div class="facility-icon">📚</div>
               <div>
-                <img src="./assets/img/icons/solid/verify.svg" class="svg-inject icon-svg icon-svg-sm solid-duo text-grape-fuchsia me-4" alt="" />
-              </div>
-              <div>
-                <h3 class="fs-22 mb-1">Perpustakaan</h3>
-                <p class="mb-0">Duis mollis gravida commodo id luctus erat porttitor ligula, eget lacinia odio sem aget elit nullam quis risus eget.</p>
+                <h3 class="fs-22">Perpustakaan</h3>
+                <p>
+                  Koleksi buku, jurnal ilmiah, e-book, dan referensi digital
+                  sebagai pusat pembelajaran dan penelitian mahasiswa.
+                </p>
               </div>
             </div>
           </div>
-          <!--/column -->
+
           <div class="col-md-6 col-lg-4">
-            <div class="d-flex flex-row">
+            <div class="facility-item">
+              <div class="facility-icon">💻</div>
               <div>
-                <img src="./assets/img/icons/solid/cloud-network.svg" class="svg-inject icon-svg icon-svg-sm solid-duo text-grape-fuchsia me-4" alt="" />
-              </div>
-              <div>
-                <h3 class="fs-22 mb-1">Fasilitas Praktikum</h3>
-                <p class="mb-0">Duis mollis gravida commodo id luctus erat porttitor ligula, eget lacinia odio sem aget elit nullam quis risus eget.</p>
+                <h3 class="fs-22">Laboratorium Komputer</h3>
+                <p>
+                  Laboratorium dengan perangkat modern dan internet berkecepatan tinggi
+                  untuk mendukung kegiatan akademik dan riset.
+                </p>
               </div>
             </div>
           </div>
-          <!--/column -->
+
           <div class="col-md-6 col-lg-4">
-            <div class="d-flex flex-row">
+            <div class="facility-item">
+              <div class="facility-icon">🎤</div>
               <div>
-                <img src="./assets/img/icons/solid/director.svg" class="svg-inject icon-svg icon-svg-sm solid-duo text-grape-fuchsia me-4" alt="" />
-              </div>
-              <div>
-                <h3 class="fs-22 mb-1">Kafetaria</h3>
-                <p class="mb-0">Duis mollis gravida commodo id luctus erat porttitor ligula, eget lacinia odio sem aget elit nullam quis risus eget.</p>
+                <h3 class="fs-22">Aula & Seminar</h3>
+                <p>
+                  Digunakan untuk seminar nasional, kuliah umum, workshop,
+                  pelatihan, dan berbagai kegiatan akademik kampus.
+                </p>
               </div>
             </div>
           </div>
-          <!--/column -->
+
           <div class="col-md-6 col-lg-4">
-            <div class="d-flex flex-row">
+            <div class="facility-item">
+              <div class="facility-icon">🤝</div>
               <div>
-                <img src="./assets/img/icons/solid/setting.svg" class="svg-inject icon-svg icon-svg-sm solid-duo text-grape-fuchsia me-4" alt="" />
-              </div>
-              <div>
-                <h3 class="fs-22 mb-1">Ruang Konseling</h3>
-                <p class="mb-0">Duis mollis gravida commodo id luctus erat porttitor ligula, eget lacinia odio sem aget elit nullam quis risus eget.</p>
+                <h3 class="fs-22">Layanan Konseling</h3>
+                <p>
+                  Pendampingan akademik, psikologis, dan pengembangan karier
+                  untuk membantu mahasiswa mencapai potensi terbaiknya.
+                </p>
               </div>
             </div>
           </div>
-          <!--/column -->
+
           <div class="col-md-6 col-lg-4">
-            <div class="d-flex flex-row">
+            <div class="facility-item">
+              <div class="facility-icon">🌐</div>
               <div>
-                <img src="./assets/img/icons/solid/server.svg" class="svg-inject icon-svg icon-svg-sm solid-duo text-grape-fuchsia me-4" alt="" />
-              </div>
-              <div>
-                <h3 class="fs-22 mb-1">Layanan Integrasi</h3>
-                <p class="mb-0">Duis mollis gravida commodo id luctus erat porttitor ligula, eget lacinia odio sem aget elit nullam quis risus eget.</p>
+                <h3 class="fs-22">Smart Campus</h3>
+                <p>
+                  Sistem akademik terintegrasi untuk KRS, KHS, jadwal kuliah,
+                  pembayaran, dan informasi kampus secara online.
+                </p>
               </div>
             </div>
           </div>
-          <!--/column -->
-          <!--/column -->
+
           <div class="col-md-6 col-lg-4">
-            <div class="d-flex flex-row">
+            <div class="facility-item">
+              <div class="facility-icon">🚗</div>
               <div>
-                <img src="./assets/img/icons/solid/server.svg" class="svg-inject icon-svg icon-svg-sm solid-duo text-grape-fuchsia me-4" alt="" />
-              </div>
-              <div>
-                <h3 class="fs-22 mb-1">Area Parkir Luas</h3>
-                <p class="mb-0">Duis mollis gravida commodo id luctus erat porttitor ligula, eget lacinia odio sem aget elit nullam quis risus eget.</p>
+                <h3 class="fs-22">Area Parkir</h3>
+                <p>
+                  Area parkir luas dan aman bagi kendaraan mahasiswa,
+                  dosen, tenaga kependidikan, serta tamu kampus.
+                </p>
               </div>
             </div>
           </div>
-          <!--/column -->
-          <!--/column -->
+
           <div class="col-md-6 col-lg-4">
-            <div class="d-flex flex-row">
+            <div class="facility-item">
+              <div class="facility-icon">👨‍🏫</div>
               <div>
-                <img src="./assets/img/icons/solid/server.svg" class="svg-inject icon-svg icon-svg-sm solid-duo text-grape-fuchsia me-4" alt="" />
-              </div>
-              <div>
-                <h3 class="fs-22 mb-1">Dosen Profesional</h3>
-                <p class="mb-0">Duis mollis gravida commodo id luctus erat porttitor ligula, eget lacinia odio sem aget elit nullam quis risus eget.</p>
+                <h3 class="fs-22">Dosen Profesional</h3>
+                <p>
+                  Didukung tenaga pengajar berpengalaman dari kalangan akademisi,
+                  praktisi, dan profesional di bidangnya.
+                </p>
               </div>
             </div>
           </div>
-          <!--/column -->
-          <!--/column -->
+
           <div class="col-md-6 col-lg-4">
-            <div class="d-flex flex-row">
+            <div class="facility-item">
+              <div class="facility-icon">📶</div>
               <div>
-                <img src="./assets/img/icons/solid/server.svg" class="svg-inject icon-svg icon-svg-sm solid-duo text-grape-fuchsia me-4" alt="" />
-              </div>
-              <div>
-                <h3 class="fs-22 mb-1">Ruang Praktikum</h3>
-                <p class="mb-0">Duis mollis gravida commodo id luctus erat porttitor ligula, eget lacinia odio sem aget elit nullam quis risus eget.</p>
+                <h3 class="fs-22">Wi-Fi Kampus</h3>
+                <p>
+                  Akses internet cepat yang tersedia di berbagai area kampus
+                  untuk menunjang proses belajar mengajar.
+                </p>
               </div>
             </div>
           </div>
-          <!--/column -->
         </div>
-        <!--/.row -->
         <div class="row gx-3 gy-10 mb-15 mb-md-18 align-items-center">
           <div class="col-lg-5 offset-lg-1">
-            <figure><img class="w-auto" src="./assets/img/ketua.jpeg" srcset="./assets/img/ketua.jpeg" alt="" /></figure>
+            <figure class="rounded-4 overflow-hidden shadow-lg">
+              <img class="img-fluid w-100"
+                src="./assets/img/ketua.jpeg"
+                alt="Ketua STIH Graha Kirana"
+                style="border-radius:28px;">
+            </figure>
+
           </div>
           <!--/column -->
           <div class="col-lg-5 offset-lg-1">
@@ -179,15 +190,29 @@ require 'head.php';
             <div class="row gy-3">
               <div class="col-xl-6">
                 <ul class="icon-list bullet-bg bullet-soft-primary mb-0">
-                  <li><span><i class="uil uil-check"></i></span><span>Aenean quam ornare. Curabitur blandit.</span></li>
-                  <li class="mt-3"><span><i class="uil uil-check"></i></span><span>Nullam quis risus eget urna mollis ornare.</span></li>
+                  <li>
+                    <span><i class="uil uil-check"></i></span>
+                    <span>Pendidikan hukum yang berkualitas dan adaptif terhadap perkembangan zaman.</span>
+                  </li>
+
+                  <li class="mt-3">
+                    <span><i class="uil uil-check"></i></span>
+                    <span>Dosen profesional dari kalangan akademisi dan praktisi hukum.</span>
+                  </li>
                 </ul>
               </div>
               <!--/column -->
               <div class="col-xl-6">
                 <ul class="icon-list bullet-bg bullet-soft-primary mb-0">
-                  <li><span><i class="uil uil-check"></i></span><span>Etiam porta euismod malesuada mollis.</span></li>
-                  <li class="mt-3"><span><i class="uil uil-check"></i></span><span>Vivamus sagittis lacus vel augue rutrum.</span></li>
+                  <li>
+                    <span><i class="uil uil-check"></i></span>
+                    <span>Fasilitas pembelajaran modern untuk mendukung kompetensi mahasiswa.</span>
+                  </li>
+
+                  <li class="mt-3">
+                    <span><i class="uil uil-check"></i></span>
+                    <span>Membangun lulusan yang unggul, beretika, dan siap berkontribusi bagi masyarakat.</span>
+                  </li>
                 </ul>
               </div>
               <!--/column -->
@@ -199,7 +224,7 @@ require 'head.php';
         <!--/.row -->
         <div class="row gx-md-8 gy-10 align-items-center">
           <div class="col-lg-6 offset-lg-1 order-lg-2 position-relative">
-            <figure class="rounded"><img class="img-fluid" src="./assets/img/photos/about27.jpg" srcset="./assets/img/photos/about27@2x.jpg 2x" alt="" /></figure>
+            <figure class="rounded"><img class="img-fluid" src="./assets/img/hero/graha.png" srcset="./assets/img/hero/graha@2x.png 2x" alt="" /></figure>
             <div class="card shadow-lg position-absolute d-none d-md-block" style="top: 15%; left: -7%">
               <div class="card-body py-4 px-5">
                 <div class="d-flex flex-row align-items-center">
@@ -207,8 +232,8 @@ require 'head.php';
                     <img src="./assets/img/icons/solid/cloud-group.svg" class="svg-inject icon-svg icon-svg-sm solid-duo text-grape-fuchsia me-3" alt="" />
                   </div>
                   <div>
-                    <h3 class="fs-25 counter mb-0 text-nowrap">25000+</h3>
-                    <p class="fs-16 lh-sm mb-0 text-nowrap">Happy Clients</p>
+                    <h3 class="fs-25 counter mb-0 text-nowrap">1.800+</h3>
+                    <p class="fs-16 lh-sm mb-0 text-nowrap">Alumni STIH</p>
                   </div>
                 </div>
               </div>
@@ -218,7 +243,7 @@ require 'head.php';
             <div class="card shadow-lg position-absolute text-center d-none d-md-block" style="bottom: 10%; left: -10%;">
               <div class="card-body p-6">
                 <div class="progressbar semi-circle fuchsia mb-3" data-value="80"></div>
-                <h4 class="mb-0">Time Saved</h4>
+                <h4 class="mb-0">Kepuasan Mahasiswa</h4>
               </div>
               <!--/.card-body -->
             </div>
@@ -226,14 +251,46 @@ require 'head.php';
           </div>
           <!--/column -->
           <div class="col-lg-5">
-            <h2 class="fs-16 text-uppercase text-gradient gradient-1 mb-3">Graha Kirana</h2>
-            <h3 class="display-4 mb-4 me-lg-n5">Berkarya dalam keadilan, berdaya untuk masa depan.</h3>
-            <p class="mb-6">Etiam porta sem malesuada magna mollis euismod. Donec ullamcorper nulla non metus auctor fringilla. Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Fusce dapibus, tellus ac cursus. Integer posuere erat a ante venenatis dapibus posuere velit.</p>
+
+            <h2 class="fs-16 text-uppercase text-gradient gradient-1 mb-3">
+              Mengapa Memilih Graha Kirana
+            </h2>
+
+            <h3 class="display-4 mb-4 me-lg-n5">
+              Membangun Generasi Profesional yang Berintegritas
+            </h3>
+
+            <p class="mb-6">
+              STIH Graha Kirana menghadirkan pendidikan hukum berkualitas melalui
+              kurikulum berbasis kompetensi, dosen profesional, dan pembelajaran
+              berbasis praktik untuk mencetak lulusan yang unggul, berintegritas,
+              dan siap bersaing di era global.
+            </p>
+
             <ul class="icon-list bullet-bg bullet-soft-primary">
-              <li><i class="uil uil-check"></i>Aenean eu leo quam. Pellentesque ornare.</li>
-              <li><i class="uil uil-check"></i>Nullam quis risus eget urna mollis ornare.</li>
-              <li><i class="uil uil-check"></i>Donec id elit non mi porta gravida at eget.</li>
+
+              <li>
+                <i class="uil uil-check"></i>
+                Kurikulum berbasis kebutuhan dunia kerja dan perkembangan ilmu pengetahuan.
+              </li>
+
+              <li>
+                <i class="uil uil-check"></i>
+                Dosen berpengalaman dari kalangan akademisi, praktisi, dan profesional.
+              </li>
+
+              <li>
+                <i class="uil uil-check"></i>
+                Fasilitas pembelajaran modern yang mendukung proses akademik, penelitian, dan pengabdian kepada masyarakat.
+              </li>
+
+              <li>
+                <i class="uil uil-check"></i>
+                Lulusan dipersiapkan menjadi pribadi yang kompeten, berintegritas, dan mampu bersaing di tingkat nasional maupun internasional.
+              </li>
+
             </ul>
+
           </div>
           <!--/column -->
         </div>
@@ -247,38 +304,89 @@ require 'head.php';
         <div class="card image-wrapper bg-full bg-image bg-overlay bg-overlay-light-500 pb-15" data-image-src="./assets/img/photos/bg22.png">
           <div class="card-body py-14 px-0">
             <div class="container">
-              <div class="row gx-lg-8 gx-xl-12 gy-10 gy-lg-0">
-                <div class="col-lg-4 text-center text-lg-start">
-                  <h3 class="display-4 mb-3 pe-xxl-15">We are proud of our works</h3>
-                  <p class="lead fs-lg mb-0 pe-xxl-10">We bring solutions to make life easier for our customers.</p>
+              <div class="row gx-lg-8 gx-xl-12 gy-10 gy-lg-0 align-items-center">
+
+                <!-- Left -->
+                <div class="col-lg-6 text-center text-lg-start">
+
+                  <h2 class="fs-16 text-uppercase text-gradient gradient-1 mb-3">
+                    Graha Kirana
+                  </h2>
+
+                  <h3 class="display-4 mb-3 pe-xxl-10">
+                    Generasi Unggul, Profesional, dan Berintegritas
+                  </h3>
+
+                  <p class="lead fs-lg mb-0 pe-xxl-10">
+                    Mencetak generasi penegak hukum yang profesional, berintegritas, dan adaptif
+                    melalui pendidikan berkualitas, pembelajaran berbasis praktik, serta
+                    pengembangan karakter dan kepemimpinan.
+                  </p>
+
                 </div>
-                <!-- /column -->
-                <div class="col-lg-8 mt-lg-2">
-                  <div class="row align-items-center counter-wrapper gy-6 text-center">
-                    <div class="col-md-4">
-                      <img src="./assets/img/icons/solid/target.svg" class="svg-inject icon-svg icon-svg-sm solid-duo text-grape-fuchsia mb-3" alt="" />
-                      <h3 class="counter">1000+</h3>
-                      <p class="mb-0">Completed Projects</p>
+
+                <!-- Right -->
+                <div class="col-lg-6">
+
+                  <div class="row align-items-center counter-wrapper gy-8 text-center">
+
+                    <!-- Mahasiswa -->
+                    <div class="col-md-3">
+
+                      <div style="font-size:52px;">🎓</div>
+
+                      <h3 class="counter mt-3">1.8K+</h3>
+
+                      <p class="mb-0">
+                        Alumni
+                      </p>
+
                     </div>
-                    <!--/column -->
-                    <div class="col-md-4">
-                      <img src="./assets/img/icons/solid/bar-chart.svg" class="svg-inject icon-svg icon-svg-sm solid-duo text-grape-fuchsia mb-3" alt="" />
-                      <h3 class="counter">4x</h3>
-                      <p class="mb-0">Revenue Growth</p>
+
+                    <!-- Dosen -->
+                    <div class="col-md-3">
+
+                      <div style="font-size:52px;">👨‍🏫</div>
+
+                      <h3 class="counter mt-3">65+</h3>
+
+                      <p class="mb-0">
+                        Dosen
+                      </p>
+
                     </div>
-                    <!--/column -->
-                    <div class="col-md-4">
-                      <img src="./assets/img/icons/solid/employees.svg" class="svg-inject icon-svg icon-svg-sm solid-duo text-grape-fuchsia mb-3" alt="" />
-                      <h3 class="counter">99.7%</h3>
-                      <p class="mb-0">Customer Satisfaction</p>
+
+                    <!-- Fasilitas -->
+                    <div class="col-md-3">
+
+                      <div style="font-size:52px;">🏛️</div>
+
+                      <h3 class="counter mt-3">20+</h3>
+
+                      <p class="mb-0">
+                        Fasilitas
+                      </p>
+
                     </div>
-                    <!--/column -->
+
+                    <!-- Kepuasan -->
+                    <div class="col-md-3">
+
+                      <div style="font-size:52px;">🏆</div>
+
+                      <h3 class="counter mt-3">95%</h3>
+
+                      <p class="mb-0">
+                        Kepuasan
+                      </p>
+
+                    </div>
+
                   </div>
-                  <!--/.row -->
+
                 </div>
-                <!-- /column -->
+
               </div>
-              <!-- /.row -->
             </div>
             <!-- /.container -->
           </div>
@@ -290,203 +398,458 @@ require 'head.php';
       <div class="container">
         <div class="grid mb-18">
           <div class="row isotope gy-6 mt-n18">
+
+            <!-- Testimoni 1 -->
             <div class="item col-md-6 col-xl-3">
-              <div class="card shadow-lg card-border-bottom border-soft-primary">
+              <div class="card shadow-lg card-border-bottom border-soft-primary h-100">
                 <div class="card-body">
-                  <blockquote class="border-0 mb-0">
-                    <p>“Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Vestibulum id ligula porta. Cras mattis consectetur.”</p>
-                    <div class="blockquote-details">
-                      <div class="info ps-0">
-                        <h5 class="mb-1">Coriss Ambady</h5>
-                        <p class="mb-0">Financial Analyst</p>
-                      </div>
+
+                  <div class="d-flex align-items-center mb-4">
+
+                    <img src="./assets/img/student/sample.png"
+                      class="rounded-circle me-3"
+                      width="70"
+                      height="70"
+                      style="object-fit:cover;">
+
+                    <div>
+
+                      <h5 class="mb-1">Andika Pratama</h5>
+
+                      <small class="text-muted">
+                        Alumni Hukum 2022
+                      </small>
+
                     </div>
+
+                  </div>
+
+                  <blockquote class="border-0 mb-0">
+
+                    <p>
+                      "Belajar di STIH Graha Kirana memberikan pengalaman akademik yang
+                      sangat berharga. Dosen profesional, lingkungan kampus nyaman"
+                    </p>
+
                   </blockquote>
+
                 </div>
-                <!-- /.card-body -->
               </div>
-              <!-- /.card -->
             </div>
-            <!--/column -->
+
+            <!-- Testimoni 2 -->
+
             <div class="item col-md-6 col-xl-3">
-              <div class="card shadow-lg card-border-bottom border-soft-primary">
+
+              <div class="card shadow-lg card-border-bottom border-soft-primary h-100">
+
                 <div class="card-body">
-                  <blockquote class="border-0 mb-0">
-                    <p>“Fusce dapibus, tellus ac cursus tortor mauris condimentum fermentum massa justo sit amet purus sit amet fermentum.”</p>
-                    <div class="blockquote-details">
-                      <div class="info ps-0">
-                        <h5 class="mb-1">Cory Zamora</h5>
-                        <p class="mb-0">Marketing Specialist</p>
-                      </div>
+
+                  <div class="d-flex align-items-center mb-4">
+
+                    <img src="./assets/img/student/sample2.png"
+                      class="rounded-circle me-3"
+                      width="70"
+                      height="70"
+                      style="object-fit:cover;">
+
+                    <div>
+
+                      <h5 class="mb-1">Nur Aisyah</h5>
+
+                      <small class="text-muted">
+                        Mahasiswa Semester VIII
+                      </small>
+
                     </div>
+
+                  </div>
+
+                  <blockquote class="border-0 mb-0">
+
+                    <p>
+                      "Fasilitas belajar yang lengkap, perpustakaan digital,
+                      serta berbagai seminar nasional membantu saya meningkatkan
+                      wawasan dan kepercayaan diri"
+                    </p>
+
                   </blockquote>
+
                 </div>
-                <!-- /.card-body -->
+
               </div>
-              <!-- /.card -->
+
             </div>
-            <!--/column -->
+
+            <!-- Testimoni 3 -->
+
             <div class="item col-md-6 col-xl-3">
-              <div class="card shadow-lg card-border-bottom border-soft-primary">
+
+              <div class="card shadow-lg card-border-bottom border-soft-primary h-100">
+
                 <div class="card-body">
-                  <blockquote class="border-0 mb-0">
-                    <p>“Curabitur blandit tempus porttitor. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor eu rutrum. Nulla vitae libero.”</p>
-                    <div class="blockquote-details">
-                      <div class="info ps-0">
-                        <h5 class="mb-1">Nikolas Brooten</h5>
-                        <p class="mb-0">Sales Manager</p>
-                      </div>
+
+                  <div class="d-flex align-items-center mb-4">
+
+                    <img src="./assets/img/student/sample3.png"
+                      class="rounded-circle me-3"
+                      width="70"
+                      height="70"
+                      style="object-fit:cover;">
+
+                    <div>
+
+                      <h5 class="mb-1">Muhammad Rizky</h5>
+
+                      <small class="text-muted">
+                        Alumni Hukum 2023
+                      </small>
+
                     </div>
+
+                  </div>
+
+                  <blockquote class="border-0 mb-0">
+
+                    <p>
+                      "Kuliah di STIH Graha Kirana memberikan bekal teori,
+                      praktik, serta pengalaman organisasi yang inovatif, sehingga sangat
+                      membantu ketika memasuki dunia profesi hukum."
+                    </p>
+
                   </blockquote>
+
                 </div>
-                <!-- /.card-body -->
+
               </div>
-              <!-- /.card -->
+
             </div>
-            <!--/column -->
+
+            <!-- Testimoni 4 -->
+
             <div class="item col-md-6 col-xl-3">
-              <div class="card shadow-lg card-border-bottom border-soft-primary">
+
+              <div class="card shadow-lg card-border-bottom border-soft-primary h-100">
+
                 <div class="card-body">
-                  <blockquote class="border-0 mb-0">
-                    <p>“Etiam adipiscing tincidunt elit convallis felis suscipit ut. Phasellus rhoncus eu tincidunt auctor nullam rutrum, pharetra augue.”</p>
-                    <div class="blockquote-details">
-                      <div class="info ps-0">
-                        <h5 class="mb-1">Coriss Ambady</h5>
-                        <p class="mb-0">Financial Analyst</p>
-                      </div>
+
+                  <div class="d-flex align-items-center mb-4">
+
+                    <img src="./assets/img/student/sample4.png"
+                      class="rounded-circle me-3"
+                      width="70"
+                      height="70"
+                      style="object-fit:cover;">
+
+                    <div>
+
+                      <h5 class="mb-1">Salsabila Putri</h5>
+
+                      <small class="text-muted">
+                        Alumni Hukum 2021
+                      </small>
+
                     </div>
+
+                  </div>
+
+                  <blockquote class="border-0 mb-0">
+
+                    <p>
+                      "Saya bangga menjadi bagian dari STIH Graha Kirana.
+                      Kampus ini tidak hanya memberikan ilmu pengetahuan,
+                      tetapi juga membentuk karakter jiwa
+                      kepemimpinan"
+                    </p>
+
                   </blockquote>
+
                 </div>
-                <!-- /.card-body -->
+
               </div>
-              <!-- /.card -->
+
             </div>
-            <!--/column -->
+
           </div>
           <!-- /.row -->
         </div>
         <!-- /.grid-view -->
         <div class="row text-center">
           <div class="col-lg-9 col-xl-8 col-xxl-7 mx-auto">
-            <h2 class="fs-16 text-uppercase text-gradient gradient-1 mb-3">Case Studies</h2>
-            <h3 class="display-4 mb-9 me-lg-n5">Check out some of our awesome projects with creative ideas and great design.</h3>
+
+            <h2 class="fs-16 text-uppercase text-gradient gradient-1 mb-3">
+              Berita Terkini
+            </h2>
+
+            <h3 class="display-4 mb-4">
+              Informasi, Prestasi, dan Aktivitas Terbaru STIH Graha Kirana
+            </h3>
+
+            <p class="lead fs-lg mb-0">
+              Ikuti berbagai informasi akademik, seminar, prestasi mahasiswa,
+              kegiatan kampus, dan perkembangan terbaru dari STIH Graha Kirana.
+            </p>
+
           </div>
-          <!-- /column -->
         </div>
         <!-- /.row -->
-        <div class="swiper-container blog grid-view mb-17 mb-md-20" data-margin="30" data-dots="true" data-items-xl="3" data-items-md="2" data-items-xs="1">
+        <div class="swiper-container blog grid-view mb-17 mb-md-20"
+          data-margin="30"
+          data-dots="true"
+          data-items-xl="3"
+          data-items-md="2"
+          data-items-xs="1">
+
           <div class="swiper">
+
             <div class="swiper-wrapper">
+
+              <!-- Berita 1 -->
               <div class="swiper-slide">
+
                 <article>
-                  <figure class="overlay overlay-1 hover-scale rounded mb-6"><a href="#"> <img src="./assets/img/photos/b4.jpg" alt="" /></a>
+
+                  <figure class="overlay overlay-1 hover-scale rounded mb-6">
+
+                    <a href="./berita-detail.html">
+                      <img src="./assets/img/news/news1.png" alt="">
+                    </a>
+
                     <figcaption>
-                      <h5 class="from-top mb-0">Read More</h5>
+                      <h5 class="from-top mb-0">
+                        Selengkapnya
+                      </h5>
                     </figcaption>
+
                   </figure>
+
                   <div class="post-header">
-                    <h2 class="post-title h3 mb-3"><a class="link-dark" href="./blog-post.html">Ligula tristique quis risus</a></h2>
+
+                    <h2 class="post-title h3 mb-3">
+                      <a class="link-dark" href="./berita-detail.html">
+                        Seminar Nasional Hukum Digital dan Artificial Intelligence
+                      </a>
+                    </h2>
+
                   </div>
-                  <!-- /.post-header -->
+
                   <div class="post-footer">
+
                     <ul class="post-meta">
-                      <li class="post-date"><i class="uil uil-calendar-alt"></i><span>14 Apr 2022</span></li>
-                      <li class="post-comments"><a href="#"><i class="uil uil-file-alt fs-15"></i>Coding</a></li>
+
+                      <li class="post-date">
+                        <i class="uil uil-calendar-alt"></i>
+                        <span>18 Juli 2026</span>
+                      </li>
+
+                      <li>
+                        <a href="#">
+                          <i class="uil uil-file-alt fs-15"></i>
+                          Seminar
+                        </a>
+                      </li>
+
                     </ul>
-                    <!-- /.post-meta -->
+
                   </div>
-                  <!-- /.post-footer -->
+
                 </article>
-                <!-- /article -->
+
               </div>
-              <!--/.swiper-slide -->
+
+              <!-- Berita 2 -->
+
               <div class="swiper-slide">
+
                 <article>
-                  <figure class="overlay overlay-1 hover-scale rounded mb-6"><a href="#"> <img src="./assets/img/photos/b5.jpg" alt="" /></a>
+
+                  <figure class="overlay overlay-1 hover-scale rounded mb-6">
+
+                    <a href="./berita-detail.html">
+                      <img src="./assets/img/news/news2.png" alt="">
+                    </a>
+
                     <figcaption>
-                      <h5 class="from-top mb-0">Read More</h5>
+                      <h5 class="from-top mb-0">
+                        Selengkapnya
+                      </h5>
                     </figcaption>
+
                   </figure>
+
                   <div class="post-header">
-                    <h2 class="post-title h3 mb-3"><a class="link-dark" href="./blog-post.html">Nullam id dolor elit id nibh</a></h2>
+
+                    <h2 class="post-title h3 mb-3">
+
+                      <a class="link-dark" href="./berita-detail.html">
+
+                        Praktik Moot Court Tingkatkan Kompetensi Mahasiswa
+
+                      </a>
+
+                    </h2>
+
                   </div>
-                  <!-- /.post-header -->
+
                   <div class="post-footer">
+
                     <ul class="post-meta">
-                      <li class="post-date"><i class="uil uil-calendar-alt"></i><span>29 Mar 2022</span></li>
-                      <li class="post-comments"><a href="#"><i class="uil uil-file-alt fs-15"></i>Workspace</a></li>
+
+                      <li class="post-date">
+                        <i class="uil uil-calendar-alt"></i>
+                        <span>10 Juli 2026</span>
+                      </li>
+
+                      <li>
+                        <a href="#">
+                          <i class="uil uil-file-alt fs-15"></i>
+                          Akademik
+                        </a>
+                      </li>
+
                     </ul>
-                    <!-- /.post-meta -->
+
                   </div>
-                  <!-- /.post-footer -->
+
                 </article>
-                <!-- /article -->
+
               </div>
-              <!--/.swiper-slide -->
+
+              <!-- Berita 3 -->
+
               <div class="swiper-slide">
+
                 <article>
-                  <figure class="overlay overlay-1 hover-scale rounded mb-6"><a href="#"> <img src="./assets/img/photos/b6.jpg" alt="" /></a>
+
+                  <figure class="overlay overlay-1 hover-scale rounded mb-6">
+
+                    <a href="./berita-detail.html">
+                      <img src="./assets/img/news/news3.png" alt="">
+                    </a>
+
                     <figcaption>
-                      <h5 class="from-top mb-0">Read More</h5>
+                      <h5 class="from-top mb-0">
+                        Selengkapnya
+                      </h5>
                     </figcaption>
+
                   </figure>
+
                   <div class="post-header">
-                    <h2 class="post-title h3 mb-3"><a class="link-dark" href="./blog-post.html">Ultricies fusce porta elit</a></h2>
+
+                    <h2 class="post-title h3 mb-3">
+
+                      <a class="link-dark" href="./berita-detail.html">
+
+                        STIH Graha Kirana Tandatangani Kerja Sama Strategis
+
+                      </a>
+
+                    </h2>
+
                   </div>
-                  <!-- /.post-header -->
+
                   <div class="post-footer">
+
                     <ul class="post-meta">
-                      <li class="post-date"><i class="uil uil-calendar-alt"></i><span>26 Feb 2022</span></li>
-                      <li class="post-comments"><a href="#"><i class="uil uil-file-alt fs-15"></i>Meeting</a></li>
+
+                      <li class="post-date">
+                        <i class="uil uil-calendar-alt"></i>
+                        <span>03 Juli 2026</span>
+                      </li>
+
+                      <li>
+                        <a href="#">
+                          <i class="uil uil-file-alt fs-15"></i>
+                          Kerja Sama
+                        </a>
+                      </li>
+
                     </ul>
-                    <!-- /.post-meta -->
+
                   </div>
-                  <!-- /.post-footer -->
+
                 </article>
-                <!-- /article -->
+
               </div>
-              <!--/.swiper-slide -->
+
+              <!-- Berita 4 -->
+
               <div class="swiper-slide">
+
                 <article>
-                  <figure class="overlay overlay-1 hover-scale rounded mb-6"><a href="#"> <img src="./assets/img/photos/b7.jpg" alt="" /></a>
+
+                  <figure class="overlay overlay-1 hover-scale rounded mb-6">
+
+                    <a href="./berita-detail.html">
+                      <img src="./assets/img/news/news4.png" alt="">
+                    </a>
+
                     <figcaption>
-                      <h5 class="from-top mb-0">Read More</h5>
+                      <h5 class="from-top mb-0">
+                        Selengkapnya
+                      </h5>
                     </figcaption>
+
                   </figure>
+
                   <div class="post-header">
-                    <h2 class="post-title h3 mb-3"><a class="link-dark" href="./blog-post.html">Morbi leo risus porta eget</a></h2>
+
+                    <h2 class="post-title h3 mb-3">
+
+                      <a class="link-dark" href="./berita-detail.html">
+
+                        Wisuda Tahun Akademik 2026 Berlangsung Meriah
+
+                      </a>
+
+                    </h2>
+
                   </div>
+
                   <div class="post-footer">
+
                     <ul class="post-meta">
-                      <li class="post-date"><i class="uil uil-calendar-alt"></i><span>7 Jan 2022</span></li>
-                      <li class="post-comments"><a href="#"><i class="uil uil-file-alt fs-15"></i>Business Tips</a></li>
+
+                      <li class="post-date">
+                        <i class="uil uil-calendar-alt"></i>
+                        <span>28 Juni 2026</span>
+                      </li>
+
+                      <li>
+                        <a href="#">
+                          <i class="uil uil-file-alt fs-15"></i>
+                          Wisuda
+                        </a>
+                      </li>
+
                     </ul>
-                    <!-- /.post-meta -->
+
                   </div>
-                  <!-- /.post-footer -->
+
                 </article>
-                <!-- /article -->
+
               </div>
-              <!--/.swiper-slide -->
+
             </div>
-            <!--/.swiper-wrapper -->
+
           </div>
-          <!-- /.swiper -->
+
         </div>
         <!-- /.swiper-container -->
         <div class="row gy-10 gy-sm-13 gx-md-8 gx-xl-12 align-items-center mb-10 mb-md-12">
           <div class="col-lg-6">
             <div class="row gx-md-5 gy-5">
               <div class="col-md-6">
-                <figure class="rounded"><img src="./assets/img/photos/g12.jpg" srcset="./assets/img/photos/g12@2x.jpg 2x" alt=""></figure>
+                <figure class="rounded"><img src="./assets/img/hero/g12.png" srcset="./assets/img/hero/g12@2x.png 2x" alt=""></figure>
               </div>
               <!--/column -->
               <div class="col-md-6 align-self-end">
-                <figure class="rounded"><img src="./assets/img/photos/g13.jpg" srcset="./assets/img/photos/g13@2x.jpg 2x" alt=""></figure>
+                <figure class="rounded"><img src="./assets/img/hero/g13.png" srcset="./assets/img/hero/g13@2x.png 2x" alt=""></figure>
               </div>
               <!--/column -->
               <div class="col-12">
-                <figure class="rounded mx-md-5"><img src="./assets/img/photos/g11.jpg" srcset="./assets/img/photos/g11@2x.jpg 2x" alt=""></figure>
+                <figure class="rounded mx-md-5"><img src="./assets/img/hero/g11.png" srcset="./assets/img/hero/g11@2x.png 2x" alt=""></figure>
               </div>
               <!--/column -->
             </div>
@@ -494,67 +857,104 @@ require 'head.php';
           </div>
           <!--/column -->
           <div class="col-lg-6">
-            <h2 class="fs-16 text-uppercase text-gradient gradient-1 mb-3">Who Are We?</h2>
-            <h3 class="display-4 mb-4">Company that believes in the power of creative strategy.</h3>
-            <p class="mb-6">Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Aenean lacinia bibendum nulla sed.</p>
+            <h2 class="fs-16 text-uppercase text-gradient gradient-1 mb-3">Tentang Kami</h2>
+
+            <h3 class="display-4 mb-4">
+              Berintegritas, Profesional, dan Berdaya Saing Global.
+            </h3>
+
+            <p class="mb-6">
+              <strong>STIH Graha Kirana</strong> berkomitmen mencetak lulusan hukum yang
+              profesional, berintegritas, dan berdaya saing melalui pendidikan berkualitas,
+              penelitian, serta pengabdian kepada masyarakat.
+            </p>
+
             <div class="row gy-3 gx-xl-8">
               <div class="col-xl-6">
                 <ul class="icon-list bullet-bg bullet-soft-primary mb-0">
-                  <li><span><i class="uil uil-check"></i></span><span>Aenean eu leo quam ornare curabitur blandit tempus.</span></li>
-                  <li class="mt-3"><span><i class="uil uil-check"></i></span><span>Nullam quis risus eget urna mollis ornare donec elit.</span></li>
+                  <li>
+                    <span><i class="uil uil-check"></i></span>
+                    <span>Pendidikan hukum berkualitas dengan kurikulum berbasis kompetensi.</span>
+                  </li>
+
+                  <li class="mt-3">
+                    <span><i class="uil uil-check"></i></span>
+                    <span>Dosen profesional yang berpengalaman di bidang akademik dan praktik hukum.</span>
+                  </li>
                 </ul>
               </div>
-              <!--/column -->
+
               <div class="col-xl-6">
                 <ul class="icon-list bullet-bg bullet-soft-primary mb-0">
-                  <li><span><i class="uil uil-check"></i></span><span>Etiam porta sem malesuada magna mollis euismod.</span></li>
-                  <li class="mt-3"><span><i class="uil uil-check"></i></span><span>Fermentum massa vivamus faucibus amet euismod.</span></li>
+                  <li>
+                    <span><i class="uil uil-check"></i></span>
+                    <span>Mendorong penelitian dan pengabdian kepada masyarakat sebagai bagian dari Tri Dharma.</span>
+                  </li>
+
+                  <li class="mt-3">
+                    <span><i class="uil uil-check"></i></span>
+                    <span>Mengembangkan lulusan yang berintegritas, adaptif, dan siap menghadapi era digital.</span>
+                  </li>
                 </ul>
               </div>
-              <!--/column -->
             </div>
-            <!--/.row -->
           </div>
           <!--/column -->
         </div>
         <!--/.row -->
         <div class="row gx-lg-8 gx-xl-12 gy-6 mb-14 mb-md-17">
+
+          <!-- Visi -->
           <div class="col-lg-4">
             <div class="d-flex flex-row">
               <div>
-                <div class="icon btn btn-circle disabled btn-soft-primary me-4"> <span class="number fs-18">1</span> </div>
+                <div class="icon btn btn-circle disabled btn-soft-primary me-4">
+                  <span class="number fs-18">1</span>
+                </div>
               </div>
               <div>
-                <h4>Our Vision</h4>
-                <p class="mb-2">Nulla vitae elit libero, a pharetra augue. Donec id elit non mi porta gravida at eget. Fusce dapibus tellus.</p>
+                <h4>Visi</h4>
+                <p class="mb-2">
+                  Menjadi Sekolah Tinggi Ilmu Hukum yang unggul, berintegritas, inovatif, dan berdaya saing global dalam menghasilkan lulusan yang profesional serta berkontribusi bagi pembangunan bangsa melalui penegakan hukum yang berkeadilan.
+                </p>
               </div>
             </div>
           </div>
-          <!--/column -->
+
+          <!-- Misi -->
           <div class="col-lg-4">
             <div class="d-flex flex-row">
               <div>
-                <div class="icon btn btn-circle disabled btn-soft-primary me-4"> <span class="number fs-18">2</span> </div>
+                <div class="icon btn btn-circle disabled btn-soft-primary me-4">
+                  <span class="number fs-18">2</span>
+                </div>
               </div>
               <div>
-                <h4>Our Mission</h4>
-                <p class="mb-2">Maecenas faucibus mollis interdum. Vivamus sagittis lacus vel augue laoreet. Sed posuere consectetur.</p>
+                <h4>Misi</h4>
+                <p class="mb-2">
+                  Menyelenggarakan pendidikan hukum yang berkualitas, mengembangkan penelitian dan pengabdian kepada masyarakat, serta membangun kerja sama strategis untuk mencetak lulusan yang kompeten, beretika, dan siap menghadapi tantangan era global.
+                </p>
               </div>
             </div>
           </div>
-          <!--/column -->
+
+          <!-- Nilai -->
           <div class="col-lg-4">
             <div class="d-flex flex-row">
               <div>
-                <div class="icon btn btn-circle disabled btn-soft-primary me-4"> <span class="number fs-18">3</span> </div>
+                <div class="icon btn btn-circle disabled btn-soft-primary me-4">
+                  <span class="number fs-18">3</span>
+                </div>
               </div>
               <div>
-                <h4>Our Values</h4>
-                <p class="mb-2">Cras justo odio, dapibus ac facilisis in, egestas eget quam. Praesent commodo cursus magna scelerisque.</p>
+                <h4>Nilai-Nilai</h4>
+                <p class="mb-2">
+                  Integritas, profesionalisme, keadilan, disiplin, inovasi, dan tanggung jawab menjadi landasan dalam setiap kegiatan akademik untuk membentuk lulusan yang berkarakter, berwawasan luas, dan mampu memberikan manfaat bagi masyarakat.
+                </p>
               </div>
             </div>
           </div>
-          <!--/column -->
+
         </div>
         <!--/.row -->
         <div class="row gx-3 gy-10 mb-15 mb-md-18 align-items-center">
@@ -563,35 +963,64 @@ require 'head.php';
           </div>
           <!--/column -->
           <div class="col-lg-5 offset-lg-1">
-            <h2 class="fs-16 text-uppercase text-gradient gradient-1 mb-3">Contact Us</h2>
-            <h3 class="display-4 mb-8">Got any questions? Don't hesitate to get in touch.</h3>
-            <div class="d-flex flex-row">
+            <h2 class="fs-16 text-uppercase text-gradient gradient-1 mb-3">
+              Informasi Kontak
+            </h2>
+
+            <h3 class="display-4 mb-8">
+              Mari terhubung dengan STIH Graha Kirana untuk memperoleh informasi
+            </h3>
+            <!-- Address -->
+            <div class="d-flex flex-row mb-4">
               <div>
-                <img src="./assets/img/icons/solid/pin.svg" class="svg-inject icon-svg icon-svg-xs solid-duo text-grape-fuchsia mt-1 me-4" style="width: 1.5rem; height: 1.5rem;" alt="" />
+                <img src="./assets/img/icons/solid/pin.svg"
+                  class="svg-inject icon-svg icon-svg-xs solid-duo text-grape-fuchsia mt-1 me-4"
+                  style="width:1.5rem;height:1.5rem;" alt="Alamat">
               </div>
               <div>
-                <h5 class="mb-0">Address</h5>
-                <address>Moonshine St. 14/05 Light City, London</address>
-              </div>
-            </div>
-            <div class="d-flex flex-row">
-              <div>
-                <img src="./assets/img/icons/solid/rotary.svg" class="svg-inject icon-svg icon-svg-xs solid-duo text-grape-fuchsia mt-1 me-4" style="width: 1.5rem; height: 1.5rem;" alt="" />
-              </div>
-              <div>
-                <h5 class="mb-0">Phone</h5>
-                <p>00 (123) 456 78 90</p>
-              </div>
-            </div>
-            <div class="d-flex flex-row">
-              <div>
-                <img src="./assets/img/icons/solid/emails.svg" class="svg-inject icon-svg icon-svg-xs solid-duo text-grape-fuchsia mt-1 me-4" style="width: 1.5rem; height: 1.5rem;" alt="" />
-              </div>
-              <div>
-                <h5 class="mb-0">E-mail</h5>
-                <p class="mb-0"><a href="mailto:sandbox@email.com" class="link-body">sandbox@email.com</a></p>
+                <h5 class="mb-0">Alamat</h5>
+                <address class="mb-0">
+                  STIH Graha Kirana<br>
+                  Jl. Kirana Raya No. 1, Medan<br>
+                  Sumatera Utara, Indonesia
+                </address>
               </div>
             </div>
+
+            <!-- Phone -->
+            <div class="d-flex flex-row mb-4">
+              <div>
+                <img src="./assets/img/icons/solid/rotary.svg"
+                  class="svg-inject icon-svg icon-svg-xs solid-duo text-grape-fuchsia mt-1 me-4"
+                  style="width:1.5rem;height:1.5rem;" alt="Telepon">
+              </div>
+              <div>
+                <h5 class="mb-0">Telepon</h5>
+                <p class="mb-0">
+                  <a href="tel:+62614567890" class="link-body">
+                    (061) 456-7890
+                  </a>
+                </p>
+              </div>
+            </div>
+
+            <!-- Email -->
+            <div class="d-flex flex-row mb-4">
+              <div>
+                <img src="./assets/img/icons/solid/emails.svg"
+                  class="svg-inject icon-svg icon-svg-xs solid-duo text-grape-fuchsia mt-1 me-4"
+                  style="width:1.5rem;height:1.5rem;" alt="Email">
+              </div>
+              <div>
+                <h5 class="mb-0">Email</h5>
+                <p class="mb-0">
+                  <a href="mailto:info@stihgrahakirana.ac.id" class="link-body">
+                    info@stihgrahakirana.ac.id
+                  </a>
+                </p>
+              </div>
+            </div>
+
           </div>
           <!--/column -->
         </div>
