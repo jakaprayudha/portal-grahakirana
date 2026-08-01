@@ -12,94 +12,133 @@ require 'head.php';
     <?php
     require 'navbar.php';
     ?>
-  </div>
-
-  <section class="wrapper bg-light">
-    <div class="container py-17 py-md-12">
-      <div class="row text-center mb-0">
-        <div class="col-lg-9 mx-auto">
-          <span class="badge bg-soft-primary text-primary rounded-pill mb-3">
-            Dokumentasi
-          </span>
-          <h2 class="display-4 mb-4">
-            Dokumentasi Kegiatan STIH Graha Kirana
-          </h2>
-          <p class="lead fs-lg">
-            Dokumentasi berbagai kegiatan akademik, kemahasiswaan,
-            seminar, pengabdian kepada masyarakat, hingga momen wisuda
-            yang menjadi bagian perjalanan STIH Graha Kirana.
-          </p>
+    <section class="wrapper bg-light">
+      <div class="container py-17 py-md-12">
+        <div class="row text-center mb-0">
+          <div class="col-lg-9 mx-auto">
+            <span class="badge bg-soft-primary text-primary rounded-pill mb-3">
+              Dokumentasi
+            </span>
+            <h2 class="display-4 mb-4">
+              Dokumentasi Kegiatan STIH Graha Kirana
+            </h2>
+            <p class="lead fs-lg">
+              Dokumentasi berbagai kegiatan akademik, kemahasiswaan,
+              seminar, pengabdian kepada masyarakat, hingga momen wisuda
+              yang menjadi bagian perjalanan STIH Graha Kirana.
+            </p>
+          </div>
         </div>
-      </div>
-
-    </div>
-  </section>
-  <section class="wrapper bg-white">
-    <div class="container pb-6">
-
-      <div class="text-center">
-
-        <a href="#" class="btn btn-soft-primary rounded-pill m-2">📚 Akademik</a>
-
-        <a href="#" class="btn btn-soft-violet rounded-pill m-2">🎓 Wisuda</a>
-
-        <a href="#" class="btn btn-soft-leaf rounded-pill m-2">⚖️ Seminar</a>
-
-        <a href="#" class="btn btn-soft-orange rounded-pill m-2">🏆 Prestasi</a>
-
-        <a href="#" class="btn btn-soft-aqua rounded-pill m-2">🤝 Kerjasama</a>
-
-        <a href="#" class="btn btn-soft-yellow rounded-pill m-2">🌍 Pengabdian</a>
-
-        <a href="#" class="btn btn-soft-red rounded-pill m-2">🎉 Kemahasiswaan</a>
 
       </div>
+    </section>
+    <section class="wrapper bg-white">
+      <div class="container pb-6">
 
-    </div>
-  </section>
-  <section class="wrapper bg-light">
-    <div class="container pb-15">
-      <div class="row g-4">
+        <div class="text-center">
 
-        <?php for ($i = 1; $i <= 12; $i++) { ?>
+          <a href="#" class="btn btn-soft-primary rounded-pill m-2">📚 Akademik</a>
 
-          <div class="col-md-6 col-lg-4">
+          <a href="#" class="btn btn-soft-violet rounded-pill m-2">🎓 Wisuda</a>
 
-            <div class="card shadow-lg border-0">
+          <a href="#" class="btn btn-soft-leaf rounded-pill m-2">⚖️ Seminar</a>
 
-              <figure class="overlay overlay-1 hover-scale rounded mb-0">
+          <a href="#" class="btn btn-soft-orange rounded-pill m-2">🏆 Prestasi</a>
 
-                <a href="./assets/img/gallery/gallery.png">
+          <a href="#" class="btn btn-soft-aqua rounded-pill m-2">🤝 Kerjasama</a>
 
-                  <img src="./assets/img/gallery/gallery.png" class="img-fluid">
+          <a href="#" class="btn btn-soft-yellow rounded-pill m-2">🌍 Pengabdian</a>
 
-                </a>
+          <a href="#" class="btn btn-soft-red rounded-pill m-2">🎉 Kemahasiswaan</a>
 
-                <figcaption>
+        </div>
 
-                  <h5 class="from-top mb-0">
+      </div>
+    </section>
+    <section class="wrapper bg-light">
+      <div class="container pb-15">
+        <div class="row g-4">
 
-                    Lihat Dokumentasi
+          <?php for ($i = 1; $i <= 12; $i++) { ?>
+
+            <div class="col-md-6 col-lg-4">
+
+              <div class="card shadow-lg border-0">
+
+                <figure class="overlay overlay-1 hover-scale rounded mb-0">
+
+                  <a href="./assets/img/gallery/gallery.png">
+
+                    <img src="./assets/img/gallery/gallery.png" class="img-fluid">
+
+                  </a>
+
+                  <figcaption>
+
+                    <h5 class="from-top mb-0">
+
+                      Lihat Dokumentasi
+
+                    </h5>
+
+                  </figcaption>
+
+                </figure>
+
+                <div class="card-body">
+
+                  <h5 class="mb-1">
+
+                    Kegiatan STIH Graha Kirana
 
                   </h5>
 
-                </figcaption>
+                  <p class="mb-0 text-muted">
 
-              </figure>
+                    Dokumentasi kegiatan akademik dan kemahasiswaan.
+
+                  </p>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          <?php } ?>
+
+        </div>
+
+      </div>
+    </section>
+    <section class="wrapper bg-white">
+      <div class="container py-15">
+
+        <div class="row mb-8">
+
+          <div class="col-lg-8">
+
+            <h2 class="display-5">
+
+              Highlight Kegiatan
+
+            </h2>
+
+          </div>
+
+        </div>
+
+        <div class="row gy-5">
+
+          <div class="col-md-4">
+
+            <div class="card shadow-lg">
 
               <div class="card-body">
 
-                <h5 class="mb-1">
+                <h4>🎓 Wisuda Sarjana</h4>
 
-                  Kegiatan STIH Graha Kirana
-
-                </h5>
-
-                <p class="mb-0 text-muted">
-
-                  Dokumentasi kegiatan akademik dan kemahasiswaan.
-
-                </p>
+                <p>250 Foto Dokumentasi</p>
 
               </div>
 
@@ -107,72 +146,33 @@ require 'head.php';
 
           </div>
 
-        <?php } ?>
+          <div class="col-md-4">
 
-      </div>
+            <div class="card shadow-lg">
 
-    </div>
-  </section>
-  <section class="wrapper bg-white">
-    <div class="container py-15">
+              <div class="card-body">
 
-      <div class="row mb-8">
+                <h4>⚖️ Seminar Nasional</h4>
 
-        <div class="col-lg-8">
+                <p>180 Foto Dokumentasi</p>
 
-          <h2 class="display-5">
-
-            Highlight Kegiatan
-
-          </h2>
-
-        </div>
-
-      </div>
-
-      <div class="row gy-5">
-
-        <div class="col-md-4">
-
-          <div class="card shadow-lg">
-
-            <div class="card-body">
-
-              <h4>🎓 Wisuda Sarjana</h4>
-
-              <p>250 Foto Dokumentasi</p>
+              </div>
 
             </div>
 
           </div>
 
-        </div>
+          <div class="col-md-4">
 
-        <div class="col-md-4">
+            <div class="card shadow-lg">
 
-          <div class="card shadow-lg">
+              <div class="card-body">
 
-            <div class="card-body">
+                <h4>🤝 PKKMB</h4>
 
-              <h4>⚖️ Seminar Nasional</h4>
+                <p>320 Foto Dokumentasi</p>
 
-              <p>180 Foto Dokumentasi</p>
-
-            </div>
-
-          </div>
-
-        </div>
-
-        <div class="col-md-4">
-
-          <div class="card shadow-lg">
-
-            <div class="card-body">
-
-              <h4>🤝 PKKMB</h4>
-
-              <p>320 Foto Dokumentasi</p>
+              </div>
 
             </div>
 
@@ -181,87 +181,88 @@ require 'head.php';
         </div>
 
       </div>
+    </section>
+    <section class="wrapper bg-soft-primary">
 
-    </div>
-  </section>
-  <section class="wrapper bg-soft-primary">
+      <div class="container py-15">
 
-    <div class="container py-15">
+        <div class="row text-center">
 
-      <div class="row text-center">
+          <div class="col-6 col-lg-3">
 
-        <div class="col-6 col-lg-3">
+            <div style="font-size:55px;">📷</div>
 
-          <div style="font-size:55px;">📷</div>
+            <h2 class="counter">2500+</h2>
 
-          <h2 class="counter">2500+</h2>
+            <p>Total Foto</p>
 
-          <p>Total Foto</p>
+          </div>
 
-        </div>
+          <div class="col-6 col-lg-3">
 
-        <div class="col-6 col-lg-3">
+            <div style="font-size:55px;">🎥</div>
 
-          <div style="font-size:55px;">🎥</div>
+            <h2 class="counter">150+</h2>
 
-          <h2 class="counter">150+</h2>
+            <p>Video</p>
 
-          <p>Video</p>
+          </div>
 
-        </div>
+          <div class="col-6 col-lg-3">
 
-        <div class="col-6 col-lg-3">
+            <div style="font-size:55px;">🏆</div>
 
-          <div style="font-size:55px;">🏆</div>
+            <h2 class="counter">85+</h2>
 
-          <h2 class="counter">85+</h2>
+            <p>Event</p>
 
-          <p>Event</p>
+          </div>
 
-        </div>
+          <div class="col-6 col-lg-3">
 
-        <div class="col-6 col-lg-3">
+            <div style="font-size:55px;">📅</div>
 
-          <div style="font-size:55px;">📅</div>
+            <h2 class="counter">24</h2>
 
-          <h2 class="counter">24</h2>
+            <p>Tahun Dokumentasi</p>
 
-          <p>Tahun Dokumentasi</p>
+          </div>
 
         </div>
 
       </div>
 
-    </div>
+    </section>
+    <section class="wrapper bg-primary">
 
-  </section>
-  <section class="wrapper bg-primary">
+      <div class="container py-16 text-center">
 
-    <div class="container py-16 text-center">
+        <h2 class="display-5 text-white mb-4">
 
-      <h2 class="display-5 text-white mb-4">
+          Mengabadikan Setiap Momen,
+          Membangun Kenangan Bersama.
 
-        Mengabadikan Setiap Momen,
-        Membangun Kenangan Bersama.
+        </h2>
 
-      </h2>
+        <p class="lead text-white mb-6">
 
-      <p class="lead text-white mb-6">
+          Seluruh dokumentasi menjadi bagian perjalanan STIH Graha Kirana
+          dalam mencetak lulusan yang profesional dan berintegritas.
 
-        Seluruh dokumentasi menjadi bagian perjalanan STIH Graha Kirana
-        dalam mencetak lulusan yang profesional dan berintegritas.
+        </p>
 
-      </p>
+        <a href="#" class="btn btn-lg btn-white rounded-pill">
 
-      <a href="#" class="btn btn-lg btn-white rounded-pill">
+          Lihat Semua Dokumentasi
 
-        Lihat Semua Dokumentasi
+        </a>
 
-      </a>
+      </div>
 
-    </div>
+    </section>
+  </div>
 
-  </section>
+
   <!-- /.content-wrapper -->
   <?php
   require 'footer.php';
