@@ -1105,21 +1105,21 @@ require 'head.php';
 
               <div class="col-6">
 
-                <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=700"
+                <img src="./assets/img/organization1.png"
                   class="img-fluid rounded-4 shadow">
 
               </div>
 
               <div class="col-6">
 
-                <img src="https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?w=700"
+                <img src="./assets/img/organization2.png"
                   class="img-fluid rounded-4 shadow">
 
               </div>
 
               <div class="col-12">
 
-                <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=1200"
+                <img src="./assets/img/organization3.png"
                   class="img-fluid rounded-4 shadow">
 
               </div>
