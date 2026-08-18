@@ -413,22 +413,23 @@ require 'head.php';
     <?php
     require 'navbar.php';
     ?>
-    <section class="wrapper image-wrapper bg-image bg-overlay bg-overlay-500"
-      style="background-image:url('./assets/img/ojs/ojs-hero.jpg');">
+    <section class="wrapper bg-light">
 
-      <div class="container pt-18 pb-17 text-white">
+      <div class="container py-15 py-md-17">
 
-        <div class="row align-items-center gy-5">
+        <div class="row align-items-center gy-8">
 
-          <div class="col-lg-7">
+          <!-- LEFT -->
 
-            <span class="badge bg-white text-primary rounded-pill mb-4">
+          <div class="col-lg-6">
+
+            <span class="badge bg-soft-primary text-primary rounded-pill mb-3">
 
               Open Journal System (OJS)
 
             </span>
 
-            <h1 class="display-2 text-white mb-4">
+            <h1 class="display-4 mb-4">
 
               Portal Jurnal Ilmiah
               <br>
@@ -436,7 +437,7 @@ require 'head.php';
 
             </h1>
 
-            <p class="lead fs-lg mb-5">
+            <p class="lead mb-5">
 
               Media publikasi ilmiah berbasis Open Journal Systems (OJS)
               yang mendukung proses submit artikel, peer review,
@@ -445,22 +446,166 @@ require 'head.php';
 
             </p>
 
-            <div class="d-flex flex-wrap gap-3">
+
+            <div class="row g-4">
+
+              <!-- ITEM 1 -->
+
+              <div class="col-md-6">
+
+                <div class="facility-highlight">
+
+                  <div class="facility-icon">
+
+                    📚
+
+                  </div>
+
+                  <div>
+
+                    <h5 class="mb-1">
+
+                      Publikasi Ilmiah
+
+                    </h5>
+
+                    <small>
+
+                      Media publikasi karya ilmiah dosen,
+                      mahasiswa, peneliti, dan praktisi hukum.
+
+                    </small>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+
+              <!-- ITEM 2 -->
+
+              <div class="col-md-6">
+
+                <div class="facility-highlight">
+
+                  <div class="facility-icon">
+
+                    🔍
+
+                  </div>
+
+                  <div>
+
+                    <h5 class="mb-1">
+
+                      Peer Review
+
+                    </h5>
+
+                    <small>
+
+                      Proses review artikel secara akademik
+                      dan terstruktur.
+
+                    </small>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+
+              <!-- ITEM 3 -->
+
+              <div class="col-md-6">
+
+                <div class="facility-highlight">
+
+                  <div class="facility-icon">
+
+                    🌐
+
+                  </div>
+
+                  <div>
+
+                    <h5 class="mb-1">
+
+                      Open Access
+
+                    </h5>
+
+                    <small>
+
+                      Publikasi dapat diakses secara mudah
+                      melalui portal jurnal.
+
+                    </small>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+
+              <!-- ITEM 4 -->
+
+              <div class="col-md-6">
+
+                <div class="facility-highlight">
+
+                  <div class="facility-icon">
+
+                    🏷️
+
+                  </div>
+
+                  <div>
+
+                    <h5 class="mb-1">
+
+                      DOI
+
+                    </h5>
+
+                    <small>
+
+                      Mendukung identifikasi dan pengelolaan
+                      publikasi ilmiah secara digital.
+
+                    </small>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+            </div>
+
+
+            <!-- ACTION -->
+
+            <div class="mt-5">
 
               <a href="https://ojs.grahakirana.ac.id"
                 target="_blank"
-                class="btn btn-lg btn-primary rounded-pill">
+                rel="noopener noreferrer"
+                class="btn btn-primary rounded-pill me-3">
 
-                <i class="uil uil-book-open me-2"></i>
+                <i class="uil uil-book-open me-1"></i>
 
                 Masuk Portal OJS
 
               </a>
 
               <a href="#tentang-ojs"
-                class="btn btn-lg btn-white rounded-pill">
+                class="btn btn-outline-primary rounded-pill">
 
-                <i class="uil uil-info-circle me-2"></i>
+                <i class="uil uil-info-circle me-1"></i>
 
                 Pelajari Lebih Lanjut
 
@@ -470,85 +615,15 @@ require 'head.php';
 
           </div>
 
-          <div class="col-lg-5">
 
-            <div class="hero-ojs-card">
+          <!-- RIGHT -->
 
-              <div class="hero-ojs-icon">
+          <div class="col-lg-6">
 
-                📚
-
-              </div>
-
-              <h3>
-
-                Publikasi Ilmiah Berkualitas
-
-              </h3>
-
-              <p>
-
-                Mendukung publikasi artikel ilmiah dosen,
-                mahasiswa, peneliti, serta praktisi hukum
-                melalui sistem OJS yang modern dan terpercaya.
-
-              </p>
-
-              <hr>
-
-              <div class="row text-center">
-
-                <div class="col-4">
-
-                  <h3 class="text-primary">
-
-                    Open
-
-                  </h3>
-
-                  <small>
-
-                    Access
-
-                  </small>
-
-                </div>
-
-                <div class="col-4">
-
-                  <h3 class="text-primary">
-
-                    Peer
-
-                  </h3>
-
-                  <small>
-
-                    Review
-
-                  </small>
-
-                </div>
-
-                <div class="col-4">
-
-                  <h3 class="text-primary">
-
-                    DOI
-
-                  </h3>
-
-                  <small>
-
-                    Ready
-
-                  </small>
-
-                </div>
-
-              </div>
-
-            </div>
+            <img
+              src="./assets/img/ojs/hero.png"
+              class="img-fluid rounded-4 shadow-lg"
+              alt="Open Journal System STIH Graha Kirana">
 
           </div>
 

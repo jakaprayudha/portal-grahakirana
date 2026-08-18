@@ -1477,22 +1477,23 @@ require 'head.php';
     <?php
     require 'navbar.php';
     ?>
-    <section class="wrapper image-wrapper bg-image bg-overlay bg-overlay-500"
-      style="background-image:url('./assets/img/research/research-hero.jpg');">
+    <section class="wrapper bg-light">
 
-      <div class="container pt-18 pb-17 text-white">
+      <div class="container py-15 py-md-17">
 
-        <div class="row align-items-center gy-5">
+        <div class="row align-items-center gy-8">
 
-          <div class="col-lg-7">
+          <!-- LEFT -->
 
-            <span class="badge bg-white text-primary rounded-pill mb-4">
+          <div class="col-lg-6">
+
+            <span class="badge bg-soft-primary text-primary rounded-pill mb-3">
 
               Research News
 
             </span>
 
-            <h1 class="display-2 text-white mb-4">
+            <h1 class="display-4 mb-4">
 
               Kabar Penelitian
               <br>
@@ -1500,7 +1501,7 @@ require 'head.php';
 
             </h1>
 
-            <p class="lead fs-lg mb-5">
+            <p class="lead mb-5">
 
               Pusat informasi mengenai penelitian dosen,
               publikasi ilmiah, hibah penelitian,
@@ -1510,21 +1511,160 @@ require 'head.php';
 
             </p>
 
-            <div class="d-flex flex-wrap gap-3">
+
+            <div class="row g-4">
+
+              <!-- ITEM 1 -->
+
+              <div class="col-md-6">
+
+                <div class="facility-highlight">
+
+                  <div class="facility-icon">
+
+                    🔬
+
+                  </div>
+
+                  <div>
+
+                    <h5 class="mb-1">
+
+                      Penelitian
+
+                    </h5>
+
+                    <small>
+
+                      Mengembangkan kajian hukum melalui penelitian ilmiah.
+
+                    </small>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+
+              <!-- ITEM 2 -->
+
+              <div class="col-md-6">
+
+                <div class="facility-highlight">
+
+                  <div class="facility-icon">
+
+                    📚
+
+                  </div>
+
+                  <div>
+
+                    <h5 class="mb-1">
+
+                      Publikasi Ilmiah
+
+                    </h5>
+
+                    <small>
+
+                      Menyebarluaskan hasil penelitian melalui publikasi ilmiah.
+
+                    </small>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+
+              <!-- ITEM 3 -->
+
+              <div class="col-md-6">
+
+                <div class="facility-highlight">
+
+                  <div class="facility-icon">
+
+                    🏆
+
+                  </div>
+
+                  <div>
+
+                    <h5 class="mb-1">
+
+                      Hibah Penelitian
+
+                    </h5>
+
+                    <small>
+
+                      Mendukung penelitian melalui berbagai skema pendanaan.
+
+                    </small>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+
+              <!-- ITEM 4 -->
+
+              <div class="col-md-6">
+
+                <div class="facility-highlight">
+
+                  <div class="facility-icon">
+
+                    🤝
+
+                  </div>
+
+                  <div>
+
+                    <h5 class="mb-1">
+
+                      Kolaborasi Riset
+
+                    </h5>
+
+                    <small>
+
+                      Membangun kolaborasi penelitian dengan berbagai mitra.
+
+                    </small>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+            </div>
+
+
+            <!-- ACTION -->
+
+            <div class="mt-5">
 
               <a href="#research"
-                class="btn btn-lg btn-primary rounded-pill">
+                class="btn btn-primary rounded-pill me-3">
 
-                <i class="uil uil-flask me-2"></i>
+                <i class="uil uil-flask me-1"></i>
 
                 Penelitian Terbaru
 
               </a>
 
               <a href="#publication"
-                class="btn btn-lg btn-white rounded-pill">
+                class="btn btn-outline-primary rounded-pill">
 
-                <i class="uil uil-book-open me-2"></i>
+                <i class="uil uil-book-open me-1"></i>
 
                 Publikasi Ilmiah
 
@@ -1534,102 +1674,15 @@ require 'head.php';
 
           </div>
 
-          <div class="col-lg-5">
 
-            <div class="research-summary">
+          <!-- RIGHT -->
 
-              <div class="research-icon">
+          <div class="col-lg-6">
 
-                🔬
-
-              </div>
-
-              <h3>
-
-                Research Excellence
-
-              </h3>
-
-              <p>
-
-                Mendorong budaya penelitian,
-                inovasi, dan publikasi ilmiah
-                sebagai kontribusi nyata terhadap
-                perkembangan ilmu hukum.
-
-              </p>
-
-              <hr>
-
-              <div class="row text-center">
-
-                <div class="col-3">
-
-                  <h3 class="text-primary">
-
-                    320+
-
-                  </h3>
-
-                  <small>
-
-                    Riset
-
-                  </small>
-
-                </div>
-
-                <div class="col-3">
-
-                  <h3 class="text-primary">
-
-                    75+
-
-                  </h3>
-
-                  <small>
-
-                    Publikasi
-
-                  </small>
-
-                </div>
-
-                <div class="col-3">
-
-                  <h3 class="text-primary">
-
-                    42+
-
-                  </h3>
-
-                  <small>
-
-                    Hibah
-
-                  </small>
-
-                </div>
-
-                <div class="col-3">
-
-                  <h3 class="text-primary">
-
-                    18+
-
-                  </h3>
-
-                  <small>
-
-                    Mitra
-
-                  </small>
-
-                </div>
-
-              </div>
-
-            </div>
+            <img
+              src="./assets/img/research/research-hero.png"
+              class="img-fluid rounded-4 shadow-lg"
+              alt="Kegiatan Penelitian STIH Graha Kirana">
 
           </div>
 
