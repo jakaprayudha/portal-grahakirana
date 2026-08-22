@@ -134,13 +134,13 @@ $pmbStages = [
    1 => [
       'name' => 'Pendaftaran',
       'icon' => 'uil-edit',
-      'page' => 'pendaftaran.php'
+      'page' => 'pmb/register-data'
    ],
 
    2 => [
       'name' => 'Data & Dokumen',
       'icon' => 'uil-file-alt',
-      'page' => 'data-dokumen.php'
+      'page' => 'pmb/register-data.php'
    ],
 
    3 => [
@@ -872,29 +872,6 @@ $currentStage =
                   </div>
 
 
-                  <div class="pmb-progress">
-
-                     <div class="pmb-progress-bar"></div>
-
-                  </div>
-
-
-                  <div class="d-flex justify-content-between mt-3">
-
-                     <small class="text-green fw-bold">
-
-                        ✓ 6 tahap selesai
-
-                     </small>
-
-                     <small class="text-primary fw-bold">
-
-                        Daftar Ulang aktif
-
-                     </small>
-
-                  </div>
-
                </div>
 
             </div>
@@ -932,47 +909,25 @@ $currentStage =
 
                         <?php
 
-                        /*
-       * Tahap sebelumnya
-       */
-                        $isComplete =
-                           $number < $tahapAktif;
-
-
-                        /*
-       * Tahap sedang aktif
-       */
-                        $isActive =
-                           $number === $tahapAktif;
-
-
-                        /*
-       * Tahap berikutnya
-       */
-                        $isLocked =
-                           $number > $tahapAktif;
-
+                        $isComplete = $number < $tahapAktif;
+                        $isActive   = $number === $tahapAktif;
+                        $isLocked   = $number > $tahapAktif;
 
                         if ($isComplete) {
-
                            $class = 'complete';
                         } elseif ($isActive) {
-
                            $class = 'active';
                         } else {
-
                            $class = 'locked';
                         }
 
                         ?>
 
-                        <div
+                        <button
+                           type="button"
                            class="pmb-stage-tab <?= $class ?>"
-                           <?php if (!$isLocked): ?>
-
-                           onclick="showStage(<?= $number ?>)"
-
-                           <?php endif; ?>>
+                           data-stage="<?= $number ?>"
+                           <?= $isLocked ? 'disabled' : '' ?>>
 
                            <span class="pmb-stage-check">
 
@@ -992,13 +947,11 @@ $currentStage =
 
                            </span>
 
-
                            <div class="pmb-stage-number">
 
                               TAHAP <?= str_pad($number, 2, '0', STR_PAD_LEFT) ?>
 
                            </div>
-
 
                            <div class="pmb-stage-name">
 
@@ -1006,7 +959,7 @@ $currentStage =
 
                            </div>
 
-                        </div>
+                        </button>
 
                      <?php endforeach; ?>
 
@@ -1465,7 +1418,7 @@ $currentStage =
 
 
    <?php
-   require '../footer-pmb.php';
+   require '../footer2.php';
    ?>
 
 
@@ -1488,28 +1441,46 @@ $currentStage =
                                  JSON_UNESCAPED_SLASHES
                            ) ?>;
 
+      document
+         .querySelectorAll('.pmb-stage-tab')
+         .forEach(function(tab) {
+
+            tab.addEventListener('click', function() {
+
+               const stage =
+                  parseInt(
+                     this.dataset.stage,
+                     10
+                  );
+
+               if (stage > PMB_ACTIVE_STAGE) {
+
+                  showToast(
+                     'info',
+                     'Tahap ini belum dapat diakses.'
+                  );
+
+                  return;
+               }
+
+               showStage(stage);
+
+            });
+
+         });
+
 
       function showStage(stage) {
 
-         stage =
-            parseInt(stage, 10);
+         stage = parseInt(stage, 10);
 
-
-         if (
-            isNaN(stage) ||
-            !PMB_STAGES[stage]
-         ) {
-
+         if (!PMB_STAGES[stage]) {
             return;
-
          }
 
-
          /*
-          * Jangan izinkan membuka
-          * tahap yang belum dicapai.
+          * Tahap yang belum dicapai
           */
-
          if (stage > PMB_ACTIVE_STAGE) {
 
             showToast(
@@ -1518,98 +1489,60 @@ $currentStage =
             );
 
             return;
-
          }
 
-
-         const stageContent =
-            document.getElementById(
-               'stageContent'
-            );
-
-
-         const data =
-            PMB_STAGES[stage];
-
+         const data = PMB_STAGES[stage];
 
          const isCurrent =
             stage === PMB_ACTIVE_STAGE;
 
-
          const isPreview =
             stage < PMB_ACTIVE_STAGE;
 
+         const stageContent =
+            document.getElementById('stageContent');
+
+         if (!stageContent) {
+            return;
+         }
 
          stageContent.innerHTML = `
 
-         <div class="row gx-lg-8 gy-6">
+      <div class="row gx-lg-8 gy-6">
 
-            <div class="col-lg-8">
+         <div class="col-lg-8">
 
-               <div class="card shadow-sm pmb-current-card">
+            <div class="card shadow-sm pmb-current-card">
 
-                  <div class="card-body p-5 p-md-6">
+               <div class="card-body p-5 p-md-6">
 
-                     <div class="d-flex align-items-start mb-6">
+                  <div class="d-flex align-items-start mb-6">
 
-                        <div class="pmb-current-icon bg-soft-primary text-primary me-4">
+                     <div class="pmb-current-icon bg-soft-primary text-primary me-4">
 
-                           <i class="uil ${data.icon} fs-28"></i>
-
-                        </div>
-
-
-                        <div>
-
-                           <span class="text-uppercase text-primary fs-13 fw-bold">
-
-                              TAHAP ${String(stage).padStart(2, '0')}
-
-                           </span>
-
-
-                           <h3 class="mt-1 mb-2">
-
-                              ${data.name}
-
-                           </h3>
-
-
-                           <p class="text-muted mb-0">
-
-                              ${
-                                 isCurrent
-                                 ? 'Tahap ini sedang aktif dan perlu Anda selesaikan.'
-                                 : 'Anda dapat melihat kembali informasi pada tahap yang telah dilewati.'
-                              }
-
-                           </p>
-
-                        </div>
+                        <i class="uil ${data.icon} fs-28"></i>
 
                      </div>
 
+                     <div>
 
-                     <div class="
-                        alert
-                        ${isCurrent ? 'alert-primary' : 'alert-success'}
-                        alert-icon
-                        mb-5
-                     ">
+                        <span class="text-uppercase text-primary fs-13 fw-bold">
 
-                        <i class="
-                           uil
-                           ${isCurrent
-                              ? 'uil-info-circle'
-                              : 'uil-check-circle'}
-                        "></i>
+                           TAHAP ${String(stage).padStart(2, '0')}
 
+                        </span>
 
-                        <p class="mb-0">
+                        <h3 class="mt-1 mb-2">
+
+                           ${data.name}
+
+                        </h3>
+
+                        <p class="text-muted mb-0">
 
                            ${
                               isCurrent
-                              ? 'Tahap ini sedang aktif.'
+                              ? 'Tahap ini sedang aktif dan perlu Anda selesaikan.'
                               : 'Tahap ini telah selesai dan dapat Anda preview kembali.'
                            }
 
@@ -1617,123 +1550,105 @@ $currentStage =
 
                      </div>
 
-
-                     <div class="pmb-preview-row">
-
-                        <div class="pmb-preview-icon bg-soft-primary text-primary">
-
-                           <i class="uil uil-user"></i>
-
-                        </div>
+                  </div>
 
 
-                        <div>
+                  <div class="
+                     alert
+                     ${isCurrent ? 'alert-primary' : 'alert-success'}
+                     alert-icon
+                     mb-5
+                  ">
 
-                           <div class="pmb-preview-label">
+                     <i class="
+                        uil
+                        ${isCurrent
+                           ? 'uil-info-circle'
+                           : 'uil-check-circle'}
+                     "></i>
 
-                              Peserta
+                     <p class="mb-0">
 
-                           </div>
+                        ${
+                           isCurrent
+                           ? 'Tahap ini sedang aktif.'
+                           : 'Tahap ini telah selesai.'
+                        }
 
+                     </p>
 
-                           <div class="pmb-preview-value">
-
-                              <?= htmlspecialchars($pmbUser['fullname']) ?>
-
-                           </div>
-
-                        </div>
-
-                     </div>
-
-
-                     <div class="pmb-preview-row">
-
-                        <div class="pmb-preview-icon bg-soft-primary text-primary">
-
-                           <i class="uil uil-envelope"></i>
-
-                        </div>
+                  </div>
 
 
-                        <div>
+                  <div class="pmb-preview-row">
 
-                           <div class="pmb-preview-label">
+                     <div class="pmb-preview-icon bg-soft-primary text-primary">
 
-                              Email
-
-                           </div>
-
-
-                           <div class="pmb-preview-value">
-
-                              <?= htmlspecialchars($pmbUser['email_register']) ?>
-
-                           </div>
-
-                        </div>
+                        <i class="uil uil-user"></i>
 
                      </div>
 
+                     <div>
 
-                     <div class="d-flex justify-content-end mt-5">
+                        <div class="pmb-preview-label">
+                           Peserta
+                        </div>
 
-                        <a
-                           href="./${data.page}"
-                           class="btn ${
-                              isCurrent
-                              ? 'btn-primary'
-                              : 'btn-outline-primary'
-                           } rounded btn-icon btn-icon-end">
+                        <div class="pmb-preview-value">
 
-                           ${
-                              isCurrent
-                              ? 'Lanjutkan'
-                              : 'Preview'
-                           }
+                           <?= htmlspecialchars($pmbUser['fullname']) ?>
 
-                           <i class="uil uil-arrow-right"></i>
-
-                        </a>
+                        </div>
 
                      </div>
 
                   </div>
 
-               </div>
 
-            </div>
+                  <div class="pmb-preview-row">
+
+                     <div class="pmb-preview-icon bg-soft-primary text-primary">
+
+                        <i class="uil uil-envelope"></i>
+
+                     </div>
+
+                     <div>
+
+                        <div class="pmb-preview-label">
+                           Email
+                        </div>
+
+                        <div class="pmb-preview-value">
+
+                           <?= htmlspecialchars($pmbUser['email_register']) ?>
+
+                        </div>
+
+                     </div>
+
+                  </div>
 
 
-            <div class="col-lg-4">
+                  <div class="d-flex justify-content-end mt-5">
 
-               <div class="card bg-soft-primary border-0">
-
-                  <div class="card-body p-5">
-
-                     <span class="text-uppercase text-muted fs-13 fw-bold">
-
-                        Status Tahap
-
-                     </span>
-
-
-                     <h4 class="mt-2 mb-4">
-
-                        Tahap ${String(stage).padStart(2, '0')}
-
-                     </h4>
-
-
-                     <p class="text-muted fs-14 mb-0">
+                     <a
+                        href="./${data.page}"
+                        class="btn ${
+                           isCurrent
+                           ? 'btn-primary'
+                           : 'btn-outline-primary'
+                        } rounded btn-icon btn-icon-end">
 
                         ${
                            isCurrent
-                           ? 'Tahap ini sedang aktif. Selesaikan proses untuk membuka tahap berikutnya.'
-                           : 'Tahap ini telah dilewati. Anda masih dapat melihat kembali informasinya.'
+                           ? 'Lanjutkan'
+                           : 'Preview'
                         }
 
-                     </p>
+                        <i class="uil uil-arrow-right"></i>
+
+                     </a>
 
                   </div>
 
@@ -1743,98 +1658,55 @@ $currentStage =
 
          </div>
 
-      `;
-      }
-   </script>
-   <script>
-      document.querySelectorAll('.pmb-stage-tab.locked')
-         .forEach(function(tab) {
 
-            tab.addEventListener('click', function() {
+         <div class="col-lg-4">
 
-               showToast(
-                  'info',
-                  'Tahap ini belum dapat diakses.'
-               );
+            <div class="card bg-soft-primary border-0">
 
-            });
+               <div class="card-body p-5">
 
-         });
+                  <span class="text-uppercase text-muted fs-13 fw-bold">
 
+                     Status Tahap
 
-      function showToast(type, message) {
+                  </span>
+
+                  <h4 class="mt-2 mb-4">
+
+                     Tahap ${String(stage).padStart(2, '0')}
+
+                  </h4>
+
+                  <p class="text-muted fs-14 mb-0">
+
+                     ${
+                        isCurrent
+                        ? 'Tahap ini sedang aktif. Selesaikan proses untuk membuka tahap berikutnya.'
+                        : 'Tahap ini telah dilewati. Anda dapat melihat kembali informasi tahap ini.'
+                     }
+
+                  </p>
+
+               </div>
+
+            </div>
+
+         </div>
+
+      </div>
+
+   `;
 
          /*
-          * Gunakan fungsi toast yang sama
-          * dengan login-pmb.js.
-          *
-          * Kalau toast global belum tersedia,
-          * kita buat sederhana.
+          * Scroll ke content
           */
-
-         let container =
-            document.getElementById(
-               'pmbToastContainer'
-            );
-
-
-         if (!container) {
-
-            container =
-               document.createElement('div');
-
-            container.id =
-               'pmbToastContainer';
-
-            container.style.position =
-               'fixed';
-
-            container.style.top =
-               '25px';
-
-            container.style.right =
-               '25px';
-
-            container.style.zIndex =
-               '999999';
-
-            document.body.appendChild(
-               container
-            );
-
-         }
-
-
-         const toast =
-            document.createElement('div');
-
-
-         toast.className =
-            'alert alert-info shadow-sm';
-
-
-         toast.innerHTML = `
-
-         <i class="uil uil-info-circle me-2"></i>
-
-         ${message}
-
-      `;
-
-
-         container.appendChild(
-            toast
-         );
-
-
-         setTimeout(function() {
-
-            toast.remove();
-
-         }, 3000);
-
+         stageContent.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+         });
       }
    </script>
+
 
 </body>
 

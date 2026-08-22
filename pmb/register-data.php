@@ -1,3 +1,123 @@
+<?php
+
+session_start();
+
+if (
+   empty($_SESSION['pmb_logged_in']) ||
+   empty($_SESSION['pmb_user_id'])
+) {
+
+   header('Location: ../login-pmb.php');
+   exit;
+}
+
+require_once __DIR__ . '/../config/connect.php';
+
+
+$stmt = $pdo->prepare("
+    SELECT
+        id,
+        fullname,
+        gender,
+        place,
+        datebirth,
+        region,
+        address_card,
+        number_id,
+        phone_number,
+        email_register,
+        agama,
+        ukuran_baju,
+        provinsi,
+        kabupaten,
+        kecamatan,
+        kelurahan,
+        year_graduation,
+        name_mother,
+        number_kip,
+        file_ktp,
+        file_kk,
+        file_ijazah,
+        file_dokumen,
+        tahap_aktif,
+        status_pendaftaran,
+        register_uid,
+        register_type
+    FROM register_pmb
+    WHERE id = :id
+    LIMIT 1
+");
+
+$stmt->execute([
+   'id' => (int) $_SESSION['pmb_user_id']
+]);
+
+$pmbUser = $stmt->fetch(PDO::FETCH_ASSOC);
+
+
+if (!$pmbUser) {
+
+   session_unset();
+   session_destroy();
+
+   header('Location: ../login-pmb.php');
+   exit;
+}
+
+
+/**
+ * =========================================================
+ * KELENGKAPAN
+ * =========================================================
+ */
+
+$totalRequired = 16;
+
+$totalFilled = 0;
+
+$requiredCheck = [
+
+   'fullname',
+   'gender',
+   'place',
+   'datebirth',
+   'number_id',
+   'phone_number',
+   'email_register',
+   'address_card',
+   'provinsi',
+   'kabupaten',
+   'kecamatan',
+   'kelurahan',
+   'year_graduation',
+   'name_mother',
+   'file_ktp',
+   'file_kk',
+   'file_ijazah'
+
+];
+
+
+$totalRequired = count($requiredCheck);
+
+
+foreach ($requiredCheck as $field) {
+
+   if (
+      !empty($pmbUser[$field])
+   ) {
+
+      $totalFilled++;
+   }
+}
+
+
+$completion =
+   round(
+      ($totalFilled / $totalRequired) * 100
+   );
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -310,33 +430,46 @@
                            </strong>
 
                            <span class="text-primary fw-bold">
-                              25%
+
+                              <?= $completion ?>%
+
                            </span>
 
                         </div>
+
 
                         <div class="progress pmb-progress">
 
                            <div
                               class="progress-bar bg-primary"
                               role="progressbar"
-                              style="width:25%;"
-                              aria-valuenow="25"
+                              style="width:<?= $completion ?>%;"
+                              aria-valuenow="<?= $completion ?>"
                               aria-valuemin="0"
                               aria-valuemax="100">
                            </div>
 
                         </div>
 
+
                      </div>
 
 
                      <div class="col-lg-4 mt-4 mt-lg-0 text-lg-end">
+                        <span class="badge
+                              <?= $completion >= 100
+                                 ? 'bg-soft-green text-green'
+                                 : 'bg-soft-yellow text-yellow'
+                              ?>
+                              rounded-pill
+                           ">
 
-                        <span class="badge bg-soft-yellow text-yellow rounded-pill">
-                           Data belum lengkap
+                           <?= $completion >= 100
+                              ? 'Data lengkap'
+                              : 'Data belum lengkap'
+                           ?>
+
                         </span>
-
                      </div>
 
                   </div>
@@ -349,1361 +482,1422 @@
             <!-- =================================================
                  MAIN
             ================================================== -->
+            <form
+               action="controllers/data-dokumen.php"
+               method="POST"
+               id="formDataDokumen"
+               enctype="multipart/form-data"
+               novalidate>
+               <div class="row gx-lg-8 gy-6">
 
-            <div class="row gx-lg-8 gy-6">
 
-
-               <!-- =================================================
+                  <!-- =================================================
                     SIDEBAR
                ================================================== -->
 
-               <div class="col-lg-3">
+                  <div class="col-lg-3">
 
-                  <div class="card shadow-sm pmb-sidebar-card">
+                     <div class="card shadow-sm pmb-sidebar-card">
 
-                     <div class="card-body p-5">
+                        <div class="card-body p-5">
 
 
-                        <!-- Profile -->
+                           <!-- Profile -->
 
-                        <div class="text-center mb-5">
+                           <div class="text-center mb-5">
 
-                           <div class="pmb-profile-box bg-soft-primary">
+                              <div class="pmb-profile-box bg-soft-primary">
 
-                              <div
-                                 class="avatar bg-white rounded-circle mb-3"
-                                 style="width:70px;height:70px;margin:auto;">
+                                 <div
+                                    class="avatar bg-white rounded-circle mb-3"
+                                    style="width:70px;height:70px;margin:auto;">
 
-                                 <i class="uil uil-user fs-40 text-primary"
-                                    style="line-height:70px;">
-                                 </i>
+                                    <i class="uil uil-user fs-40 text-primary"
+                                       style="line-height:70px;">
+                                    </i>
+
+                                 </div>
+                                 <h5 class="mb-1">
+
+                                    <?= htmlspecialchars(
+                                       $pmbUser['fullname']
+                                    ) ?>
+
+                                 </h5>
+
+
+                                 <p class="text-muted fs-13 mb-1">
+
+                                    ID Pendaftaran
+
+                                 </p>
+
+
+                                 <strong class="text-primary">
+
+                                    <?= htmlspecialchars(
+                                       $pmbUser['register_uid'] ?? '-'
+                                    ) ?>
+
+                                 </strong>
 
                               </div>
 
-                              <h5 class="mb-1">
-                                 Calon Mahasiswa
-                              </h5>
-
-                              <p class="text-muted fs-13 mb-1">
-                                 ID Pendaftaran
-                              </p>
-
-                              <strong class="text-primary">
-                                 99-26-69-74-01-001
-                              </strong>
-
                            </div>
 
+
+                           <!-- Menu -->
+
+                           <ul class="nav flex-column pmb-step-menu">
+
+                              <li class="nav-item">
+
+                                 <a class="nav-link active" href="#biodata">
+
+                                    <i class="uil uil-user">
+                                    </i>
+
+                                    Biodata Diri
+
+                                 </a>
+
+                              </li>
+
+
+                              <li class="nav-item">
+
+                                 <a class="nav-link" href="#pembiayaan">
+
+                                    <i class="uil uil-wallet">
+                                    </i>
+
+                                    Pembiayaan
+
+                                 </a>
+
+                              </li>
+
+
+                              <li class="nav-item">
+
+                                 <a class="nav-link" href="#dokumen">
+
+                                    <i class="uil uil-file-check-alt">
+                                    </i>
+
+                                    Dokumen
+
+                                 </a>
+
+                              </li>
+
+
+                              <li class="nav-item">
+
+                                 <a class="nav-link disabled">
+
+                                    <i class="uil uil-ticket">
+                                    </i>
+
+                                    Kartu PMB
+
+                                    <span class="badge bg-soft-gray text-muted ms-auto">
+                                       Tahap 03
+                                    </span>
+
+                                 </a>
+
+                              </li>
+
+                           </ul>
+
+
                         </div>
-
-
-                        <!-- Menu -->
-
-                        <ul class="nav flex-column pmb-step-menu">
-
-                           <li class="nav-item">
-
-                              <a class="nav-link active" href="#biodata">
-
-                                 <i class="uil uil-user">
-                                 </i>
-
-                                 Biodata Diri
-
-                              </a>
-
-                           </li>
-
-
-                           <li class="nav-item">
-
-                              <a class="nav-link" href="#pembiayaan">
-
-                                 <i class="uil uil-wallet">
-                                 </i>
-
-                                 Pembiayaan
-
-                              </a>
-
-                           </li>
-
-
-                           <li class="nav-item">
-
-                              <a class="nav-link" href="#dokumen">
-
-                                 <i class="uil uil-file-check-alt">
-                                 </i>
-
-                                 Dokumen
-
-                              </a>
-
-                           </li>
-
-
-                           <li class="nav-item">
-
-                              <a class="nav-link disabled">
-
-                                 <i class="uil uil-ticket">
-                                 </i>
-
-                                 Kartu PMB
-
-                                 <span class="badge bg-soft-gray text-muted ms-auto">
-                                    Tahap 03
-                                 </span>
-
-                              </a>
-
-                           </li>
-
-                        </ul>
-
 
                      </div>
 
                   </div>
 
-               </div>
 
-
-               <!-- =================================================
+                  <!-- =================================================
                     CONTENT
                ================================================== -->
 
-               <div class="col-lg-9">
+                  <div class="col-lg-9">
 
 
-                  <!-- =================================================
+                     <!-- =================================================
                        BIODATA
                   ================================================== -->
 
-                  <div
-                     class="card shadow-sm pmb-form-card mb-6"
-                     id="biodata">
+                     <div
+                        class="card shadow-sm pmb-form-card mb-6"
+                        id="biodata">
 
-                     <div class="card-body">
+                        <div class="card-body">
 
 
-                        <div class="pmb-section-title">
+                           <div class="pmb-section-title">
 
-                           <div class="icon btn btn-circle btn-lg btn-soft-primary">
+                              <div class="icon btn btn-circle btn-lg btn-soft-primary">
 
-                              <i class="uil uil-user"></i>
-
-                           </div>
-
-                           <div>
-
-                              <span class="text-uppercase text-muted fs-13 fw-bold">
-                                 Bagian 01
-                              </span>
-
-                              <h3 class="mb-0">
-                                 Biodata Diri
-                              </h3>
-
-                           </div>
-
-                        </div>
-
-
-                        <div class="alert alert-primary alert-icon mb-6">
-
-                           <i class="uil uil-info-circle"></i>
-
-                           <p class="mb-0">
-                              Isi data sesuai dengan identitas resmi.
-                              Pastikan nama dan NIK sesuai KTP.
-                           </p>
-
-                        </div>
-
-
-                        <div class="row gx-4">
-
-
-                           <!-- Nama -->
-
-                           <div class="col-md-6">
-
-                              <div class="form-floating mb-4">
-
-                                 <input
-                                    type="text"
-                                    class="form-control"
-                                    id="nama"
-                                    name="nama"
-                                    value=""
-                                    placeholder="Nama Lengkap"
-                                    required>
-
-                                 <label for="nama">
-                                    Nama Lengkap <span class="required">*</span>
-                                 </label>
-
-                              </div>
-
-                           </div>
-
-
-                           <!-- NIK -->
-
-                           <div class="col-md-6">
-
-                              <div class="form-floating mb-4">
-
-                                 <input
-                                    type="text"
-                                    class="form-control"
-                                    id="nik"
-                                    name="nik"
-                                    maxlength="16"
-                                    placeholder="NIK"
-                                    required>
-
-                                 <label for="nik">
-                                    NIK <span class="required">*</span>
-                                 </label>
-
-                              </div>
-
-                           </div>
-
-
-                           <!-- Gender -->
-
-                           <div class="col-md-6">
-
-                              <div class="form-select-wrapper mb-4">
-
-                                 <select
-                                    class="form-select"
-                                    name="jenis_kelamin"
-                                    id="jenis_kelamin"
-                                    required>
-
-                                    <option value="">
-                                       -- Pilih Jenis Kelamin --
-                                    </option>
-
-                                    <option value="L">
-                                       Laki-laki
-                                    </option>
-
-                                    <option value="P">
-                                       Perempuan
-                                    </option>
-
-                                 </select>
-
-                              </div>
-
-                           </div>
-
-
-                           <!-- Agama -->
-
-                           <div class="col-md-6">
-
-                              <div class="form-select-wrapper mb-4">
-
-                                 <select
-                                    class="form-select"
-                                    name="agama"
-                                    id="agama"
-                                    required>
-
-                                    <option value="">
-                                       -- Pilih Agama --
-                                    </option>
-
-                                    <option value="Islam">
-                                       Islam
-                                    </option>
-
-                                    <option value="Kristen">
-                                       Kristen
-                                    </option>
-
-                                    <option value="Katolik">
-                                       Katolik
-                                    </option>
-
-                                    <option value="Hindu">
-                                       Hindu
-                                    </option>
-
-                                    <option value="Buddha">
-                                       Buddha
-                                    </option>
-
-                                    <option value="Konghucu">
-                                       Konghucu
-                                    </option>
-
-                                 </select>
-
-                              </div>
-
-                           </div>
-
-
-                           <!-- Tempat Lahir -->
-
-                           <div class="col-md-6">
-
-                              <div class="form-floating mb-4">
-
-                                 <input
-                                    type="text"
-                                    class="form-control"
-                                    id="tempat_lahir"
-                                    name="tempat_lahir"
-                                    placeholder="Tempat Lahir"
-                                    required>
-
-                                 <label for="tempat_lahir">
-                                    Tempat Lahir <span class="required">*</span>
-                                 </label>
-
-                              </div>
-
-                           </div>
-
-
-                           <!-- Tanggal Lahir -->
-
-                           <div class="col-md-6">
-
-                              <div class="form-floating mb-4">
-
-                                 <input
-                                    type="date"
-                                    class="form-control"
-                                    id="tanggal_lahir"
-                                    name="tanggal_lahir"
-                                    required>
-
-                                 <label for="tanggal_lahir">
-                                    Tanggal Lahir <span class="required">*</span>
-                                 </label>
-
-                              </div>
-
-                           </div>
-
-
-                           <!-- Nama Ibu -->
-
-                           <div class="col-md-6">
-
-                              <div class="form-floating mb-4">
-
-                                 <input
-                                    type="text"
-                                    class="form-control"
-                                    id="nama_ibu"
-                                    name="nama_ibu"
-                                    placeholder="Nama Ibu Kandung"
-                                    required>
-
-                                 <label for="nama_ibu">
-                                    Nama Ibu Kandung <span class="required">*</span>
-                                 </label>
-
-                              </div>
-
-                           </div>
-
-
-                           <!-- Tahun Lulus -->
-
-                           <div class="col-md-6">
-
-                              <div class="form-floating mb-4">
-
-                                 <input
-                                    type="number"
-                                    class="form-control"
-                                    id="tahun_lulus"
-                                    name="tahun_lulus"
-                                    min="1900"
-                                    max="2100"
-                                    placeholder="Tahun Lulus"
-                                    required>
-
-                                 <label for="tahun_lulus">
-                                    Tahun Lulus SMA/Sederajat <span class="required">*</span>
-                                 </label>
-
-                              </div>
-
-                           </div>
-
-
-                           <!-- Nomor HP -->
-
-                           <div class="col-md-6">
-
-                              <div class="form-floating mb-4">
-
-                                 <input
-                                    type="tel"
-                                    class="form-control"
-                                    id="no_hp"
-                                    name="no_hp"
-                                    placeholder="Nomor HP"
-                                    required>
-
-                                 <label for="no_hp">
-                                    Nomor HP Aktif <span class="required">*</span>
-                                 </label>
-
-                              </div>
-
-                           </div>
-
-
-                           <!-- Email -->
-
-                           <div class="col-md-6">
-
-                              <div class="form-floating mb-4">
-
-                                 <input
-                                    type="email"
-                                    class="form-control"
-                                    id="email"
-                                    name="email"
-                                    placeholder="Email"
-                                    required>
-
-                                 <label for="email">
-                                    Email Aktif <span class="required">*</span>
-                                 </label>
-
-                              </div>
-
-                           </div>
-
-
-                           <!-- Ukuran Baju -->
-
-                           <div class="col-md-6">
-
-                              <div class="form-select-wrapper mb-4">
-
-                                 <select
-                                    class="form-select"
-                                    name="ukuran_baju"
-                                    id="ukuran_baju"
-                                    required>
-
-                                    <option value="">
-                                       -- Pilih Ukuran Baju --
-                                    </option>
-
-                                    <option value="S">S</option>
-                                    <option value="M">M</option>
-                                    <option value="L">L</option>
-                                    <option value="XL">XL</option>
-                                    <option value="XXL">XXL</option>
-
-                                 </select>
-
-                              </div>
-
-                           </div>
-
-
-                        </div>
-
-
-                        <!-- =================================================
-                             ALAMAT
-                        ================================================== -->
-
-                        <hr class="my-6">
-
-
-                        <h4 class="mb-5">
-                           Alamat Domisili
-                        </h4>
-
-
-                        <div class="row gx-4">
-
-
-                           <!-- Jalan -->
-
-                           <div class="col-12">
-
-                              <div class="form-floating mb-4">
-
-                                 <textarea
-                                    class="form-control"
-                                    id="alamat"
-                                    name="alamat"
-                                    placeholder="Alamat"
-                                    style="height:100px"
-                                    required></textarea>
-
-                                 <label for="alamat">
-                                    Jalan / Gang, Nomor Rumah
-                                    <span class="required">*</span>
-                                 </label>
-
-                              </div>
-
-                           </div>
-
-
-                           <!-- Kelurahan -->
-
-                           <div class="col-md-6">
-
-                              <div class="form-floating mb-4">
-
-                                 <input
-                                    type="text"
-                                    class="form-control"
-                                    id="kelurahan"
-                                    name="kelurahan"
-                                    placeholder="Kelurahan"
-                                    required>
-
-                                 <label for="kelurahan">
-                                    Kelurahan <span class="required">*</span>
-                                 </label>
-
-                              </div>
-
-                           </div>
-
-
-                           <!-- Kecamatan -->
-
-                           <div class="col-md-6">
-
-                              <div class="form-floating mb-4">
-
-                                 <input
-                                    type="text"
-                                    class="form-control"
-                                    id="kecamatan"
-                                    name="kecamatan"
-                                    placeholder="Kecamatan"
-                                    required>
-
-                                 <label for="kecamatan">
-                                    Kecamatan <span class="required">*</span>
-                                 </label>
-
-                              </div>
-
-                           </div>
-
-
-                           <!-- Kabupaten -->
-
-                           <div class="col-md-6">
-
-                              <div class="form-floating mb-4">
-
-                                 <input
-                                    type="text"
-                                    class="form-control"
-                                    id="kabupaten"
-                                    name="kabupaten"
-                                    placeholder="Kabupaten/Kota"
-                                    required>
-
-                                 <label for="kabupaten">
-                                    Kabupaten / Kota <span class="required">*</span>
-                                 </label>
-
-                              </div>
-
-                           </div>
-
-
-                           <!-- Provinsi -->
-
-                           <div class="col-md-6">
-
-                              <div class="form-floating mb-4">
-
-                                 <input
-                                    type="text"
-                                    class="form-control"
-                                    id="provinsi"
-                                    name="provinsi"
-                                    placeholder="Provinsi"
-                                    required>
-
-                                 <label for="provinsi">
-                                    Provinsi <span class="required">*</span>
-                                 </label>
-
-                              </div>
-
-                           </div>
-
-                        </div>
-
-
-                        <!-- Save -->
-
-                        <div class="text-end mt-3">
-
-                           <button
-                              type="button"
-                              class="btn btn-primary rounded btn-icon btn-icon-end">
-
-                              Simpan Biodata
-
-                              <i class="uil uil-check"></i>
-
-                           </button>
-
-                        </div>
-
-                     </div>
-
-                  </div>
-
-
-                  <!-- =================================================
-                       PEMBIAYAAN
-                  ================================================== -->
-
-                  <div
-                     class="card shadow-sm pmb-form-card mb-6"
-                     id="pembiayaan">
-
-                     <div class="card-body">
-
-
-                        <div class="pmb-section-title">
-
-                           <div class="icon btn btn-circle btn-lg btn-soft-green">
-
-                              <i class="uil uil-wallet"></i>
-
-                           </div>
-
-                           <div>
-
-                              <span class="text-uppercase text-muted fs-13 fw-bold">
-                                 Bagian 02
-                              </span>
-
-                              <h3 class="mb-0">
-                                 Jenis Pembiayaan
-                              </h3>
-
-                           </div>
-
-                        </div>
-
-
-                        <p class="text-muted mb-5">
-                           Pilih jenis pembiayaan yang akan digunakan selama
-                           proses pendidikan.
-                        </p>
-
-
-                        <div class="row gx-4">
-
-
-                           <!-- Mandiri -->
-
-                           <div class="col-md-6 mb-4 mb-md-0">
-
-                              <div class="pmb-financing-option">
-
-                                 <input
-                                    type="radio"
-                                    name="jenis_pembiayaan"
-                                    id="mandiri"
-                                    value="mandiri"
-                                    checked>
-
-                                 <label
-                                    class="pmb-financing-label"
-                                    for="mandiri">
-
-                                    <div class="d-flex">
-
-                                       <div class="icon btn btn-circle btn-sm btn-soft-primary me-3">
-
-                                          <i class="uil uil-wallet"></i>
-
-                                       </div>
-
-                                       <div>
-
-                                          <h4 class="mb-1">
-                                             Mandiri
-                                          </h4>
-
-                                          <p class="text-muted mb-0 fs-14">
-                                             Pembiayaan secara mandiri sesuai
-                                             ketentuan biaya pendidikan.
-                                          </p>
-
-                                       </div>
-
-                                    </div>
-
-                                 </label>
-
-                              </div>
-
-                           </div>
-
-
-                           <!-- Beasiswa -->
-
-                           <div class="col-md-6">
-
-                              <div class="pmb-financing-option">
-
-                                 <input
-                                    type="radio"
-                                    name="jenis_pembiayaan"
-                                    id="beasiswa"
-                                    value="beasiswa">
-
-                                 <label
-                                    class="pmb-financing-label"
-                                    for="beasiswa">
-
-                                    <div class="d-flex">
-
-                                       <div class="icon btn btn-circle btn-sm btn-soft-green me-3">
-
-                                          <i class="uil uil-award"></i>
-
-                                       </div>
-
-                                       <div>
-
-                                          <h4 class="mb-1">
-                                             Beasiswa
-                                          </h4>
-
-                                          <p class="text-muted mb-0 fs-14">
-                                             Mengajukan pembiayaan melalui
-                                             program beasiswa.
-                                          </p>
-
-                                       </div>
-
-                                    </div>
-
-                                 </label>
-
-                              </div>
-
-                           </div>
-
-                        </div>
-
-                     </div>
-
-                  </div>
-
-
-                  <!-- =================================================
-                       DOKUMEN UMUM
-                  ================================================== -->
-
-                  <div
-                     class="card shadow-sm pmb-form-card mb-6"
-                     id="dokumen">
-
-                     <div class="card-body">
-
-
-                        <div class="pmb-section-title">
-
-                           <div class="icon btn btn-circle btn-lg btn-soft-yellow">
-
-                              <i class="uil uil-file-check-alt"></i>
-
-                           </div>
-
-                           <div>
-
-                              <span class="text-uppercase text-muted fs-13 fw-bold">
-                                 Bagian 03
-                              </span>
-
-                              <h3 class="mb-0">
-                                 Dokumen Prasyarat
-                              </h3>
-
-                           </div>
-
-                        </div>
-
-
-                        <div class="alert alert-warning alert-icon mb-6">
-
-                           <i class="uil uil-exclamation-triangle"></i>
-
-                           <p class="mb-0">
-                              Dokumen yang bertanda <strong>Wajib</strong>
-                              harus diunggah sebelum dapat melanjutkan ke
-                              tahap berikutnya.
-                           </p>
-
-                        </div>
-
-
-                        <div class="row gx-4 gy-4">
-
-
-                           <!-- =================================================
-                                KTP
-                           ================================================== -->
-
-                           <div class="col-md-6">
-
-                              <div class="card pmb-document-card h-100">
-
-                                 <div class="card-body">
-
-                                    <div class="d-flex align-items-start mb-4">
-
-                                       <div class="pmb-document-icon bg-soft-primary text-primary me-3">
-
-                                          <i class="uil uil-card-atm fs-24"></i>
-
-                                       </div>
-
-                                       <div>
-
-                                          <h5 class="mb-1">
-                                             KTP
-                                          </h5>
-
-                                          <span class="pmb-status pmb-status-required">
-                                             Wajib
-                                          </span>
-
-                                       </div>
-
-                                    </div>
-
-
-                                    <p class="text-muted fs-14 mb-4">
-                                       Kartu Tanda Penduduk dalam format PDF.
-                                    </p>
-
-
-                                    <div class="pmb-upload">
-
-                                       <input
-                                          type="file"
-                                          name="ktp"
-                                          class="form-control"
-                                          accept=".pdf"
-                                          required>
-
-                                       <small class="text-muted">
-                                          Format PDF
-                                       </small>
-
-                                    </div>
-
-                                 </div>
-
-                              </div>
-
-                           </div>
-
-
-                           <!-- =================================================
-                                KK
-                           ================================================== -->
-
-                           <div class="col-md-6">
-
-                              <div class="card pmb-document-card h-100">
-
-                                 <div class="card-body">
-
-                                    <div class="d-flex align-items-start mb-4">
-
-                                       <div class="pmb-document-icon bg-soft-info text-info me-3">
-
-                                          <i class="uil uil-family fs-24"></i>
-
-                                       </div>
-
-                                       <div>
-
-                                          <h5 class="mb-1">
-                                             Kartu Keluarga
-                                          </h5>
-
-                                          <span class="pmb-status pmb-status-required">
-                                             Wajib
-                                          </span>
-
-                                       </div>
-
-                                    </div>
-
-
-                                    <p class="text-muted fs-14 mb-4">
-                                       Kartu Keluarga dalam format PDF.
-                                    </p>
-
-
-                                    <div class="pmb-upload">
-
-                                       <input
-                                          type="file"
-                                          name="kk"
-                                          class="form-control"
-                                          accept=".pdf"
-                                          required>
-
-                                       <small class="text-muted">
-                                          Format PDF
-                                       </small>
-
-                                    </div>
-
-                                 </div>
-
-                              </div>
-
-                           </div>
-
-
-                           <!-- =================================================
-                                IJAZAH
-                           ================================================== -->
-
-                           <div class="col-md-6">
-
-                              <div class="card pmb-document-card h-100">
-
-                                 <div class="card-body">
-
-                                    <div class="d-flex align-items-start mb-4">
-
-                                       <div class="pmb-document-icon bg-soft-green text-green me-3">
-
-                                          <i class="uil uil-graduation-cap fs-24"></i>
-
-                                       </div>
-
-                                       <div>
-
-                                          <h5 class="mb-1">
-                                             Ijazah / SKTL
-                                          </h5>
-
-                                          <span class="pmb-status pmb-status-required">
-                                             Wajib
-                                          </span>
-
-                                       </div>
-
-                                    </div>
-
-
-                                    <p class="text-muted fs-14 mb-4">
-                                       Ijazah SMA atau Surat Keterangan
-                                       Tanda Lulus.
-                                    </p>
-
-
-                                    <div class="pmb-upload">
-
-                                       <input
-                                          type="file"
-                                          name="ijazah"
-                                          class="form-control"
-                                          accept=".pdf"
-                                          required>
-
-                                       <small class="text-muted">
-                                          Format PDF
-                                       </small>
-
-                                    </div>
-
-                                 </div>
-
-                              </div>
-
-                           </div>
-
-
-                           <!-- =================================================
-                                PAS FOTO
-                           ================================================== -->
-
-                           <div class="col-md-6">
-
-                              <div class="card pmb-document-card h-100">
-
-                                 <div class="card-body">
-
-                                    <div class="d-flex align-items-start mb-4">
-
-                                       <div class="pmb-document-icon bg-soft-red text-red me-3">
-
-                                          <i class="uil uil-camera fs-24"></i>
-
-                                       </div>
-
-                                       <div>
-
-                                          <h5 class="mb-1">
-                                             Pasfoto
-                                          </h5>
-
-                                          <span class="pmb-status pmb-status-required">
-                                             Wajib
-                                          </span>
-
-                                       </div>
-
-                                    </div>
-
-
-                                    <p class="text-muted fs-14 mb-4">
-                                       Pasfoto resmi berwarna dengan
-                                       latar belakang merah.
-                                    </p>
-
-
-                                    <div class="pmb-upload">
-
-                                       <input
-                                          type="file"
-                                          name="pasfoto"
-                                          class="form-control"
-                                          accept="image/jpeg,image/png"
-                                          required>
-
-                                       <small class="text-muted">
-                                          JPG / PNG
-                                       </small>
-
-                                    </div>
-
-                                 </div>
-
-                              </div>
-
-                           </div>
-
-                        </div>
-
-
-                        <!-- =================================================
-                             BEASISWA DOCUMENT
-                        ================================================== -->
-
-                        <div
-                           id="dokumenBeasiswa"
-                           class="mt-8"
-                           style="display:none;">
-
-
-                           <hr class="mb-7">
-
-
-                           <div class="d-flex align-items-center mb-5">
-
-                              <div class="icon btn btn-circle btn-lg btn-soft-green me-3">
-
-                                 <i class="uil uil-award"></i>
+                                 <i class="uil uil-user"></i>
 
                               </div>
 
                               <div>
 
                                  <span class="text-uppercase text-muted fs-13 fw-bold">
-                                    Dokumen Tambahan
+                                    Bagian 01
                                  </span>
 
-                                 <h4 class="mb-0">
-                                    Persyaratan Beasiswa
-                                 </h4>
+                                 <h3 class="mb-0">
+                                    Biodata Diri
+                                 </h3>
 
                               </div>
 
                            </div>
 
 
-                           <div class="alert alert-success alert-icon">
+                           <div class="alert alert-primary alert-icon mb-6">
 
                               <i class="uil uil-info-circle"></i>
 
                               <p class="mb-0">
-                                 Dokumen tambahan ditampilkan berdasarkan
-                                 jalur pendaftaran dan jenis pembiayaan.
+                                 Isi data sesuai dengan identitas resmi.
+                                 Pastikan nama dan NIK sesuai KTP.
                               </p>
 
                            </div>
 
 
-                           <!-- Surat Permohonan -->
+                           <div class="row gx-4">
 
-                           <div class="card pmb-document-card mb-4">
 
-                              <div class="card-body">
+                              <!-- Nama -->
 
-                                 <div class="row align-items-center">
+                              <div class="col-md-6">
 
-                                    <div class="col-lg-6">
+                                 <div class="form-floating mb-4">
 
-                                       <h5 class="mb-1">
-                                          Surat Permohonan Beasiswa
-                                       </h5>
+                                    <input
+                                       type="text"
+                                       class="form-control"
+                                       id="nama"
+                                       name="nama"
+                                       value="<?= htmlspecialchars($pmbUser['fullname'] ?? '') ?>"
+                                       placeholder="Nama Lengkap"
+                                       required>
 
-                                       <p class="text-muted fs-14 mb-lg-0">
-                                          Dokumen permohonan beasiswa.
-                                       </p>
-
-                                    </div>
-
-                                    <div class="col-lg-6">
-
-                                       <input
-                                          type="file"
-                                          name="surat_beasiswa"
-                                          class="form-control"
-                                          accept=".pdf">
-
-                                    </div>
+                                    <label for="nama">
+                                       Nama Lengkap <span class="required">*</span>
+                                    </label>
 
                                  </div>
 
                               </div>
 
-                           </div>
 
+                              <!-- NIK -->
 
-                           <!-- SKTM -->
+                              <div class="col-md-6">
 
-                           <div
-                              class="card pmb-document-card mb-4"
-                              id="dokumenSktm">
+                                 <div class="form-floating mb-4">
 
-                              <div class="card-body">
+                                    <input
+                                       type="text"
+                                       class="form-control"
+                                       id="nik"
+                                       value="<?= htmlspecialchars($pmbUser['number_id'] ?? '') ?>"
+                                       name="nik"
+                                       maxlength="16"
+                                       placeholder="NIK"
+                                       required>
 
-                                 <div class="row align-items-center">
-
-                                    <div class="col-lg-6">
-
-                                       <h5 class="mb-1">
-                                          Surat Keterangan Tidak Mampu
-                                       </h5>
-
-                                       <p class="text-muted fs-14 mb-lg-0">
-                                          SKTM untuk pengajuan beasiswa reguler.
-                                       </p>
-
-                                    </div>
-
-                                    <div class="col-lg-6">
-
-                                       <input
-                                          type="file"
-                                          name="sktm"
-                                          class="form-control"
-                                          accept=".pdf">
-
-                                    </div>
+                                    <label for="nik">
+                                       NIK <span class="required">*</span>
+                                    </label>
 
                                  </div>
 
                               </div>
 
-                           </div>
 
+                              <!-- Gender -->
 
-                           <!-- KIP -->
+                              <div class="col-md-6">
 
-                           <div
-                              class="card pmb-document-card mb-4"
-                              id="dokumenKip">
+                                 <div class="form-select-wrapper mb-4">
 
-                              <div class="card-body">
+                                    <select
+                                       class="form-select"
+                                       name="jenis_kelamin"
+                                       id="jenis_kelamin"
+                                       required>
 
-                                 <div class="row align-items-center">
+                                       <option value="">
+                                          -- Pilih Jenis Kelamin --
+                                       </option>
 
-                                    <div class="col-lg-6">
+                                       <option
+                                          value="L"
+                                          <?= ($pmbUser['gender'] ?? '') === 'Laki-laki'
+                                             ? 'selected'
+                                             : '' ?>>
+                                          Laki-laki
+                                       </option>
 
-                                       <h5 class="mb-1">
-                                          Nomor Pendaftaran KIP
-                                       </h5>
+                                       <option
+                                          value="P"
+                                          <?= ($pmbUser['gender'] ?? '') === 'Perempuan'
+                                             ? 'selected'
+                                             : '' ?>>
+                                          Perempuan
+                                       </option>
 
-                                       <p class="text-muted fs-14 mb-lg-0">
-                                          Nomor pendaftaran KIP.
-                                       </p>
-
-                                    </div>
-
-                                    <div class="col-lg-6">
-
-                                       <input
-                                          type="text"
-                                          name="nomor_kip"
-                                          class="form-control"
-                                          placeholder="Nomor Pendaftaran KIP">
-
-                                    </div>
-
-                                 </div>
-
-                              </div>
-
-                           </div>
-
-
-                           <!-- Prestasi -->
-
-                           <div
-                              class="card pmb-document-card"
-                              id="dokumenPrestasi">
-
-                              <div class="card-body">
-
-                                 <div class="row align-items-center">
-
-                                    <div class="col-lg-6">
-
-                                       <h5 class="mb-1">
-
-                                          Bukti Prestasi
-
-                                          <span class="badge bg-soft-gray text-muted ms-1">
-                                             Opsional
-                                          </span>
-
-                                       </h5>
-
-                                       <p class="text-muted fs-14 mb-lg-0">
-                                          Bukti prestasi akademik/non-akademik.
-                                       </p>
-
-                                    </div>
-
-                                    <div class="col-lg-6">
-
-                                       <input
-                                          type="file"
-                                          name="bukti_prestasi"
-                                          class="form-control"
-                                          accept=".pdf,image/jpeg,image/png">
-
-                                    </div>
+                                    </select>
 
                                  </div>
 
                               </div>
 
+
+                              <!-- Agama -->
+
+                              <div class="col-md-6">
+
+                                 <div class="form-select-wrapper mb-4">
+
+                                    <select
+                                       class="form-select"
+                                       name="agama"
+                                       id="agama"
+                                       required>
+
+                                       <option value="">
+                                          -- Pilih Agama --
+                                       </option>
+
+                                       <option
+                                          value="Islam"
+                                          <?= ($pmbUser['agama'] ?? '') === 'Islam'
+                                             ? 'selected'
+                                             : '' ?>>
+                                          Islam
+                                       </option>
+
+                                       <option
+                                          value="Kristen"
+                                          <?= ($pmbUser['agama'] ?? '') === 'Kristen'
+                                             ? 'selected'
+                                             : '' ?>>
+                                          Kristen
+                                       </option>
+
+                                       <option
+                                          value="Katolik"
+                                          <?= ($pmbUser['agama'] ?? '') === 'Katolik'
+                                             ? 'selected'
+                                             : '' ?>>
+                                          Katolik
+                                       </option>
+
+                                       <option
+                                          value="Hindu"
+                                          <?= ($pmbUser['agama'] ?? '') === 'Hindu'
+                                             ? 'selected'
+                                             : '' ?>>
+                                          Hindu
+                                       </option>
+
+                                       <option
+                                          value="Buddha"
+                                          <?= ($pmbUser['agama'] ?? '') === 'Buddha'
+                                             ? 'selected'
+                                             : '' ?>>
+                                          Buddha
+                                       </option>
+
+                                       <option
+                                          value="Konghucu"
+                                          <?= ($pmbUser['agama'] ?? '') === 'Konghucu'
+                                             ? 'selected'
+                                             : '' ?>>
+                                          Konghucu
+                                       </option>
+
+                                    </select>
+
+                                 </div>
+
+                              </div>
+
+
+                              <!-- Tempat Lahir -->
+
+                              <div class="col-md-6">
+
+                                 <div class="form-floating mb-4">
+
+                                    <input
+                                       type="text"
+                                       class="form-control"
+                                       id="tempat_lahir"
+                                       value="<?= htmlspecialchars($pmbUser['place'] ?? '') ?>"
+                                       name="tempat_lahir"
+                                       placeholder="Tempat Lahir"
+                                       required>
+
+                                    <label for="tempat_lahir">
+                                       Tempat Lahir <span class="required">*</span>
+                                    </label>
+
+                                 </div>
+
+                              </div>
+
+
+                              <!-- Tanggal Lahir -->
+
+                              <div class="col-md-6">
+
+                                 <div class="form-floating mb-4">
+
+                                    <input
+                                       type="date"
+                                       class="form-control"
+                                       id="tanggal_lahir"
+                                       value="<?= htmlspecialchars($pmbUser['datebirth'] ?? '') ?>"
+                                       name="tanggal_lahir"
+                                       required>
+
+                                    <label for="tanggal_lahir">
+                                       Tanggal Lahir <span class="required">*</span>
+                                    </label>
+
+                                 </div>
+
+                              </div>
+
+
+                              <!-- Nama Ibu -->
+
+                              <div class="col-md-6">
+
+                                 <div class="form-floating mb-4">
+
+                                    <input
+                                       type="text"
+                                       class="form-control"
+                                       id="nama_ibu"
+                                       name="nama_ibu"
+                                       value="<?= htmlspecialchars($pmbUser['name_mother'] ?? '') ?>"
+                                       placeholder="Nama Ibu Kandung"
+                                       required>
+
+                                    <label for="nama_ibu">
+                                       Nama Ibu Kandung <span class="required">*</span>
+                                    </label>
+
+                                 </div>
+
+                              </div>
+
+
+                              <!-- Tahun Lulus -->
+
+                              <div class="col-md-6">
+
+                                 <div class="form-floating mb-4">
+
+                                    <input
+                                       type="number"
+                                       class="form-control"
+                                       id="tahun_lulus"
+                                       name="tahun_lulus"
+                                       min="1900"
+                                       max="2100"
+                                       value="<?= htmlspecialchars($pmbUser['year_graduation'] ?? '') ?>"
+                                       placeholder="Tahun Lulus"
+                                       required>
+
+                                    <label for="tahun_lulus">
+                                       Tahun Lulus SMA/Sederajat <span class="required">*</span>
+                                    </label>
+
+                                 </div>
+
+                              </div>
+
+
+                              <!-- Nomor HP -->
+
+                              <div class="col-md-6">
+
+                                 <div class="form-floating mb-4">
+
+                                    <input
+                                       type="tel"
+                                       class="form-control"
+                                       id="no_hp"
+                                       name="no_hp"
+                                       value="<?= htmlspecialchars($pmbUser['phone_number'] ?? '') ?>"
+                                       placeholder="Nomor HP"
+                                       required>
+
+                                    <label for="no_hp">
+                                       Nomor HP Aktif <span class="required">*</span>
+                                    </label>
+
+                                 </div>
+
+                              </div>
+
+
+                              <!-- Email -->
+
+                              <div class="col-md-6">
+
+                                 <div class="form-floating mb-4">
+
+                                    <input
+                                       type="email"
+                                       class="form-control"
+                                       id="email"
+                                       value="<?= htmlspecialchars($pmbUser['email_register'] ?? '') ?>"
+                                       name="email"
+                                       placeholder="Email"
+                                       required>
+
+                                    <label for="email">
+                                       Email Aktif <span class="required">*</span>
+                                    </label>
+
+                                 </div>
+
+                              </div>
+
+
+                              <!-- Ukuran Baju -->
+
+                              <div class="col-md-6">
+
+                                 <div class="form-select-wrapper mb-4">
+
+                                    <select
+                                       class="form-select"
+                                       name="ukuran_baju"
+                                       id="ukuran_baju"
+                                       required>
+
+                                       <option value="">
+                                          -- Pilih Ukuran Almamater --
+                                       </option>
+
+                                       <?php
+                                       $ukuranList = [
+                                          'S',
+                                          'M',
+                                          'L',
+                                          'XL',
+                                          'XXL'
+                                       ];
+
+                                       foreach ($ukuranList as $ukuran):
+                                       ?>
+
+                                          <option
+                                             value="<?= $ukuran ?>"
+                                             <?= ($pmbUser['ukuran_baju'] ?? '') === $ukuran
+                                                ? 'selected'
+                                                : '' ?>>
+
+                                             <?= $ukuran ?>
+
+                                          </option>
+
+                                       <?php endforeach; ?>
+
+                                    </select>
+
+                                 </div>
+
+                              </div>
+
+
                            </div>
 
 
-                        </div>
-
-
-                        <!-- =================================================
-                             SAVE DOCUMENT
+                           <!-- =================================================
+                             ALAMAT
                         ================================================== -->
 
-                        <div class="mt-7 pt-5 border-top">
+                           <hr class="my-6">
 
-                           <div class="row align-items-center">
 
-                              <div class="col-lg">
+                           <h4 class="mb-5">
+                              Alamat Domisili
+                           </h4>
 
-                                 <p class="text-muted fs-14 mb-0">
 
-                                    <i class="uil uil-lock me-1"></i>
+                           <div class="row gx-4">
 
-                                    Data dan dokumen Anda akan disimpan
-                                    secara aman pada sistem PMB.
 
-                                 </p>
+                              <!-- Jalan -->
+
+                              <div class="col-12">
+
+                                 <div class="form-floating mb-4">
+
+                                    <textarea
+                                       class="form-control"
+                                       id="alamat"
+                                       name="alamat"
+                                       placeholder="Alamat"
+                                       style="height:100px"
+                                       required><?= htmlspecialchars(
+                                                   $pmbUser['address_card'] ?? ''
+                                                ) ?></textarea>
+
+                                    <label for="alamat">
+                                       Jalan / Gang, Nomor Rumah
+                                       <span class="required">*</span>
+                                    </label>
+
+                                 </div>
 
                               </div>
 
 
-                              <div class="col-lg-auto mt-4 mt-lg-0">
+                              <!-- Kelurahan -->
 
-                                 <button
-                                    type="button"
-                                    class="btn btn-primary rounded btn-icon btn-icon-end">
+                              <div class="col-md-6">
 
-                                    Simpan Data & Dokumen
+                                 <div class="form-floating mb-4">
 
-                                    <i class="uil uil-check"></i>
+                                    <input
+                                       type="text"
+                                       class="form-control"
+                                       id="kelurahan"
+                                       name="kelurahan"
+                                       value="<?= htmlspecialchars($pmbUser['kelurahan'] ?? '') ?>"
+                                       placeholder="Kelurahan"
+                                       required>
 
-                                 </button>
+                                    <label for="kelurahan">
+                                       Kelurahan <span class="required">*</span>
+                                    </label>
+
+                                 </div>
+
+                              </div>
+
+
+                              <!-- Kecamatan -->
+
+                              <div class="col-md-6">
+
+                                 <div class="form-floating mb-4">
+
+                                    <input
+                                       type="text"
+                                       class="form-control"
+                                       id="kecamatan"
+                                       name="kecamatan"
+                                       value="<?= htmlspecialchars($pmbUser['kecamatan'] ?? '') ?>"
+                                       placeholder="Kecamatan"
+                                       required>
+
+                                    <label for="kecamatan">
+                                       Kecamatan <span class="required">*</span>
+                                    </label>
+
+                                 </div>
+
+                              </div>
+
+
+                              <!-- Kabupaten -->
+
+                              <div class="col-md-6">
+
+                                 <div class="form-floating mb-4">
+
+                                    <input
+                                       type="text"
+                                       class="form-control"
+                                       id="kabupaten"
+                                       name="kabupaten"
+                                       value="<?= htmlspecialchars($pmbUser['kabupaten'] ?? '') ?>"
+                                       placeholder="Kabupaten/Kota"
+                                       required>
+
+                                    <label for="kabupaten">
+                                       Kabupaten / Kota <span class="required">*</span>
+                                    </label>
+
+                                 </div>
+
+                              </div>
+
+
+                              <!-- Provinsi -->
+
+                              <div class="col-md-6">
+
+                                 <div class="form-floating mb-4">
+
+                                    <input
+                                       type="text"
+                                       class="form-control"
+                                       id="provinsi"
+                                       name="provinsi"
+                                       value="<?= htmlspecialchars($pmbUser['provinsi'] ?? '') ?>"
+                                       placeholder="Provinsi"
+                                       required>
+
+                                    <label for="provinsi">
+                                       Provinsi <span class="required">*</span>
+                                    </label>
+
+                                 </div>
 
                               </div>
 
                            </div>
 
-                        </div>
 
+                           <!-- Save -->
+
+                           <div class="text-end mt-3">
+
+                              <button
+                                 type="submit"
+                                 id="btnSimpanData"
+                                 class="btn btn-primary rounded btn-icon btn-icon-end">
+
+                                 Simpan Data & Dokumen
+
+                                 <i class="uil uil-check"></i>
+
+                              </button>
+                           </div>
+
+                        </div>
 
                      </div>
 
-                  </div>
 
-
-                  <!-- =================================================
-                       NEXT STEP
+                     <!-- =================================================
+                       PEMBIAYAAN
                   ================================================== -->
 
-                  <div class="card bg-soft-primary border-0">
+                     <div
+                        class="card shadow-sm pmb-form-card mb-6"
+                        id="pembiayaan">
 
-                     <div class="card-body p-5">
+                        <div class="card-body">
 
-                        <div class="row align-items-center">
 
-                           <div class="col-lg">
+                           <div class="pmb-section-title">
 
-                              <div class="d-flex align-items-center">
+                              <div class="icon btn btn-circle btn-lg btn-soft-green">
 
-                                 <div class="icon btn btn-circle btn-lg btn-primary me-4">
+                                 <i class="uil uil-wallet"></i>
 
-                                    <i class="uil uil-ticket"></i>
+                              </div>
+
+                              <div>
+
+                                 <span class="text-uppercase text-muted fs-13 fw-bold">
+                                    Bagian 02
+                                 </span>
+
+                                 <h3 class="mb-0">
+                                    Jenis Pembiayaan
+                                 </h3>
+
+                              </div>
+
+                           </div>
+
+
+                           <p class="text-muted mb-5">
+                              Pilih jenis pembiayaan yang akan digunakan selama
+                              proses pendidikan.
+                           </p>
+
+
+                           <div class="row gx-4">
+
+
+                              <!-- Mandiri -->
+
+                              <div class="col-md-6 mb-4 mb-md-0">
+
+                                 <div class="pmb-financing-option">
+
+                                    <input
+                                       type="radio"
+                                       name="jenis_pembiayaan"
+                                       id="mandiri"
+                                       value="mandiri"
+                                       checked>
+
+                                    <label
+                                       class="pmb-financing-label"
+                                       for="mandiri">
+
+                                       <div class="d-flex">
+
+                                          <div class="icon btn btn-circle btn-sm btn-soft-primary me-3">
+
+                                             <i class="uil uil-wallet"></i>
+
+                                          </div>
+
+                                          <div>
+
+                                             <h4 class="mb-1">
+                                                Mandiri
+                                             </h4>
+
+                                             <p class="text-muted mb-0 fs-14">
+                                                Pembiayaan secara mandiri sesuai
+                                                ketentuan biaya pendidikan.
+                                             </p>
+
+                                          </div>
+
+                                       </div>
+
+                                    </label>
+
+                                 </div>
+
+                              </div>
+
+
+                              <!-- Beasiswa -->
+
+                              <div class="col-md-6">
+
+                                 <div class="pmb-financing-option">
+
+                                    <input
+                                       type="radio"
+                                       name="jenis_pembiayaan"
+                                       id="beasiswa"
+                                       value="beasiswa">
+
+                                    <label
+                                       class="pmb-financing-label"
+                                       for="beasiswa">
+
+                                       <div class="d-flex">
+
+                                          <div class="icon btn btn-circle btn-sm btn-soft-green me-3">
+
+                                             <i class="uil uil-award"></i>
+
+                                          </div>
+
+                                          <div>
+
+                                             <h4 class="mb-1">
+                                                Beasiswa
+                                             </h4>
+
+                                             <p class="text-muted mb-0 fs-14">
+                                                Mengajukan pembiayaan melalui
+                                                program beasiswa.
+                                             </p>
+
+                                          </div>
+
+                                       </div>
+
+                                    </label>
+
+                                 </div>
+
+                              </div>
+
+                           </div>
+
+                        </div>
+
+                     </div>
+
+
+                     <!-- =================================================
+                       DOKUMEN UMUM
+                  ================================================== -->
+
+                     <div
+                        class="card shadow-sm pmb-form-card mb-6"
+                        id="dokumen">
+
+                        <div class="card-body">
+
+
+                           <div class="pmb-section-title">
+
+                              <div class="icon btn btn-circle btn-lg btn-soft-yellow">
+
+                                 <i class="uil uil-file-check-alt"></i>
+
+                              </div>
+
+                              <div>
+
+                                 <span class="text-uppercase text-muted fs-13 fw-bold">
+                                    Bagian 03
+                                 </span>
+
+                                 <h3 class="mb-0">
+                                    Dokumen Prasyarat
+                                 </h3>
+
+                              </div>
+
+                           </div>
+
+
+                           <div class="alert alert-warning alert-icon mb-6">
+
+                              <i class="uil uil-exclamation-triangle"></i>
+
+                              <p class="mb-0">
+                                 Dokumen yang bertanda <strong>Wajib</strong>
+                                 harus diunggah sebelum dapat melanjutkan ke
+                                 tahap berikutnya.
+                              </p>
+
+                           </div>
+
+
+                           <div class="row gx-4 gy-4">
+
+
+                              <!-- =================================================
+                                KTP
+                           ================================================== -->
+
+                              <div class="col-md-6">
+
+                                 <div class="card pmb-document-card h-100">
+
+                                    <div class="card-body">
+
+                                       <div class="d-flex align-items-start mb-4">
+
+                                          <div class="pmb-document-icon bg-soft-primary text-primary me-3">
+
+                                             <i class="uil uil-card-atm fs-24"></i>
+
+                                          </div>
+
+                                          <div>
+
+                                             <h5 class="mb-1">
+                                                KTP
+                                             </h5>
+                                             <?php if (!empty($pmbUser['file_ktp'])): ?>
+
+                                                <span class="pmb-status pmb-status-complete">
+                                                   ✓ Sudah diupload
+                                                </span>
+
+                                             <?php else: ?>
+
+                                                <span class="pmb-status pmb-status-required">
+                                                   Wajib
+                                                </span>
+
+                                             <?php endif; ?>
+
+                                          </div>
+
+                                       </div>
+
+
+                                       <p class="text-muted fs-14 mb-4">
+                                          Kartu Tanda Penduduk dalam format PDF.
+                                       </p>
+
+
+                                       <div class="pmb-upload">
+
+                                          <input
+                                             type="file"
+                                             name="ktp"
+                                             class="form-control"
+                                             accept=".pdf">
+
+                                          <small class="text-muted">
+                                             Format PDF
+                                          </small>
+
+                                       </div>
+
+                                    </div>
+
+                                 </div>
+
+                              </div>
+
+
+                              <!-- =================================================
+                                KK
+                           ================================================== -->
+
+                              <div class="col-md-6">
+
+                                 <div class="card pmb-document-card h-100">
+
+                                    <div class="card-body">
+
+                                       <div class="d-flex align-items-start mb-4">
+
+                                          <div class="pmb-document-icon bg-soft-info text-info me-3">
+
+                                             <i class="uil uil-family fs-24"></i>
+
+                                          </div>
+
+                                          <div>
+
+                                             <h5 class="mb-1">
+                                                Kartu Keluarga
+                                             </h5>
+
+                                             <?php if (!empty($pmbUser['file_kk'])): ?>
+
+                                                <span class="pmb-status pmb-status-complete">
+                                                   ✓ Sudah diupload
+                                                </span>
+
+                                             <?php else: ?>
+
+                                                <span class="pmb-status pmb-status-required">
+                                                   Wajib
+                                                </span>
+
+                                             <?php endif; ?>
+
+                                          </div>
+
+                                       </div>
+
+
+                                       <p class="text-muted fs-14 mb-4">
+                                          Kartu Keluarga dalam format PDF.
+                                       </p>
+
+
+                                       <div class="pmb-upload">
+
+                                          <input
+                                             type="file"
+                                             name="kk"
+                                             class="form-control"
+                                             accept=".pdf">
+
+                                          <small class="text-muted">
+                                             Format PDF
+                                          </small>
+
+                                       </div>
+
+                                    </div>
+
+                                 </div>
+
+                              </div>
+
+
+                              <!-- =================================================
+                                IJAZAH
+                           ================================================== -->
+
+                              <div class="col-md-6">
+
+                                 <div class="card pmb-document-card h-100">
+
+                                    <div class="card-body">
+
+                                       <div class="d-flex align-items-start mb-4">
+
+                                          <div class="pmb-document-icon bg-soft-green text-green me-3">
+
+                                             <i class="uil uil-graduation-cap fs-24"></i>
+
+                                          </div>
+
+                                          <div>
+
+                                             <h5 class="mb-1">
+                                                Ijazah / SKTL
+                                             </h5>
+
+                                             <?php if (!empty($pmbUser['file_ijazah'])): ?>
+
+                                                <span class="pmb-status pmb-status-complete">
+                                                   ✓ Sudah diupload
+                                                </span>
+
+                                             <?php else: ?>
+
+                                                <span class="pmb-status pmb-status-required">
+                                                   Wajib
+                                                </span>
+
+                                             <?php endif; ?>
+
+                                          </div>
+
+                                       </div>
+
+
+                                       <p class="text-muted fs-14 mb-4">
+                                          Ijazah SMA atau Surat Keterangan
+                                          Tanda Lulus.
+                                       </p>
+
+
+                                       <div class="pmb-upload">
+
+                                          <input
+                                             type="file"
+                                             name="ijazah"
+                                             class="form-control"
+                                             accept=".pdf">
+
+                                          <small class="text-muted">
+                                             Format PDF
+                                          </small>
+
+                                       </div>
+
+                                    </div>
+
+                                 </div>
+
+                              </div>
+
+
+                              <!-- =================================================
+                                PAS FOTO
+                           ================================================== -->
+
+                              <div class="col-md-6">
+
+                                 <div class="card pmb-document-card h-100">
+
+                                    <div class="card-body">
+
+                                       <div class="d-flex align-items-start mb-4">
+
+                                          <div class="pmb-document-icon bg-soft-red text-red me-3">
+
+                                             <i class="uil uil-camera fs-24"></i>
+
+                                          </div>
+
+                                          <div>
+
+                                             <h5 class="mb-1">
+                                                Pasfoto
+                                             </h5>
+
+                                             <span class="pmb-status pmb-status-required">
+                                                Wajib
+                                             </span>
+
+                                          </div>
+
+                                       </div>
+
+
+                                       <p class="text-muted fs-14 mb-4">
+                                          Pasfoto resmi berwarna dengan
+                                          latar belakang merah.
+                                       </p>
+
+
+                                       <div class="pmb-upload">
+
+                                          <input
+                                             type="file"
+                                             name="pasfoto"
+                                             class="form-control"
+                                             accept="image/jpeg,image/png">
+
+                                          <small class="text-muted">
+                                             JPG / PNG
+                                          </small>
+
+                                       </div>
+
+                                    </div>
+
+                                 </div>
+
+                              </div>
+
+                           </div>
+
+
+                           <!-- =================================================
+                             BEASISWA DOCUMENT
+                        ================================================== -->
+
+                           <div
+                              id="dokumenBeasiswa"
+                              class="mt-8"
+                              style="display:none;">
+
+
+                              <hr class="mb-7">
+
+
+                              <div class="d-flex align-items-center mb-5">
+
+                                 <div class="icon btn btn-circle btn-lg btn-soft-green me-3">
+
+                                    <i class="uil uil-award"></i>
 
                                  </div>
 
                                  <div>
 
                                     <span class="text-uppercase text-muted fs-13 fw-bold">
-                                       Tahap Berikutnya
+                                       Dokumen Tambahan
                                     </span>
 
-                                    <h4 class="mb-1">
-                                       Kartu Peserta PMB
+                                    <h4 class="mb-0">
+                                       Persyaratan Beasiswa
                                     </h4>
 
-                                    <p class="mb-0 text-muted">
-                                       Kartu peserta dapat dicetak setelah
-                                       seluruh data dan dokumen dinyatakan lengkap.
+                                 </div>
+
+                              </div>
+
+
+                              <div class="alert alert-success alert-icon">
+
+                                 <i class="uil uil-info-circle"></i>
+
+                                 <p class="mb-0">
+                                    Dokumen tambahan ditampilkan berdasarkan
+                                    jalur pendaftaran dan jenis pembiayaan.
+                                 </p>
+
+                              </div>
+
+
+                              <!-- Surat Permohonan -->
+
+                              <div class="card pmb-document-card mb-4">
+
+                                 <div class="card-body">
+
+                                    <div class="row align-items-center">
+
+                                       <div class="col-lg-6">
+
+                                          <h5 class="mb-1">
+                                             Surat Permohonan Beasiswa
+                                          </h5>
+
+                                          <p class="text-muted fs-14 mb-lg-0">
+                                             Dokumen permohonan beasiswa.
+                                          </p>
+
+                                       </div>
+
+                                       <div class="col-lg-6">
+
+                                          <input
+                                             type="file"
+                                             name="surat_beasiswa"
+                                             class="form-control"
+                                             accept=".pdf">
+
+                                       </div>
+
+                                    </div>
+
+                                 </div>
+
+                              </div>
+
+
+                              <!-- SKTM -->
+
+                              <div
+                                 class="card pmb-document-card mb-4"
+                                 id="dokumenSktm">
+
+                                 <div class="card-body">
+
+                                    <div class="row align-items-center">
+
+                                       <div class="col-lg-6">
+
+                                          <h5 class="mb-1">
+                                             Surat Keterangan Tidak Mampu
+                                          </h5>
+
+                                          <p class="text-muted fs-14 mb-lg-0">
+                                             SKTM untuk pengajuan beasiswa reguler.
+                                          </p>
+
+                                       </div>
+
+                                       <div class="col-lg-6">
+
+                                          <input
+                                             type="file"
+                                             name="sktm"
+                                             class="form-control"
+                                             accept=".pdf">
+
+                                       </div>
+
+                                    </div>
+
+                                 </div>
+
+                              </div>
+
+
+                              <!-- KIP -->
+
+                              <div
+                                 class="card pmb-document-card mb-4"
+                                 id="dokumenKip">
+
+                                 <div class="card-body">
+
+                                    <div class="row align-items-center">
+
+                                       <div class="col-lg-6">
+
+                                          <h5 class="mb-1">
+                                             Nomor Pendaftaran KIP
+                                          </h5>
+
+                                          <p class="text-muted fs-14 mb-lg-0">
+                                             Nomor pendaftaran KIP.
+                                          </p>
+
+                                       </div>
+
+                                       <div class="col-lg-6">
+
+                                          <input
+                                             type="text"
+                                             name="nomor_kip"
+                                             id="nomor_kip"
+                                             class="form-control"
+                                             placeholder="Nomor Pendaftaran KIP"
+                                             value="<?= htmlspecialchars(
+                                                         $pmbUser['number_kip'] ?? ''
+                                                      ) ?>">
+                                       </div>
+
+                                    </div>
+
+                                 </div>
+
+                              </div>
+
+
+                              <!-- Prestasi -->
+
+                              <div
+                                 class="card pmb-document-card"
+                                 id="dokumenPrestasi">
+
+                                 <div class="card-body">
+
+                                    <div class="row align-items-center">
+
+                                       <div class="col-lg-6">
+
+                                          <h5 class="mb-1">
+
+                                             Bukti Prestasi
+
+                                             <span class="badge bg-soft-gray text-muted ms-1">
+                                                Opsional
+                                             </span>
+
+                                          </h5>
+
+                                          <p class="text-muted fs-14 mb-lg-0">
+                                             Bukti prestasi akademik/non-akademik.
+                                          </p>
+
+                                       </div>
+
+                                       <div class="col-lg-6">
+
+                                          <input
+                                             type="file"
+                                             name="bukti_prestasi"
+                                             class="form-control"
+                                             accept=".pdf,image/jpeg,image/png">
+
+                                       </div>
+
+                                    </div>
+
+                                 </div>
+
+                              </div>
+
+
+                           </div>
+
+
+                           <!-- =================================================
+                             SAVE DOCUMENT
+                        ================================================== -->
+
+                           <div class="mt-7 pt-5 border-top">
+
+                              <div class="row align-items-center">
+
+                                 <div class="col-lg">
+
+                                    <p class="text-muted fs-14 mb-0">
+
+                                       <i class="uil uil-lock me-1"></i>
+
+                                       Data dan dokumen Anda akan disimpan
+                                       secara aman pada sistem PMB.
+
                                     </p>
+
+                                 </div>
+
+
+                                 <div class="col-lg-auto mt-4 mt-lg-0">
+
+                                    <button
+                                       type="submit"
+                                       id="btnSimpanDataBottom"
+                                       class="btn btn-primary rounded btn-icon btn-icon-end">
+
+                                       Simpan Data & Dokumen
+
+                                       <i class="uil uil-check"></i>
+
+                                    </button>
 
                                  </div>
 
@@ -1711,15 +1905,64 @@
 
                            </div>
 
-                           <div class="col-lg-auto mt-4 mt-lg-0">
 
-                              <span class="badge bg-soft-primary text-primary rounded-pill px-4 py-2">
+                        </div>
 
-                                 Tahap 03
+                     </div>
 
-                                 <i class="uil uil-arrow-right ms-1"></i>
 
-                              </span>
+                     <!-- =================================================
+                       NEXT STEP
+                  ================================================== -->
+
+                     <div class="card bg-soft-primary border-0">
+
+                        <div class="card-body p-5">
+
+                           <div class="row align-items-center">
+
+                              <div class="col-lg">
+
+                                 <div class="d-flex align-items-center">
+
+                                    <div class="icon btn btn-circle btn-lg btn-primary me-4">
+
+                                       <i class="uil uil-ticket"></i>
+
+                                    </div>
+
+                                    <div>
+
+                                       <span class="text-uppercase text-muted fs-13 fw-bold">
+                                          Tahap Berikutnya
+                                       </span>
+
+                                       <h4 class="mb-1">
+                                          Kartu Peserta PMB
+                                       </h4>
+
+                                       <p class="mb-0 text-muted">
+                                          Kartu peserta dapat dicetak setelah
+                                          seluruh data dan dokumen dinyatakan lengkap.
+                                       </p>
+
+                                    </div>
+
+                                 </div>
+
+                              </div>
+
+                              <div class="col-lg-auto mt-4 mt-lg-0">
+
+                                 <span class="badge bg-soft-primary text-primary rounded-pill px-4 py-2">
+
+                                    Tahap 03
+
+                                    <i class="uil uil-arrow-right ms-1"></i>
+
+                                 </span>
+
+                              </div>
 
                            </div>
 
@@ -1727,13 +1970,12 @@
 
                      </div>
 
-                  </div>
 
+                  </div>
 
                </div>
 
-            </div>
-
+            </form>
          </div>
 
       </section>
@@ -1801,6 +2043,8 @@
 
       });
    </script>
+
+   <script src="assets/js/data-dokumen.js"></script>
 
 </body>
 
