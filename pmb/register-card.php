@@ -934,65 +934,108 @@ $page = 'Kartu Peserta PMB';
 
                <div class="col-lg-10 mx-auto">
 
-                  <div class="card bg-soft-primary border-0">
+                  <a
+                     href="./pmb/register-schedule.php"
+                     class="text-decoration-none d-block">
 
-                     <div class="card-body p-5">
+                     <div
+                        class="card bg-soft-primary border-0 shadow-sm h-100 pmb-next-stage-card">
 
-                        <div class="row align-items-center">
+                        <div class="card-body p-5">
+
+                           <div class="row align-items-center">
 
 
-                           <div class="col-lg">
+                              <!-- =========================================
+                       INFO
+                  ========================================== -->
 
-                              <div class="d-flex align-items-center">
+                              <div class="col-lg">
 
-                                 <div class="icon btn btn-circle btn-lg btn-primary me-4">
+                                 <div class="d-flex align-items-start">
 
-                                    <i class="uil uil-calendar-alt"></i>
+                                    <div
+                                       class="icon btn btn-circle btn-lg btn-primary me-4 flex-shrink-0">
 
-                                 </div>
+                                       <i class="uil uil-calendar-alt"></i>
 
-                                 <div>
+                                    </div>
 
-                                    <span class="text-uppercase text-muted fs-13 fw-bold">
-                                       Tahap Berikutnya
-                                    </span>
 
-                                    <h4 class="mb-1">
-                                       Jadwal Seleksi PMB
-                                    </h4>
+                                    <div>
 
-                                    <p class="mb-0 text-muted">
+                                       <span
+                                          class="text-uppercase text-primary fs-13 fw-bold">
 
-                                       Lihat jadwal TPA dan wawancara
-                                       setelah kartu peserta diterbitkan.
+                                          Tahap Berikutnya
 
-                                    </p>
+                                       </span>
+
+
+                                       <h4 class="mb-1 text-dark">
+
+                                          Jadwal Seleksi PMB
+
+                                       </h4>
+
+
+                                       <p class="mb-0 text-muted">
+
+                                          Lihat jadwal TPA dan wawancara
+                                          setelah kartu peserta diterbitkan.
+
+                                       </p>
+
+                                    </div>
 
                                  </div>
 
                               </div>
 
+
+                              <!-- =========================================
+                       ACTION
+                  ========================================== -->
+
+                              <div class="col-lg-auto mt-4 mt-lg-0">
+
+                                 <div class="text-lg-end">
+
+                                    <span
+                                       class="badge bg-soft-primary text-primary rounded-pill px-4 py-2 mb-2">
+
+                                       Tahap 04
+
+                                       <i class="uil uil-arrow-right ms-1"></i>
+
+                                    </span>
+
+
+                                    <div>
+
+                                       <span
+                                          class="btn btn-primary btn-sm rounded-pill px-4">
+
+                                          Lihat Jadwal
+
+                                          <i class="uil uil-arrow-right ms-1"></i>
+
+                                       </span>
+
+                                    </div>
+
+                                 </div>
+
+                              </div>
+
+
                            </div>
-
-
-                           <div class="col-lg-auto mt-4 mt-lg-0">
-
-                              <span class="badge bg-soft-primary text-primary rounded-pill px-4 py-2">
-
-                                 Tahap 04
-
-                                 <i class="uil uil-arrow-right ms-1"></i>
-
-                              </span>
-
-                           </div>
-
 
                         </div>
 
                      </div>
 
-                  </div>
+                  </a>
 
                </div>
 

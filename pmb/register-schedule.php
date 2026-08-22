@@ -1,3 +1,183 @@
+<?php
+
+session_start();
+
+require_once '../config/connect.php';
+
+/**
+ * =========================================================
+ * AUTHENTICATION
+ * =========================================================
+ */
+
+if (
+   empty($_SESSION['pmb_logged_in']) ||
+   empty($_SESSION['pmb_user_id'])
+) {
+   header('Location: ./login-pmb.php');
+   exit;
+}
+
+$userId = (int) $_SESSION['pmb_user_id'];
+
+
+/**
+ * =========================================================
+ * AMBIL DATA PESERTA
+ * =========================================================
+ */
+
+$stmt = $pdo->prepare("
+    SELECT
+        id,
+        fullname,
+        gender,
+        agama,
+        place,
+        datebirth,
+        number_id,
+        phone_number,
+        email_register,
+        address_card,
+        provinsi,
+        kabupaten,
+        kecamatan,
+        kelurahan,
+
+        school_name,
+        school_npsn,
+        school_address,
+        number_nisn,
+        year_graduation,
+
+        name_father,
+        name_mother,
+
+        number_kk,
+        number_nik_kk,
+
+        register_uid,
+        register_type,
+
+        id_program,
+        id_provider,
+
+        file_ktp,
+        file_kk,
+        file_ijazah,
+        file_dokumen,
+
+        tahap_aktif,
+        status_pendaftaran,
+        account_status,
+
+        created_at
+
+    FROM register_pmb
+
+    WHERE id = :id
+
+    LIMIT 1
+");
+
+$stmt->execute([
+   'id' => $userId
+]);
+
+$pmbUser = $stmt->fetch(PDO::FETCH_ASSOC);
+
+
+if (!$pmbUser) {
+
+   session_destroy();
+
+   header('Location: ./login-pmb.php');
+   exit;
+}
+
+
+/**
+ * =========================================================
+ * GUARD TAHAP 03
+ * =========================================================
+ */
+
+if ((int) $pmbUser['tahap_aktif'] < 2) {
+
+   header('Location: ./welcome.php');
+   exit;
+}
+
+
+/**
+ * =========================================================
+ * DATA DISPLAY
+ * =========================================================
+ */
+
+$namaPeserta =
+   $pmbUser['fullname'] ?: '-';
+
+$emailPeserta =
+   $pmbUser['email_register'] ?: '-';
+
+$idPendaftaran =
+   $pmbUser['register_uid'] ?: '-';
+
+$jalur =
+   $pmbUser['register_type'] ?: '-';
+
+
+/**
+ * Tahun PMB
+ *
+ * Bisa nanti dipindahkan ke tabel setting.
+ */
+
+$tahunPmb = '2026/2027';
+
+
+/**
+ * =========================================================
+ * FOTO PESERTA
+ * =========================================================
+ *
+ * file_dokumen saat ini kita gunakan sebagai pasfoto.
+ */
+
+$fotoPeserta = null;
+
+if (!empty($pmbUser['file_dokumen'])) {
+
+   $fotoPath =
+      '../uploads/pmb/' . $pmbUser['file_dokumen'];
+
+   if (is_file($fotoPath)) {
+
+      $fotoPeserta =
+         'uploads/pmb/' . rawurlencode(
+            $pmbUser['file_dokumen']
+         );
+   }
+}
+
+
+/**
+ * =========================================================
+ * QR DATA
+ * =========================================================
+ *
+ * Jangan gunakan ID database sebagai QR utama.
+ * Gunakan register_uid karena itu identifier peserta.
+ */
+
+$qrData =
+   $idPendaftaran;
+
+$page = 'Kartu Peserta PMB';
+
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -330,8 +510,8 @@
 
 
             <!-- =================================================
-                 PARTICIPANT STATUS
-            ================================================== -->
+     PARTICIPANT STATUS
+================================================== -->
 
             <div class="card shadow-sm pmb-participant-card mb-7">
 
@@ -340,33 +520,57 @@
                   <div class="row align-items-center">
 
 
-                     <!-- Profile -->
+                     <!-- =========================================
+              PROFILE
+         ========================================== -->
 
                      <div class="col-lg">
 
                         <div class="d-flex align-items-center">
 
-                           <div class="icon btn btn-circle btn-lg btn-soft-primary me-4">
+                           <div
+                              class="icon btn btn-circle btn-lg btn-soft-primary me-4">
 
                               <i class="uil uil-user"></i>
 
                            </div>
 
+
                            <div>
 
-                              <span class="text-uppercase text-muted fs-13 fw-bold">
+                              <span
+                                 class="text-uppercase text-muted fs-13 fw-bold">
+
                                  Peserta
+
                               </span>
 
+
                               <h4 class="mb-1">
-                                 Jaka Prayudha
+
+                                 <?= htmlspecialchars(
+                                    $pmbUser['fullname'] ?? '-',
+                                    ENT_QUOTES,
+                                    'UTF-8'
+                                 ) ?>
+
                               </h4>
 
+
                               <p class="mb-0 text-muted pmb-participant-id">
+
                                  ID Pendaftaran:
-                                 <span class="text-primary">
-                                    99-26-69-74-01-001
+
+                                 <span class="text-primary fw-semibold">
+
+                                    <?= htmlspecialchars(
+                                       $pmbUser['register_uid'] ?? '-',
+                                       ENT_QUOTES,
+                                       'UTF-8'
+                                    ) ?>
+
                                  </span>
+
                               </p>
 
                            </div>
@@ -376,17 +580,56 @@
                      </div>
 
 
-                     <!-- Status -->
+                     <!-- =========================================
+              STATUS
+         ========================================== -->
 
                      <div class="col-lg-auto mt-4 mt-lg-0">
 
-                        <span class="badge bg-soft-green text-green pmb-status-badge">
+                        <?php
 
-                           <i class="uil uil-check-circle me-1"></i>
+                        $statusPendaftaran =
+                           $pmbUser['status_pendaftaran'] ?? 'REGISTRASI';
 
-                           Peserta Aktif
+                        $accountStatus =
+                           $pmbUser['account_status'] ?? 'PENDING';
 
-                        </span>
+                        ?>
+
+                        <?php if ($accountStatus === 'ACTIVE'): ?>
+
+                           <span
+                              class="badge bg-soft-green text-green pmb-status-badge">
+
+                              <i class="uil uil-check-circle me-1"></i>
+
+                              Peserta Aktif
+
+                           </span>
+
+                        <?php elseif ($accountStatus === 'BLOCKED'): ?>
+
+                           <span
+                              class="badge bg-soft-red text-red pmb-status-badge">
+
+                              <i class="uil uil-times-circle me-1"></i>
+
+                              Akun Diblokir
+
+                           </span>
+
+                        <?php else: ?>
+
+                           <span
+                              class="badge bg-soft-yellow text-yellow pmb-status-badge">
+
+                              <i class="uil uil-clock me-1"></i>
+
+                              Menunggu Aktivasi
+
+                           </span>
+
+                        <?php endif; ?>
 
                      </div>
 
@@ -883,16 +1126,17 @@
 
                            <div class="col-lg-auto mt-4 mt-lg-0">
 
-                              <button
-                                 type="button"
+                              <a
+                                 href="./pmb/print/print-jadwal"
+                                 target="_blank"
+                                 rel="noopener"
                                  class="btn btn-primary rounded btn-icon btn-icon-end">
 
                                  Cetak Jadwal
 
                                  <i class="uil uil-print"></i>
 
-                              </button>
-
+                              </a>
                            </div>
 
                         </div>
