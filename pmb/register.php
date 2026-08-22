@@ -592,7 +592,7 @@
                                           type="radio"
                                           name="jalur_pendaftaran"
                                           id="jalur_reguler"
-                                          value="01"
+                                          value="Reguler"
                                           required>
 
 
@@ -653,7 +653,7 @@
                                           type="radio"
                                           name="jalur_pendaftaran"
                                           id="jalur_eksekutif"
-                                          value="02"
+                                          value="Eksekutif"
                                           required>
 
 
@@ -714,7 +714,7 @@
                                           type="radio"
                                           name="jalur_pendaftaran"
                                           id="jalur_pindahan"
-                                          value="03"
+                                          value="Pindahan"
                                           required>
 
 
