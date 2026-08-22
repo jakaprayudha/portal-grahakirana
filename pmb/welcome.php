@@ -1,3 +1,216 @@
+<?php
+
+session_start();
+
+/**
+ * =========================================================
+ * AUTHENTICATION GUARD
+ * =========================================================
+ */
+
+if (
+   empty($_SESSION['pmb_logged_in']) ||
+   empty($_SESSION['pmb_user_id'])
+) {
+
+   header('Location: login-pmb.php');
+   exit;
+}
+
+
+/**
+ * =========================================================
+ * DATABASE
+ * =========================================================
+ */
+
+require_once __DIR__ . '/../config/connect.php';
+
+
+/**
+ * =========================================================
+ * AMBIL DATA USER TERBARU
+ * =========================================================
+ */
+
+try {
+
+   $stmt = $pdo->prepare("
+        SELECT
+            id,
+            fullname,
+            email_register,
+            phone_number,
+            register_uid,
+            register_type,
+            tahap_aktif,
+            status_pendaftaran,
+            account_status
+        FROM register_pmb
+        WHERE id = :id
+        LIMIT 1
+    ");
+
+   $stmt->execute([
+      'id' => (int) $_SESSION['pmb_user_id']
+   ]);
+
+   $pmbUser = $stmt->fetch(PDO::FETCH_ASSOC);
+
+
+   /**
+    * User tidak ditemukan
+    */
+
+   if (!$pmbUser) {
+
+      session_unset();
+      session_destroy();
+
+      header('Location: login-pmb.php');
+      exit;
+   }
+
+
+   /**
+    * Akun diblokir
+    */
+
+   if ($pmbUser['account_status'] === 'BLOCKED') {
+
+      session_unset();
+      session_destroy();
+
+      header('Location: login-pmb.php?status=blocked');
+      exit;
+   }
+
+
+   /**
+    * Update session dari database
+    */
+
+   $_SESSION['pmb_fullname'] =
+      $pmbUser['fullname'];
+
+   $_SESSION['pmb_email'] =
+      $pmbUser['email_register'];
+
+   $_SESSION['pmb_tahap_aktif'] =
+      (int) $pmbUser['tahap_aktif'];
+
+   $_SESSION['pmb_status_pendaftaran'] =
+      $pmbUser['status_pendaftaran'];
+
+
+   /**
+    * Tahap aktif
+    */
+
+   $tahapAktif =
+      max(
+         1,
+         min(
+            8,
+            (int) $pmbUser['tahap_aktif']
+         )
+      );
+} catch (PDOException $e) {
+
+   http_response_code(500);
+
+   die('Terjadi kesalahan saat memuat dashboard.');
+}
+
+
+/**
+ * =========================================================
+ * KONFIGURASI TAHAP PMB
+ * =========================================================
+ */
+
+$pmbStages = [
+
+   1 => [
+      'name' => 'Pendaftaran',
+      'icon' => 'uil-edit',
+      'page' => 'pendaftaran.php'
+   ],
+
+   2 => [
+      'name' => 'Data & Dokumen',
+      'icon' => 'uil-file-alt',
+      'page' => 'data-dokumen.php'
+   ],
+
+   3 => [
+      'name' => 'Kartu Peserta',
+      'icon' => 'uil-credit-card',
+      'page' => 'kartu-peserta.php'
+   ],
+
+   4 => [
+      'name' => 'Jadwal Seleksi',
+      'icon' => 'uil-calendar-alt',
+      'page' => 'jadwal-seleksi.php'
+   ],
+
+   5 => [
+      'name' => 'Seleksi',
+      'icon' => 'uil-clipboard-alt',
+      'page' => 'hasil-seleksi.php'
+   ],
+
+   6 => [
+      'name' => 'Kelulusan',
+      'icon' => 'uil-trophy',
+      'page' => 'pengumuman-kelulusan.php'
+   ],
+
+   7 => [
+      'name' => 'Daftar Ulang',
+      'icon' => 'uil-file-check-alt',
+      'page' => 'daftar-ulang.php'
+   ],
+
+   8 => [
+      'name' => 'SIAKAD',
+      'icon' => 'uil-graduation-cap',
+      'page' => 'siakad.php'
+   ]
+
+];
+
+
+/**
+ * =========================================================
+ * PROGRESS
+ * =========================================================
+ */
+
+$progress =
+   (($tahapAktif - 1) / 8) * 100;
+
+$progress =
+   max(0, min(100, $progress));
+
+$progressFormatted =
+   number_format($progress, 1);
+
+$completedStages =
+   max(0, $tahapAktif - 1);
+
+
+/**
+ * =========================================================
+ * STATUS TAHAP AKTIF
+ * =========================================================
+ */
+
+$currentStage =
+   $pmbStages[$tahapAktif];
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -471,10 +684,10 @@
 
                   <h2 class="display-4 mb-3">
 
-                     Selamat Datang, Jaka! 👋
+                     Selamat Datang,
+                     <?= htmlspecialchars($pmbUser['fullname']) ?>! 👋
 
                   </h2>
-
                   <p class="lead fs-18 mb-0">
 
                      Pantau seluruh proses Penerimaan Mahasiswa Baru
@@ -522,21 +735,23 @@
 
                                  <h3 class="text-white mt-1 mb-2">
 
-                                    Jaka Prayudha
+                                    <?= htmlspecialchars($pmbUser['fullname']) ?>
 
                                  </h3>
 
 
                                  <div class="pmb-meta">
 
-
                                     <span class="pmb-meta-item text-white opacity-75">
 
                                        <i class="uil uil-card-atm me-1"></i>
 
-                                       ID:
+                                       UID:
+
                                        <strong class="text-white">
-                                          99-26-69-74-01-001
+
+                                          <?= htmlspecialchars($pmbUser['register_uid'] ?? '-') ?>
+
                                        </strong>
 
                                     </span>
@@ -544,9 +759,9 @@
 
                                     <span class="pmb-meta-item text-white opacity-75">
 
-                                       <i class="uil uil-graduation-cap me-1"></i>
+                                       <i class="uil uil-envelope me-1"></i>
 
-                                       Ilmu Hukum
+                                       <?= htmlspecialchars($pmbUser['email_register']) ?>
 
                                     </span>
 
@@ -555,13 +770,11 @@
 
                                        <i class="uil uil-sign-alt me-1"></i>
 
-                                       Reguler
+                                       <?= htmlspecialchars($pmbUser['register_type'] ?? '-') ?>
 
                                     </span>
 
-
                                  </div>
-
                               </div>
 
                            </div>
@@ -610,7 +823,7 @@
 
                         <h4 class="mt-2 mb-0">
 
-                           Tahap 07 dari 08
+                           Tahap <?= $tahapAktif ?> dari 08
 
                         </h4>
 
@@ -621,11 +834,40 @@
 
                         <strong class="text-primary">
 
-                           87.5%
+                           <?= $progressFormatted ?>%
 
                         </strong>
 
                      </div>
+
+                  </div>
+
+
+                  <div class="pmb-progress">
+
+                     <div
+                        class="pmb-progress-bar"
+                        style="width: <?= $progress ?>%;">
+
+                     </div>
+
+                  </div>
+
+
+                  <div class="d-flex justify-content-between mt-3">
+
+                     <small class="text-green fw-bold">
+
+                        ✓ <?= $completedStages ?> tahap selesai
+
+                     </small>
+
+
+                     <small class="text-primary fw-bold">
+
+                        <?= htmlspecialchars($currentStage['name']) ?> aktif
+
+                     </small>
 
                   </div>
 
@@ -686,221 +928,87 @@
 
                   <div class="pmb-stage-nav">
 
+                     <?php foreach ($pmbStages as $number => $stage): ?>
 
-                     <!-- 01 -->
+                        <?php
 
-                     <div
-                        class="pmb-stage-tab"
-                        onclick="showStage(1)">
-
-                        <span class="pmb-stage-check text-green">
-
-                           ✓
-
-                        </span>
-
-                        <div class="pmb-stage-number">
-
-                           TAHAP 01
-
-                        </div>
-
-                        <div class="pmb-stage-name">
-
-                           Pendaftaran
-
-                        </div>
-
-                     </div>
+                        /*
+       * Tahap sebelumnya
+       */
+                        $isComplete =
+                           $number < $tahapAktif;
 
 
-                     <!-- 02 -->
-
-                     <div
-                        class="pmb-stage-tab"
-                        onclick="showStage(2)">
-
-                        <span class="pmb-stage-check text-green">
-
-                           ✓
-
-                        </span>
-
-                        <div class="pmb-stage-number">
-
-                           TAHAP 02
-
-                        </div>
-
-                        <div class="pmb-stage-name">
-
-                           Data & Dokumen
-
-                        </div>
-
-                     </div>
+                        /*
+       * Tahap sedang aktif
+       */
+                        $isActive =
+                           $number === $tahapAktif;
 
 
-                     <!-- 03 -->
-
-                     <div
-                        class="pmb-stage-tab"
-                        onclick="showStage(3)">
-
-                        <span class="pmb-stage-check text-green">
-
-                           ✓
-
-                        </span>
-
-                        <div class="pmb-stage-number">
-
-                           TAHAP 03
-
-                        </div>
-
-                        <div class="pmb-stage-name">
-
-                           Kartu Peserta
-
-                        </div>
-
-                     </div>
+                        /*
+       * Tahap berikutnya
+       */
+                        $isLocked =
+                           $number > $tahapAktif;
 
 
-                     <!-- 04 -->
+                        if ($isComplete) {
 
-                     <div
-                        class="pmb-stage-tab"
-                        onclick="showStage(4)">
+                           $class = 'complete';
+                        } elseif ($isActive) {
 
-                        <span class="pmb-stage-check text-green">
+                           $class = 'active';
+                        } else {
 
-                           ✓
+                           $class = 'locked';
+                        }
 
-                        </span>
+                        ?>
 
-                        <div class="pmb-stage-number">
+                        <div
+                           class="pmb-stage-tab <?= $class ?>"
+                           <?php if (!$isLocked): ?>
 
-                           TAHAP 04
+                           onclick="showStage(<?= $number ?>)"
+
+                           <?php endif; ?>>
+
+                           <span class="pmb-stage-check">
+
+                              <?php if ($isComplete): ?>
+
+                                 ✓
+
+                              <?php elseif ($isActive): ?>
+
+                                 ●
+
+                              <?php else: ?>
+
+                                 🔒
+
+                              <?php endif; ?>
+
+                           </span>
+
+
+                           <div class="pmb-stage-number">
+
+                              TAHAP <?= str_pad($number, 2, '0', STR_PAD_LEFT) ?>
+
+                           </div>
+
+
+                           <div class="pmb-stage-name">
+
+                              <?= htmlspecialchars($stage['name']) ?>
+
+                           </div>
 
                         </div>
 
-                        <div class="pmb-stage-name">
-
-                           Jadwal Seleksi
-
-                        </div>
-
-                     </div>
-
-
-                     <!-- 05 -->
-
-                     <div
-                        class="pmb-stage-tab"
-                        onclick="showStage(5)">
-
-                        <span class="pmb-stage-check text-green">
-
-                           ✓
-
-                        </span>
-
-                        <div class="pmb-stage-number">
-
-                           TAHAP 05
-
-                        </div>
-
-                        <div class="pmb-stage-name">
-
-                           Seleksi
-
-                        </div>
-
-                     </div>
-
-
-                     <!-- 06 -->
-
-                     <div
-                        class="pmb-stage-tab"
-                        onclick="showStage(6)">
-
-                        <span class="pmb-stage-check text-green">
-
-                           ✓
-
-                        </span>
-
-                        <div class="pmb-stage-number">
-
-                           TAHAP 06
-
-                        </div>
-
-                        <div class="pmb-stage-name">
-
-                           Kelulusan
-
-                        </div>
-
-                     </div>
-
-
-                     <!-- 07 ACTIVE -->
-
-                     <div
-                        class="pmb-stage-tab active"
-                        onclick="showStage(7)">
-
-                        <span class="pmb-stage-check">
-
-                           ●
-
-                        </span>
-
-                        <div class="pmb-stage-number">
-
-                           TAHAP 07
-
-                        </div>
-
-                        <div class="pmb-stage-name">
-
-                           Daftar Ulang
-
-                        </div>
-
-                     </div>
-
-
-                     <!-- 08 -->
-
-                     <div
-                        class="pmb-stage-tab locked">
-
-                        <span class="pmb-stage-check">
-
-                           🔒
-
-                        </span>
-
-                        <div class="pmb-stage-number">
-
-                           TAHAP 08
-
-                        </div>
-
-                        <div class="pmb-stage-name">
-
-                           SIAKAD
-
-                        </div>
-
-                     </div>
-
+                     <?php endforeach; ?>
 
                   </div>
 
@@ -933,10 +1041,9 @@
 
                            <div class="d-flex align-items-start mb-6">
 
-
                               <div class="pmb-current-icon bg-soft-primary text-primary me-4">
 
-                                 <i class="uil uil-file-check-alt fs-28"></i>
+                                 <i class="uil <?= htmlspecialchars($currentStage['icon']) ?> fs-28"></i>
 
                               </div>
 
@@ -945,20 +1052,24 @@
 
                                  <span class="text-uppercase text-primary fs-13 fw-bold">
 
-                                    TAHAP 07
+                                    TAHAP <?= str_pad($tahapAktif, 2, '0', STR_PAD_LEFT) ?>
 
                                  </span>
 
+
                                  <h3 class="mt-1 mb-2">
 
-                                    Daftar Ulang
+                                    <?= htmlspecialchars($currentStage['name']) ?>
 
                                  </h3>
 
+
                                  <p class="text-muted mb-0">
 
-                                    Lengkapi proses daftar ulang untuk
-                                    mengonfirmasi penerimaan Anda.
+                                    <?= $tahapAktif === 1
+                                       ? 'Lengkapi proses registrasi untuk melanjutkan ke tahap berikutnya.'
+                                       : 'Silakan lanjutkan proses pada tahap ini untuk melanjutkan pendaftaran Anda.'
+                                    ?>
 
                                  </p>
 
@@ -1070,10 +1181,10 @@
                            <div class="d-flex justify-content-end mt-5">
 
                               <a
-                                 href="./pages/daftar-ulang.php"
+                                 href="./<?= htmlspecialchars($currentStage['page']) ?>"
                                  class="btn btn-primary rounded btn-icon btn-icon-end">
 
-                                 Lanjutkan Daftar Ulang
+                                 Lanjutkan <?= htmlspecialchars($currentStage['name']) ?>
 
                                  <i class="uil uil-arrow-right"></i>
 
@@ -1116,238 +1227,70 @@
 
                            <div class="pmb-timeline">
 
+                              <?php foreach ($pmbStages as $number => $stage): ?>
 
-                              <!-- 01 -->
+                                 <?php
 
-                              <div class="pmb-timeline-item">
+                                 if ($number < $tahapAktif) {
 
-                                 <div class="pmb-timeline-number complete">
+                                    $timelineClass = 'complete';
+                                    $timelineIcon = '✓';
+                                    $timelineStatus = 'Selesai';
+                                 } elseif ($number === $tahapAktif) {
 
-                                    ✓
+                                    $timelineClass = 'active';
+                                    $timelineIcon = $number;
+                                    $timelineStatus = 'Aktif';
+                                 } else {
 
-                                 </div>
+                                    $timelineClass = 'locked';
+                                    $timelineIcon = '🔒';
+                                    $timelineStatus = 'Menunggu';
+                                 }
 
-                                 <div>
+                                 ?>
 
-                                    <h6 class="mb-1">
+                                 <div class="pmb-timeline-item">
 
-                                       Pendaftaran
+                                    <div class="pmb-timeline-number <?= $timelineClass ?>">
 
-                                    </h6>
+                                       <?= $timelineIcon ?>
 
-                                    <small class="text-muted">
-
-                                       Selesai
-
-                                    </small>
-
-                                 </div>
-
-                              </div>
-
-
-                              <!-- 02 -->
-
-                              <div class="pmb-timeline-item">
-
-                                 <div class="pmb-timeline-number complete">
-
-                                    ✓
-
-                                 </div>
-
-                                 <div>
-
-                                    <h6 class="mb-1">
-
-                                       Data & Dokumen
-
-                                    </h6>
-
-                                    <small class="text-muted">
-
-                                       Lengkap
-
-                                    </small>
-
-                                 </div>
-
-                              </div>
+                                    </div>
 
 
-                              <!-- 03 -->
+                                    <div>
 
-                              <div class="pmb-timeline-item">
+                                       <h6 class="mb-1">
 
-                                 <div class="pmb-timeline-number complete">
+                                          <?= htmlspecialchars($stage['name']) ?>
 
-                                    ✓
+                                       </h6>
+
+
+                                       <?php if ($number === $tahapAktif): ?>
+
+                                          <span class="badge bg-soft-primary text-primary rounded-pill">
+
+                                             Aktif
+
+                                          </span>
+
+                                       <?php else: ?>
+
+                                          <small class="text-muted">
+
+                                             <?= $timelineStatus ?>
+
+                                          </small>
+
+                                       <?php endif; ?>
+
+                                    </div>
 
                                  </div>
 
-                                 <div>
-
-                                    <h6 class="mb-1">
-
-                                       Kartu Peserta
-
-                                    </h6>
-
-                                    <small class="text-muted">
-
-                                       Diterbitkan
-
-                                    </small>
-
-                                 </div>
-
-                              </div>
-
-
-                              <!-- 04 -->
-
-                              <div class="pmb-timeline-item">
-
-                                 <div class="pmb-timeline-number complete">
-
-                                    ✓
-
-                                 </div>
-
-                                 <div>
-
-                                    <h6 class="mb-1">
-
-                                       Jadwal Seleksi
-
-                                    </h6>
-
-                                    <small class="text-muted">
-
-                                       Selesai
-
-                                    </small>
-
-                                 </div>
-
-                              </div>
-
-
-                              <!-- 05 -->
-
-                              <div class="pmb-timeline-item">
-
-                                 <div class="pmb-timeline-number complete">
-
-                                    ✓
-
-                                 </div>
-
-                                 <div>
-
-                                    <h6 class="mb-1">
-
-                                       Seleksi
-
-                                    </h6>
-
-                                    <small class="text-muted">
-
-                                       Selesai
-
-                                    </small>
-
-                                 </div>
-
-                              </div>
-
-
-                              <!-- 06 -->
-
-                              <div class="pmb-timeline-item">
-
-                                 <div class="pmb-timeline-number complete">
-
-                                    ✓
-
-                                 </div>
-
-                                 <div>
-
-                                    <h6 class="mb-1">
-
-                                       Kelulusan
-
-                                    </h6>
-
-                                    <small class="text-muted">
-
-                                       Lulus
-
-                                    </small>
-
-                                 </div>
-
-                              </div>
-
-
-                              <!-- 07 -->
-
-                              <div class="pmb-timeline-item">
-
-                                 <div class="pmb-timeline-number active">
-
-                                    7
-
-                                 </div>
-
-                                 <div>
-
-                                    <h6 class="mb-1">
-
-                                       Daftar Ulang
-
-                                    </h6>
-
-                                    <span class="badge bg-soft-primary text-primary rounded-pill">
-
-                                       Aktif
-
-                                    </span>
-
-                                 </div>
-
-                              </div>
-
-
-                              <!-- 08 -->
-
-                              <div class="pmb-timeline-item">
-
-                                 <div class="pmb-timeline-number locked">
-
-                                    🔒
-
-                                 </div>
-
-                                 <div>
-
-                                    <h6 class="mb-1">
-
-                                       SIAKAD
-
-                                    </h6>
-
-                                    <small class="text-muted">
-
-                                       Menunggu
-
-                                    </small>
-
-                                 </div>
-
-                              </div>
-
+                              <?php endforeach; ?>
 
                            </div>
 
@@ -1534,114 +1477,67 @@
 
    <script src="./assets/js/theme.js"></script>
 
-
    <script>
-      /*
-       * =========================================================
-       * PMB STAGE PREVIEW
-       * =========================================================
-       *
-       * Tahapan yang sudah selesai dapat dibuka kembali
-       * untuk preview.
-       *
-       * Tahap aktif diarahkan ke halaman proses.
-       *
-       */
+      const PMB_ACTIVE_STAGE =
+         <?= (int) $tahapAktif ?>;
+
+
+      const PMB_STAGES = <?= json_encode(
+                              $pmbStages,
+                              JSON_UNESCAPED_UNICODE |
+                                 JSON_UNESCAPED_SLASHES
+                           ) ?>;
+
 
       function showStage(stage) {
 
-         const stageContent = document.getElementById('stageContent');
-
-         /*
-          * Untuk sementara preview sederhana.
-          * Nantinya data dapat diambil melalui AJAX/API.
-          */
-
-         const stages = {
-
-            1: {
-               title: 'Pendaftaran',
-               icon: 'uil-edit',
-               description: 'Informasi pendaftaran akun PMB.',
-               status: 'Selesai',
-               color: 'green',
-               action: './pages/pendaftaran.php'
-            },
-
-            2: {
-               title: 'Data & Dokumen',
-               icon: 'uil-file-alt',
-               description: 'Data pribadi dan dokumen pendaftaran.',
-               status: 'Lengkap',
-               color: 'green',
-               action: './pages/data-dokumen.php'
-            },
-
-            3: {
-               title: 'Kartu Peserta',
-               icon: 'uil-credit-card',
-               description: 'Kartu peserta seleksi PMB.',
-               status: 'Diterbitkan',
-               color: 'green',
-               action: './pages/kartu-peserta.php'
-            },
-
-            4: {
-               title: 'Jadwal Seleksi',
-               icon: 'uil-calendar-alt',
-               description: 'Jadwal pelaksanaan seleksi.',
-               status: 'Selesai',
-               color: 'green',
-               action: './pages/jadwal-seleksi.php'
-            },
-
-            5: {
-               title: 'Pelaksanaan & Hasil Seleksi',
-               icon: 'uil-clipboard-alt',
-               description: 'Riwayat pelaksanaan dan hasil seleksi.',
-               status: 'Selesai',
-               color: 'green',
-               action: './pages/hasil-seleksi.php'
-            },
-
-            6: {
-               title: 'Pengumuman Kelulusan',
-               icon: 'uil-trophy',
-               description: 'Informasi hasil akhir seleksi PMB.',
-               status: 'Lulus',
-               color: 'green',
-               action: './pages/pengumuman-kelulusan.php'
-            },
-
-            7: {
-               title: 'Daftar Ulang',
-               icon: 'uil-file-check-alt',
-               description: 'Lengkapi proses daftar ulang mahasiswa baru.',
-               status: 'Aktif',
-               color: 'primary',
-               action: './pages/daftar-ulang.php'
-            }
-
-         };
+         stage =
+            parseInt(stage, 10);
 
 
-         const data = stages[stage];
+         if (
+            isNaN(stage) ||
+            !PMB_STAGES[stage]
+         ) {
 
-         if (!data) {
             return;
+
          }
 
 
-         const colorClass =
-            data.color === 'green' ?
-            'bg-soft-green text-green' :
-            'bg-soft-primary text-primary';
+         /*
+          * Jangan izinkan membuka
+          * tahap yang belum dicapai.
+          */
+
+         if (stage > PMB_ACTIVE_STAGE) {
+
+            showToast(
+               'info',
+               'Tahap ini belum dapat diakses.'
+            );
+
+            return;
+
+         }
 
 
-         const statusClass =
-            data.color === 'green' ?
-            'bg-soft-green text-green' :
-            'bg-soft-primary text-primary';
+         const stageContent =
+            document.getElementById(
+               'stageContent'
+            );
+
+
+         const data =
+            PMB_STAGES[stage];
+
+
+         const isCurrent =
+            stage === PMB_ACTIVE_STAGE;
+
+
+         const isPreview =
+            stage < PMB_ACTIVE_STAGE;
 
 
          stageContent.innerHTML = `
@@ -1656,29 +1552,36 @@
 
                      <div class="d-flex align-items-start mb-6">
 
-                        <div class="pmb-current-icon ${colorClass} me-4">
+                        <div class="pmb-current-icon bg-soft-primary text-primary me-4">
 
                            <i class="uil ${data.icon} fs-28"></i>
 
                         </div>
 
+
                         <div>
 
                            <span class="text-uppercase text-primary fs-13 fw-bold">
 
-                              TAHAP ${String(stage).padStart(2,'0')}
+                              TAHAP ${String(stage).padStart(2, '0')}
 
                            </span>
 
+
                            <h3 class="mt-1 mb-2">
 
-                              ${data.title}
+                              ${data.name}
 
                            </h3>
 
+
                            <p class="text-muted mb-0">
 
-                              ${data.description}
+                              ${
+                                 isCurrent
+                                 ? 'Tahap ini sedang aktif dan perlu Anda selesaikan.'
+                                 : 'Anda dapat melihat kembali informasi pada tahap yang telah dilewati.'
+                              }
 
                            </p>
 
@@ -1687,43 +1590,30 @@
                      </div>
 
 
-                     <div class="alert alert-primary alert-icon mb-5">
+                     <div class="
+                        alert
+                        ${isCurrent ? 'alert-primary' : 'alert-success'}
+                        alert-icon
+                        mb-5
+                     ">
 
-                        <i class="uil uil-eye"></i>
+                        <i class="
+                           uil
+                           ${isCurrent
+                              ? 'uil-info-circle'
+                              : 'uil-check-circle'}
+                        "></i>
+
 
                         <p class="mb-0">
 
-                           Anda sedang melihat preview tahap
-                           yang telah dilalui.
+                           ${
+                              isCurrent
+                              ? 'Tahap ini sedang aktif.'
+                              : 'Tahap ini telah selesai dan dapat Anda preview kembali.'
+                           }
 
                         </p>
-
-                     </div>
-
-
-                     <div class="pmb-preview-row">
-
-                        <div class="pmb-preview-icon ${colorClass}">
-
-                           <i class="uil uil-check-circle"></i>
-
-                        </div>
-
-                        <div>
-
-                           <div class="pmb-preview-label">
-
-                              Status
-
-                           </div>
-
-                           <div class="pmb-preview-value">
-
-                              ${data.status}
-
-                           </div>
-
-                        </div>
 
                      </div>
 
@@ -1736,6 +1626,7 @@
 
                         </div>
 
+
                         <div>
 
                            <div class="pmb-preview-label">
@@ -1744,9 +1635,39 @@
 
                            </div>
 
+
                            <div class="pmb-preview-value">
 
-                              Jaka Prayudha
+                              <?= htmlspecialchars($pmbUser['fullname']) ?>
+
+                           </div>
+
+                        </div>
+
+                     </div>
+
+
+                     <div class="pmb-preview-row">
+
+                        <div class="pmb-preview-icon bg-soft-primary text-primary">
+
+                           <i class="uil uil-envelope"></i>
+
+                        </div>
+
+
+                        <div>
+
+                           <div class="pmb-preview-label">
+
+                              Email
+
+                           </div>
+
+
+                           <div class="pmb-preview-value">
+
+                              <?= htmlspecialchars($pmbUser['email_register']) ?>
 
                            </div>
 
@@ -1758,10 +1679,18 @@
                      <div class="d-flex justify-content-end mt-5">
 
                         <a
-                           href="${data.action}"
-                           class="btn btn-outline-primary rounded btn-icon btn-icon-end">
+                           href="./${data.page}"
+                           class="btn ${
+                              isCurrent
+                              ? 'btn-primary'
+                              : 'btn-outline-primary'
+                           } rounded btn-icon btn-icon-end">
 
-                           Buka Detail
+                           ${
+                              isCurrent
+                              ? 'Lanjutkan'
+                              : 'Preview'
+                           }
 
                            <i class="uil uil-arrow-right"></i>
 
@@ -1784,21 +1713,25 @@
 
                      <span class="text-uppercase text-muted fs-13 fw-bold">
 
-                        Preview Tahap
+                        Status Tahap
 
                      </span>
 
+
                      <h4 class="mt-2 mb-4">
 
-                        Tahap ${String(stage).padStart(2,'0')}
+                        Tahap ${String(stage).padStart(2, '0')}
 
                      </h4>
 
+
                      <p class="text-muted fs-14 mb-0">
 
-                        Tahapan ini sudah dilewati.
-                        Anda tetap dapat membuka kembali detail
-                        untuk melihat informasi sebelumnya.
+                        ${
+                           isCurrent
+                           ? 'Tahap ini sedang aktif. Selesaikan proses untuk membuka tahap berikutnya.'
+                           : 'Tahap ini telah dilewati. Anda masih dapat melihat kembali informasinya.'
+                        }
 
                      </p>
 
@@ -1811,6 +1744,94 @@
          </div>
 
       `;
+      }
+   </script>
+   <script>
+      document.querySelectorAll('.pmb-stage-tab.locked')
+         .forEach(function(tab) {
+
+            tab.addEventListener('click', function() {
+
+               showToast(
+                  'info',
+                  'Tahap ini belum dapat diakses.'
+               );
+
+            });
+
+         });
+
+
+      function showToast(type, message) {
+
+         /*
+          * Gunakan fungsi toast yang sama
+          * dengan login-pmb.js.
+          *
+          * Kalau toast global belum tersedia,
+          * kita buat sederhana.
+          */
+
+         let container =
+            document.getElementById(
+               'pmbToastContainer'
+            );
+
+
+         if (!container) {
+
+            container =
+               document.createElement('div');
+
+            container.id =
+               'pmbToastContainer';
+
+            container.style.position =
+               'fixed';
+
+            container.style.top =
+               '25px';
+
+            container.style.right =
+               '25px';
+
+            container.style.zIndex =
+               '999999';
+
+            document.body.appendChild(
+               container
+            );
+
+         }
+
+
+         const toast =
+            document.createElement('div');
+
+
+         toast.className =
+            'alert alert-info shadow-sm';
+
+
+         toast.innerHTML = `
+
+         <i class="uil uil-info-circle me-2"></i>
+
+         ${message}
+
+      `;
+
+
+         container.appendChild(
+            toast
+         );
+
+
+         setTimeout(function() {
+
+            toast.remove();
+
+         }, 3000);
 
       }
    </script>
