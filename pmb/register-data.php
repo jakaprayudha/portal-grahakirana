@@ -1915,36 +1915,80 @@ $completion =
                        NEXT STEP
                   ================================================== -->
 
-                     <div class="card bg-soft-primary border-0">
+                     <?php if ((int)$pmbUser['tahap_aktif'] >= 2): ?>
 
-                        <div class="card-body p-5">
+                        <!-- =================================================
+        NEXT STAGE : KARTU PESERTA
+   ================================================== -->
 
-                           <div class="row align-items-center">
+                        <div class="card border-0 shadow-sm bg-soft-primary">
 
-                              <div class="col-lg">
+                           <div class="card-body p-5 p-md-6">
 
-                                 <div class="d-flex align-items-center">
+                              <div class="row align-items-center">
 
-                                    <div class="icon btn btn-circle btn-lg btn-primary me-4">
+                                 <!-- INFO -->
+                                 <div class="col-lg">
 
-                                       <i class="uil uil-ticket"></i>
+                                    <div class="d-flex align-items-start">
+
+                                       <div
+                                          class="icon btn btn-circle btn-lg btn-primary me-4 flex-shrink-0">
+
+                                          <i class="uil uil-ticket fs-22"></i>
+
+                                       </div>
+
+                                       <div>
+
+                                          <span
+                                             class="text-uppercase text-primary fs-13 fw-bold">
+
+                                             Tahap Berikutnya
+
+                                          </span>
+
+                                          <h4 class="mb-2 mt-1">
+
+                                             Kartu Peserta PMB
+
+                                          </h4>
+
+                                          <p class="mb-0 text-muted">
+
+                                             Data dan dokumen Anda telah lengkap.
+                                             Silakan lanjutkan untuk melihat dan mencetak
+                                             Kartu Peserta PMB.
+
+                                          </p>
+
+                                       </div>
 
                                     </div>
 
-                                    <div>
+                                 </div>
 
-                                       <span class="text-uppercase text-muted fs-13 fw-bold">
-                                          Tahap Berikutnya
-                                       </span>
 
-                                       <h4 class="mb-1">
-                                          Kartu Peserta PMB
-                                       </h4>
+                                 <!-- ACTION -->
+                                 <div class="col-lg-auto mt-5 mt-lg-0">
 
-                                       <p class="mb-0 text-muted">
-                                          Kartu peserta dapat dicetak setelah
-                                          seluruh data dan dokumen dinyatakan lengkap.
-                                       </p>
+                                    <a
+                                       href="pmb/register-card"
+                                       class="btn btn-primary rounded btn-icon btn-icon-end px-5 py-3">
+
+                                       Lanjutkan ke Kartu Peserta
+
+                                       <i class="uil uil-arrow-right"></i>
+
+                                    </a>
+
+                                    <div class="text-center mt-2">
+
+                                       <small class="text-muted">
+
+                                          Tahap 03
+
+                                       </small>
 
                                     </div>
 
@@ -1952,15 +1996,73 @@ $completion =
 
                               </div>
 
-                              <div class="col-lg-auto mt-4 mt-lg-0">
+                           </div>
 
-                                 <span class="badge bg-soft-primary text-primary rounded-pill px-4 py-2">
+                        </div>
 
-                                    Tahap 03
+                     <?php else: ?>
 
-                                    <i class="uil uil-arrow-right ms-1"></i>
+                        <!-- =================================================
+        NEXT STAGE : LOCKED
+   ================================================== -->
 
-                                 </span>
+                        <div class="card border-0 bg-soft-gray">
+
+                           <div class="card-body p-5">
+
+                              <div class="row align-items-center">
+
+                                 <div class="col-lg">
+
+                                    <div class="d-flex align-items-center">
+
+                                       <div
+                                          class="icon btn btn-circle btn-lg btn-gray me-4">
+
+                                          <i class="uil uil-lock-alt"></i>
+
+                                       </div>
+
+                                       <div>
+
+                                          <span
+                                             class="text-uppercase text-muted fs-13 fw-bold">
+
+                                             Tahap Berikutnya
+
+                                          </span>
+
+                                          <h4 class="mb-1">
+
+                                             Kartu Peserta PMB
+
+                                          </h4>
+
+                                          <p class="mb-0 text-muted">
+
+                                             Kartu peserta dapat diakses setelah
+                                             seluruh data dan dokumen dinyatakan lengkap.
+
+                                          </p>
+
+                                       </div>
+
+                                    </div>
+
+                                 </div>
+
+                                 <div class="col-lg-auto mt-4 mt-lg-0">
+
+                                    <span
+                                       class="badge bg-soft-gray text-muted rounded-pill px-4 py-2">
+
+                                       <i class="uil uil-lock-alt me-1"></i>
+
+                                       Menunggu Tahap 02
+
+                                    </span>
+
+                                 </div>
 
                               </div>
 
@@ -1968,8 +2070,7 @@ $completion =
 
                         </div>
 
-                     </div>
-
+                     <?php endif; ?>
 
                   </div>
 

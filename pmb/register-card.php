@@ -1,3 +1,183 @@
+<?php
+
+session_start();
+
+require_once '../config/connect.php';
+
+/**
+ * =========================================================
+ * AUTHENTICATION
+ * =========================================================
+ */
+
+if (
+   empty($_SESSION['pmb_logged_in']) ||
+   empty($_SESSION['pmb_user_id'])
+) {
+   header('Location: ./login-pmb.php');
+   exit;
+}
+
+$userId = (int) $_SESSION['pmb_user_id'];
+
+
+/**
+ * =========================================================
+ * AMBIL DATA PESERTA
+ * =========================================================
+ */
+
+$stmt = $pdo->prepare("
+    SELECT
+        id,
+        fullname,
+        gender,
+        agama,
+        place,
+        datebirth,
+        number_id,
+        phone_number,
+        email_register,
+        address_card,
+        provinsi,
+        kabupaten,
+        kecamatan,
+        kelurahan,
+
+        school_name,
+        school_npsn,
+        school_address,
+        number_nisn,
+        year_graduation,
+
+        name_father,
+        name_mother,
+
+        number_kk,
+        number_nik_kk,
+
+        register_uid,
+        register_type,
+
+        id_program,
+        id_provider,
+
+        file_ktp,
+        file_kk,
+        file_ijazah,
+        file_dokumen,
+
+        tahap_aktif,
+        status_pendaftaran,
+        account_status,
+
+        created_at
+
+    FROM register_pmb
+
+    WHERE id = :id
+
+    LIMIT 1
+");
+
+$stmt->execute([
+   'id' => $userId
+]);
+
+$pmbUser = $stmt->fetch(PDO::FETCH_ASSOC);
+
+
+if (!$pmbUser) {
+
+   session_destroy();
+
+   header('Location: ./login-pmb.php');
+   exit;
+}
+
+
+/**
+ * =========================================================
+ * GUARD TAHAP 03
+ * =========================================================
+ */
+
+if ((int) $pmbUser['tahap_aktif'] < 2) {
+
+   header('Location: ./welcome.php');
+   exit;
+}
+
+
+/**
+ * =========================================================
+ * DATA DISPLAY
+ * =========================================================
+ */
+
+$namaPeserta =
+   $pmbUser['fullname'] ?: '-';
+
+$emailPeserta =
+   $pmbUser['email_register'] ?: '-';
+
+$idPendaftaran =
+   $pmbUser['register_uid'] ?: '-';
+
+$jalur =
+   $pmbUser['register_type'] ?: '-';
+
+
+/**
+ * Tahun PMB
+ *
+ * Bisa nanti dipindahkan ke tabel setting.
+ */
+
+$tahunPmb = '2026/2027';
+
+
+/**
+ * =========================================================
+ * FOTO PESERTA
+ * =========================================================
+ *
+ * file_dokumen saat ini kita gunakan sebagai pasfoto.
+ */
+
+$fotoPeserta = null;
+
+if (!empty($pmbUser['file_dokumen'])) {
+
+   $fotoPath =
+      '../uploads/pmb/' . $pmbUser['file_dokumen'];
+
+   if (is_file($fotoPath)) {
+
+      $fotoPeserta =
+         'uploads/pmb/' . rawurlencode(
+            $pmbUser['file_dokumen']
+         );
+   }
+}
+
+
+/**
+ * =========================================================
+ * QR DATA
+ * =========================================================
+ *
+ * Jangan gunakan ID database sebagai QR utama.
+ * Gunakan register_uid karena itu identifier peserta.
+ */
+
+$qrData =
+   $idPendaftaran;
+
+$page = 'Kartu Peserta PMB';
+
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -420,13 +600,19 @@
                               <span class="text-uppercase text-muted fs-13 fw-bold">
                                  Status Pendaftaran
                               </span>
-
                               <h4 class="mb-1">
-                                 Data & Dokumen Lengkap
+
+                                 <?= htmlspecialchars(
+                                    $pmbUser['status_pendaftaran'] ?: 'DATA_DOKUMEN'
+                                 ) ?>
+
                               </h4>
 
                               <p class="text-muted mb-0 fs-14">
-                                 Kartu peserta sudah dapat diterbitkan.
+
+                                 Kartu peserta telah tersedia
+                                 untuk proses PMB.
+
                               </p>
 
                            </div>
@@ -442,7 +628,7 @@
 
                            <i class="uil uil-check me-1"></i>
 
-                           LENGKAP
+                           DATA LENGKAP
 
                         </span>
 
@@ -485,7 +671,7 @@
                                  <div class="participant-logo">
 
                                     <img
-                                       src="./assets/img/logo.png"
+                                       src="./assets/img/logo-stih.png"
                                        alt="Logo STIH Graha Kirana"
                                        class="img-fluid">
 
@@ -546,20 +732,22 @@
 
                         <div class="col-md-3 text-center mb-5 mb-md-0">
 
-                           <div class="participant-photo-placeholder mx-auto">
+                           <?php if ($fotoPeserta): ?>
 
-                              <i class="uil uil-user text-muted fs-50"></i>
+                              <img
+                                 src="<?= htmlspecialchars($fotoPeserta) ?>"
+                                 class="participant-photo mx-auto d-block"
+                                 alt="Foto <?= htmlspecialchars($namaPeserta) ?>">
 
-                           </div>
+                           <?php else: ?>
 
-                           <!--
-                           Jika foto sudah tersedia:
+                              <div class="participant-photo-placeholder mx-auto">
 
-                           <img
-                              src="uploads/pmb/foto.jpg"
-                              class="participant-photo"
-                              alt="Foto Peserta">
-                           -->
+                                 <i class="uil uil-user text-muted fs-50"></i>
+
+                              </div>
+
+                           <?php endif; ?>
 
                         </div>
 
@@ -571,14 +759,15 @@
 
                            <span class="participant-id mb-3">
 
-                              ID: 99-26-69-74-01-001
+                              ID:
+
+                              <?= htmlspecialchars($idPendaftaran) ?>
 
                            </span>
 
-
                            <h3 class="participant-name mt-4">
 
-                              Jaka Prayudha
+                              <?= htmlspecialchars($namaPeserta) ?>
 
                            </h3>
 
@@ -590,7 +779,9 @@
                               </div>
 
                               <div class="participant-info-value">
-                                 Reguler
+
+                                 <?= htmlspecialchars($jalur) ?>
+
                               </div>
 
                            </div>
@@ -603,7 +794,12 @@
                               </div>
 
                               <div class="participant-info-value">
-                                 Ilmu Hukum
+
+                                 <?= !empty($pmbUser['id_program'])
+                                    ? 'Program Studi #' . (int)$pmbUser['id_program']
+                                    : '-'
+                                 ?>
+
                               </div>
 
                            </div>
@@ -616,7 +812,9 @@
                               </div>
 
                               <div class="participant-info-value">
-                                 2026/2027
+
+                                 <?= htmlspecialchars($tahunPmb) ?>
+
                               </div>
 
                            </div>
@@ -656,7 +854,7 @@
                                  -->
 
                                  <img
-                                    src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=99-26-69-74-01-001"
+                                    src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=<?= urlencode($qrData) ?>"
                                     class="img-fluid"
                                     alt="QR Code Peserta">
 
@@ -703,15 +901,17 @@
 
                         <div class="col-lg-auto mt-4 mt-lg-0">
 
-                           <button
-                              type="button"
+                           <a
+                              href="./pmb/print/print-kartu-peserta"
+                              target="_blank"
+                              rel="noopener"
                               class="btn btn-primary rounded btn-icon btn-icon-end">
 
                               Cetak Kartu
 
                               <i class="uil uil-print"></i>
 
-                           </button>
+                           </a>
 
                         </div>
 
