@@ -1,76 +1,277 @@
-  <div class="container pb-13 pb-md-15"">
-        <div class=" row gy-6 gy-lg-0">
-     <div class="col-md-4 col-lg-3">
-        <div class="widget">
-           <img src="./assets/img/logo-stih.png"
-              srcset="./assets/img/logo-stih@10x.png 10x"
-              alt="Logo STIH Graha Kirana"
-              class="mb-4"
-              style="width: 150px; height: auto;">
-           <p class="mb-4">© 2025 Graha Kirana. <br class="d-none d-lg-block" />All rights reserved.</p>
-           <nav class="nav social ">
-              <a href="#"><i class="uil uil-twitter"></i></a>
-              <a href="#"><i class="uil uil-facebook-f"></i></a>
-              <a href="#"><i class="uil uil-instagram"></i></a>
-              <a href="#"><i class="uil uil-youtube"></i></a>
-           </nav>
-           <!-- /.social -->
-        </div>
-        <!-- /.widget -->
-     </div>
-     <!-- /column -->
-     <div class="col-md-4 col-lg-3">
-        <div class="widget">
-           <h4 class="widget-title  mb-3">Alamat Kampus</h4>
-           <address class="pe-xl-15 pe-xxl-17">Kampus Ringroad - JL. Tasbih 2, Medan</address>
-           <address class="pe-xl-15 pe-xxl-17">Kampus Petisah - Jl. Kirana No.20-22, Medan</address>
-           <a href="mailto:#" class="link-body">info@grahakirana-stih.ac.id</a><br /> 62 2976 2969
-        </div>
-        <!-- /.widget -->
-     </div>
-     <!-- /column -->
-     <div class="col-md-4 col-lg-3">
-        <div class="widget">
-           <h4 class="widget-title  mb-3">Learn More</h4>
-           <ul class="list-unstyled text-reset mb-0">
-              <li><a href="#">Tentang</a></li>
-              <li><a href="#">Akademik</a></li>
-              <li><a href="#">Pendaftaran Mahasiswa Baru</a></li>
-              <li><a href="#">Riset & Pengabdian</a></li>
-              <li><a href="#">Lembaga Penjamin Mutu</a></li>
-           </ul>
-        </div>
-        <!-- /.widget -->
-     </div>
-     <!-- /column -->
-     <div class="col-md-12 col-lg-3">
-        <div class="widget">
-           <h4 class="widget-title  mb-3">Informasi Kampus</h4>
-           <p class="mb-5">Daftarkan email Anda untuk mendapatkan informasi terbaru</p>
-           <div class="newsletter-wrapper">
-              <!-- Begin Mailchimp Signup Form -->
-              <div id="mc_embed_signup2">
-                 <form action="https://elemisfreebies.us20.list-manage.com/subscribe/post?u=aa4947f70a475ce162057838d&amp;id=b49ef47a9a" method="post" id="mc-embedded-subscribe-form2" name="mc-embedded-subscribe-form" class="validate " target="_blank" novalidate>
-                    <div id="mc_embed_signup_scroll2">
-                       <div class="mc-field-group input-group form-floating">
-                          <input type="email" value="" name="EMAIL" class="required email form-control" placeholder="Email Address" id="mce-EMAIL2">
-                          <label for="mce-EMAIL2">Email Address</label>
-                          <input type="submit" value="Join" name="subscribe" id="mc-embedded-subscribe2" class="btn btn-primary btn-gradient gradient-1">
-                       </div>
-                       <div id="mce-responses2" class="clear">
-                          <div class="response" id="mce-error-response2" style="display:none"></div>
-                          <div class="response" id="mce-success-response2" style="display:none"></div>
-                       </div> <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
-                       <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_ddc180777a163e0f9f66ee014_4b1bcfa0bc" tabindex="-1" value=""></div>
-                       <div class="clear"></div>
-                    </div>
-                 </form>
-              </div>
-              <!--End mc_embed_signup-->
-           </div>
-           <!-- /.newsletter-wrapper -->
-        </div>
-        <!-- /.widget -->
-     </div>
-     <!-- /column -->
-  </div>
+<footer class="bg-dark text-inverse">
+
+   <div class="container pt-10 pt-md-12 pb-13 pb-md-15">
+
+      <div class="row gy-6 gy-lg-0">
+
+
+         <!-- =====================================================
+              BRAND
+         ====================================================== -->
+
+         <div class="col-md-6 col-lg-3">
+
+            <div class="widget">
+
+               <img
+                  src="./assets/img/logo-stih.png"
+                  srcset="./assets/img/logo-stih@10x.png 10x"
+                  alt="Logo STIH Graha Kirana"
+                  class="mb-4"
+                  style="width: 150px; height: auto;">
+
+               <p class="mb-4 text-white">
+
+                  Portal Penerimaan Mahasiswa Baru
+                  STIH Graha Kirana.
+
+               </p>
+
+               <p class="mb-4 text-white-50">
+
+                  © 2025 Graha Kirana.<br>
+                  All rights reserved.
+
+               </p>
+
+
+               <nav class="nav social">
+
+                  <a href="#" aria-label="Twitter">
+                     <i class="uil uil-twitter"></i>
+                  </a>
+
+                  <a href="#" aria-label="Facebook">
+                     <i class="uil uil-facebook-f"></i>
+                  </a>
+
+                  <a href="#" aria-label="Instagram">
+                     <i class="uil uil-instagram"></i>
+                  </a>
+
+                  <a href="#" aria-label="YouTube">
+                     <i class="uil uil-youtube"></i>
+                  </a>
+
+               </nav>
+
+               <!-- /.social -->
+
+            </div>
+
+            <!-- /.widget -->
+
+         </div>
+
+         <!-- /column -->
+
+
+         <!-- =====================================================
+              KONTAK PMB
+         ====================================================== -->
+
+         <div class="col-md-6 col-lg-3">
+
+            <div class="widget">
+
+               <h4 class="widget-title text-white mb-3">
+                  Informasi PMB
+               </h4>
+
+               <p class="text-white-50 mb-4">
+
+                  Pusat informasi dan layanan
+                  Penerimaan Mahasiswa Baru.
+
+               </p>
+
+
+               <address class="text-white-50 pe-xl-5">
+
+                  Kampus Ringroad<br>
+                  JL. Tasbih 2, Medan
+
+               </address>
+
+
+               <address class="text-white-50 pe-xl-5">
+
+                  Kampus Petisah<br>
+                  Jl. Kirana No.20-22, Medan
+
+               </address>
+
+
+               <a
+                  href="mailto:info@grahakirana-stih.ac.id"
+                  class="link-white">
+
+                  info@grahakirana-stih.ac.id
+
+               </a>
+
+               <br>
+
+               <a
+                  href="tel:+626229762969"
+                  class="link-white">
+
+                  +62 622 976 2969
+
+               </a>
+
+            </div>
+
+            <!-- /.widget -->
+
+         </div>
+
+         <!-- /column -->
+
+
+         <!-- =====================================================
+              MENU PMB
+         ====================================================== -->
+
+         <div class="col-md-6 col-lg-3">
+
+            <div class="widget">
+
+               <h4 class="widget-title text-white mb-3">
+                  Menu PMB
+               </h4>
+
+               <ul class="list-unstyled mb-0">
+
+                  <li>
+                     <a href="./pages/jalur-pendaftaran.html">
+                        Jalur Pendaftaran
+                     </a>
+                  </li>
+
+                  <li>
+                     <a href="./pages/login.html">
+                        Login PMB
+                     </a>
+                  </li>
+
+                  <li>
+                     <a href="./pages/data-dokumen.html">
+                        Data & Dokumen
+                     </a>
+                  </li>
+
+                  <li>
+                     <a href="./pages/kartu-peserta.html">
+                        Kartu Peserta
+                     </a>
+                  </li>
+
+                  <li>
+                     <a href="./pages/jadwal-seleksi.html">
+                        Jadwal Seleksi
+                     </a>
+                  </li>
+
+                  <li>
+                     <a href="./pages/hasil-seleksi.html">
+                        Hasil Seleksi
+                     </a>
+                  </li>
+
+                  <li>
+                     <a href="./pages/daftar-ulang.html">
+                        Daftar Ulang
+                     </a>
+                  </li>
+
+               </ul>
+
+            </div>
+
+            <!-- /.widget -->
+
+         </div>
+
+         <!-- /column -->
+
+
+         <!-- =====================================================
+              BANTUAN PMB
+         ====================================================== -->
+
+         <div class="col-md-6 col-lg-3">
+
+            <div class="widget">
+
+               <h4 class="widget-title text-white mb-3">
+                  Butuh Bantuan?
+               </h4>
+
+               <p class="text-white-50 mb-5">
+
+                  Punya pertanyaan mengenai pendaftaran,
+                  seleksi, atau daftar ulang?
+
+               </p>
+
+
+               <div class="newsletter-wrapper">
+
+
+                  <div class="d-flex align-items-start mb-4">
+
+                     <div class="icon btn btn-circle btn-sm btn-primary me-3">
+
+                        <i class="uil uil-headphones"></i>
+
+                     </div>
+
+                     <div>
+
+                        <span class="d-block text-white fw-bold">
+                           Helpdesk PMB
+                        </span>
+
+                        <span class="text-white-50 fs-14">
+                           Senin – Jumat
+                        </span>
+
+                     </div>
+
+                  </div>
+
+
+                  <a
+                     href="#"
+                     class="btn btn-primary rounded">
+
+                     Hubungi Panitia
+
+                     <i class="uil uil-arrow-right ms-1"></i>
+
+                  </a>
+
+
+               </div>
+
+               <!-- /.newsletter-wrapper -->
+
+            </div>
+
+            <!-- /.widget -->
+
+         </div>
+
+         <!-- /column -->
+
+
+      </div>
+
+      <!-- /.row -->
+
+   </div>
+
+   <!-- /.container -->
+
+</footer>
