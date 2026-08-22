@@ -483,9 +483,10 @@
                         ================================================== -->
 
                         <form
-                           action="#"
+                           action="../controllers/register-pmb.php"
                            method="POST"
-                           id="formRegistrasiPMB">
+                           id="formRegistrasiPMB"
+                           novalidate>
 
 
                            <!-- =================================================
@@ -963,6 +964,7 @@
 
       }
    </script>
+   <script src="assets/js/register-pmb.js"></script>
 
 </body>
 
