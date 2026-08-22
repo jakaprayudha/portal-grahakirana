@@ -225,7 +225,7 @@
 
                            Silakan masuk ke Portal PMB menggunakan
                            <strong class="text-white">
-                              ID Pendaftaran
+                              Email
                            </strong>
                            dan password yang telah Anda buat saat melakukan
                            registrasi akun.
@@ -254,7 +254,7 @@
                               <div>
 
                                  <h5 class="text-white mb-1">
-                                    ID Pendaftaran
+                                    Email Pendaftaran
                                  </h5>
 
                                  <p class="text-white opacity-75 mb-0">
@@ -381,55 +381,36 @@
                         ================================================== -->
 
                         <form
-                           action="#"
+                           action="controllers/login-pmb.php"
                            method="POST"
-                           id="formLoginPMB">
-
+                           id="formLoginPMB"
+                           novalidate>
 
                            <!-- =================================================
-                                ID PENDAFTARAN
-                           ================================================== -->
+         EMAIL
+    ================================================== -->
 
                            <div class="form-floating mb-4">
 
                               <input
-                                 type="text"
-                                 name="id_pendaftaran"
-                                 id="id_pendaftaran"
+                                 type="email"
+                                 name="email"
+                                 id="email"
                                  class="form-control pmb-login-input"
-                                 placeholder="ID Pendaftaran"
+                                 placeholder="Email"
                                  autocomplete="username"
                                  required>
 
-                              <label for="id_pendaftaran">
-
-                                 ID Pendaftaran
-
+                              <label for="email">
+                                 Email
                               </label>
 
                            </div>
 
 
-                           <!-- Example -->
-
-                           <div class="mb-4">
-
-                              <small class="text-muted">
-
-                                 Contoh ID Pendaftaran:
-
-                                 <strong>
-                                    99-26-69-74-01-001
-                                 </strong>
-
-                              </small>
-
-                           </div>
-
-
                            <!-- =================================================
-                                PASSWORD
-                           ================================================== -->
+         PASSWORD
+    ================================================== -->
 
                            <div class="form-floating mb-3">
 
@@ -443,17 +424,15 @@
                                  required>
 
                               <label for="password">
-
                                  Password
-
                               </label>
 
                            </div>
 
 
                            <!-- =================================================
-                                SHOW PASSWORD
-                           ================================================== -->
+         SHOW PASSWORD
+    ================================================== -->
 
                            <div class="d-flex justify-content-between align-items-center mb-5">
 
@@ -487,8 +466,8 @@
 
 
                            <!-- =================================================
-                                LOGIN BUTTON
-                           ================================================== -->
+         LOGIN BUTTON
+    ================================================== -->
 
                            <button
                               type="submit"
@@ -500,9 +479,7 @@
 
                            </button>
 
-
                         </form>
-
                         <!-- =================================================
                              REGISTER BUTTON
                         ================================================== -->
@@ -620,6 +597,7 @@
 
       }
    </script>
+   <script src="assets/js/login-pmb.js"></script>
 
 </body>
 
