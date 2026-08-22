@@ -154,7 +154,7 @@ document.addEventListener("DOMContentLoaded", function () {
         showPMBToast("info", result.message || "Sesi login telah berakhir.");
 
         setTimeout(function () {
-          window.location.href = "login-pmb.php";
+          window.location.href = "login-pmb";
         }, 1500);
 
         return;

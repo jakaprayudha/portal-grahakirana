@@ -62,7 +62,7 @@ if (
       false,
       'Sesi login telah berakhir. Silakan login kembali.',
       [
-         'redirect' => '../login-pmb.php'
+         'redirect' => '../login-pmb'
       ],
       401
    );

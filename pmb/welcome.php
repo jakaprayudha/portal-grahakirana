@@ -13,7 +13,7 @@ if (
    empty($_SESSION['pmb_user_id'])
 ) {
 
-   header('Location: login-pmb.php');
+   header('Location: login-pmb');
    exit;
 }
 
@@ -67,7 +67,7 @@ try {
       session_unset();
       session_destroy();
 
-      header('Location: login-pmb.php');
+      header('Location: login-pmb');
       exit;
    }
 
@@ -81,7 +81,7 @@ try {
       session_unset();
       session_destroy();
 
-      header('Location: login-pmb.php?status=blocked');
+      header('Location: login-pmb?status=blocked');
       exit;
    }
 
@@ -209,6 +209,113 @@ $completedStages =
 
 $currentStage =
    $pmbStages[$tahapAktif];
+
+?>
+<?php
+
+$tahapAktif = (int) ($pmbUser['tahap_aktif'] ?? 1);
+
+$statusPendaftaran =
+   $pmbUser['status_pendaftaran'] ?? 'REGISTRASI';
+
+
+// =========================================================
+// STATUS KELULUSAN
+// =========================================================
+
+if ($statusPendaftaran === 'LULUS') {
+
+   $statusKelulusan = 'LULUS';
+
+   $statusKelulusanClass = 'text-green';
+
+   $statusKelulusanBg = 'bg-soft-green';
+
+   $statusKelulusanIcon = 'uil-check-circle';
+} elseif ($statusPendaftaran === 'TIDAK_LULUS') {
+
+   $statusKelulusan = 'TIDAK LULUS';
+
+   $statusKelulusanClass = 'text-red';
+
+   $statusKelulusanBg = 'bg-soft-red';
+
+   $statusKelulusanIcon = 'uil-times-circle';
+} elseif ($tahapAktif >= 5) {
+
+   $statusKelulusan = 'Menunggu Hasil';
+
+   $statusKelulusanClass = 'text-yellow';
+
+   $statusKelulusanBg = 'bg-soft-yellow';
+
+   $statusKelulusanIcon = 'uil-clock';
+} else {
+
+   $statusKelulusan = 'Belum Seleksi';
+
+   $statusKelulusanClass = 'text-muted';
+
+   $statusKelulusanBg = 'bg-soft-gray';
+
+   $statusKelulusanIcon = 'uil-minus-circle';
+}
+
+
+// =========================================================
+// PROGRAM STUDI
+// =========================================================
+
+$programStudi = '-';
+
+if (!empty($pmbUser['id_program'])) {
+
+   /*
+    * Sementara karena tabel program studi belum
+    * kita hubungkan di controller.
+    *
+    * Nanti ganti dengan nama program studi
+    * dari tabel program.
+    */
+
+   $programStudi =
+      'Program Studi #' .
+      (int) $pmbUser['id_program'];
+}
+
+
+// =========================================================
+// STATUS DAFTAR ULANG
+// =========================================================
+
+if ($statusPendaftaran === 'MAHASISWA') {
+
+   $statusDaftarUlang = 'Selesai';
+
+   $statusDaftarUlangClass = 'text-green';
+
+   $statusDaftarUlangBg = 'bg-soft-green';
+
+   $statusDaftarUlangIcon = 'uil-check-circle';
+} elseif ($statusPendaftaran === 'DAFTAR_ULANG') {
+
+   $statusDaftarUlang = 'Belum Diajukan';
+
+   $statusDaftarUlangClass = 'text-yellow';
+
+   $statusDaftarUlangBg = 'bg-soft-yellow';
+
+   $statusDaftarUlangIcon = 'uil-clock';
+} else {
+
+   $statusDaftarUlang = 'Belum Dibuka';
+
+   $statusDaftarUlangClass = 'text-muted';
+
+   $statusDaftarUlangBg = 'bg-soft-gray';
+
+   $statusDaftarUlangIcon = 'uil-lock';
+}
 
 ?>
 <!DOCTYPE html>
@@ -1047,14 +1154,18 @@ $currentStage =
 
                            </div>
 
-
-                           <!-- Preview -->
+                           <!-- =================================================
+     PREVIEW : STATUS KELULUSAN
+================================================== -->
 
                            <div class="pmb-preview-row">
 
-                              <div class="pmb-preview-icon bg-soft-green text-green">
+                              <div
+                                 class="pmb-preview-icon
+      <?= $statusKelulusanBg ?>
+      <?= $statusKelulusanClass ?>">
 
-                                 <i class="uil uil-check-circle"></i>
+                                 <i class="uil <?= $statusKelulusanIcon ?>"></i>
 
                               </div>
 
@@ -1066,9 +1177,13 @@ $currentStage =
 
                                  </div>
 
-                                 <div class="pmb-preview-value text-green">
+                                 <div
+                                    class="pmb-preview-value
+         <?= $statusKelulusanClass ?>">
 
-                                    LULUS
+                                    <?= htmlspecialchars(
+                                       $statusKelulusan
+                                    ) ?>
 
                                  </div>
 
@@ -1077,9 +1192,16 @@ $currentStage =
                            </div>
 
 
+                           <!-- =================================================
+     PREVIEW : PROGRAM STUDI
+================================================== -->
+
                            <div class="pmb-preview-row">
 
-                              <div class="pmb-preview-icon bg-soft-primary text-primary">
+                              <div
+                                 class="pmb-preview-icon
+      bg-soft-primary
+      text-primary">
 
                                  <i class="uil uil-graduation-cap"></i>
 
@@ -1095,7 +1217,9 @@ $currentStage =
 
                                  <div class="pmb-preview-value">
 
-                                    Ilmu Hukum
+                                    <?= htmlspecialchars(
+                                       $programStudi
+                                    ) ?>
 
                                  </div>
 
@@ -1104,11 +1228,18 @@ $currentStage =
                            </div>
 
 
+                           <!-- =================================================
+     PREVIEW : DAFTAR ULANG
+================================================== -->
+
                            <div class="pmb-preview-row">
 
-                              <div class="pmb-preview-icon bg-soft-yellow text-yellow">
+                              <div
+                                 class="pmb-preview-icon
+      <?= $statusDaftarUlangBg ?>
+      <?= $statusDaftarUlangClass ?>">
 
-                                 <i class="uil uil-clock"></i>
+                                 <i class="uil <?= $statusDaftarUlangIcon ?>"></i>
 
                               </div>
 
@@ -1120,16 +1251,19 @@ $currentStage =
 
                                  </div>
 
-                                 <div class="pmb-preview-value">
+                                 <div
+                                    class="pmb-preview-value
+         <?= $statusDaftarUlangClass ?>">
 
-                                    Belum Diajukan
+                                    <?= htmlspecialchars(
+                                       $statusDaftarUlang
+                                    ) ?>
 
                                  </div>
 
                               </div>
 
                            </div>
-
 
                            <div class="d-flex justify-content-end mt-5">
 

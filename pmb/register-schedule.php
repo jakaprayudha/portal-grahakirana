@@ -14,7 +14,7 @@ if (
    empty($_SESSION['pmb_logged_in']) ||
    empty($_SESSION['pmb_user_id'])
 ) {
-   header('Location: ./login-pmb.php');
+   header('Location: ./login-pmb');
    exit;
 }
 
@@ -91,7 +91,7 @@ if (!$pmbUser) {
 
    session_destroy();
 
-   header('Location: ./login-pmb.php');
+   header('Location: ./login-pmb');
    exit;
 }
 
@@ -1411,59 +1411,107 @@ $page = 'Kartu Peserta PMB';
 
 
             <!-- =================================================
-                 NEXT STEP
-            ================================================== -->
+     NEXT STEP : TAHAP 05
+================================================== -->
 
             <div class="row mt-8">
 
                <div class="col-lg-10 mx-auto">
 
-                  <div class="card bg-soft-primary border-0">
+                  <a
+                     href="./pmb/register-test"
+                     class="text-decoration-none d-block">
 
-                     <div class="card-body p-5">
+                     <div
+                        class="card bg-soft-primary border-0 shadow-sm h-100 pmb-next-stage-card">
 
-                        <div class="row align-items-center">
+                        <div class="card-body p-5">
 
-                           <div class="col-lg">
+                           <div class="row align-items-center">
 
-                              <div class="d-flex align-items-center">
 
-                                 <div class="icon btn btn-circle btn-lg btn-primary me-4">
+                              <!-- =========================================
+                       INFO
+                  ========================================== -->
 
-                                    <i class="uil uil-clipboard-alt"></i>
+                              <div class="col-lg">
 
-                                 </div>
+                                 <div class="d-flex align-items-start">
 
-                                 <div>
+                                    <div
+                                       class="icon btn btn-circle btn-lg btn-primary me-4 flex-shrink-0">
 
-                                    <span class="text-uppercase text-muted fs-13 fw-bold">
-                                       Tahap Berikutnya
-                                    </span>
+                                       <i class="uil uil-clipboard-alt"></i>
 
-                                    <h4 class="mb-1">
-                                       Pelaksanaan & Hasil Seleksi
-                                    </h4>
+                                    </div>
 
-                                    <p class="mb-0 text-muted">
-                                       Setelah seleksi selesai, hasil akan diproses
-                                       oleh tim seleksi dan diumumkan melalui Portal PMB.
-                                    </p>
+
+                                    <div>
+
+                                       <span
+                                          class="text-uppercase text-primary fs-13 fw-bold">
+
+                                          Tahap Berikutnya
+
+                                       </span>
+
+
+                                       <h4 class="mb-1 text-dark">
+
+                                          Pelaksanaan &amp; Hasil Seleksi
+
+                                       </h4>
+
+
+                                       <p class="mb-0 text-muted">
+
+                                          Setelah seleksi selesai, hasil akan diproses
+                                          oleh tim seleksi dan diumumkan melalui Portal PMB.
+
+                                       </p>
+
+                                    </div>
 
                                  </div>
 
                               </div>
 
-                           </div>
 
-                           <div class="col-lg-auto mt-4 mt-lg-0">
+                              <!-- =========================================
+                       ACTION
+                  ========================================== -->
 
-                              <span class="badge bg-soft-primary text-primary rounded-pill px-4 py-2">
+                              <div class="col-lg-auto mt-4 mt-lg-0">
 
-                                 Tahap 05
+                                 <div class="text-lg-end">
 
-                                 <i class="uil uil-arrow-right ms-1"></i>
+                                    <span
+                                       class="badge bg-soft-primary text-primary rounded-pill px-4 py-2 mb-2">
 
-                              </span>
+                                       Tahap 05
+
+                                       <i class="uil uil-arrow-right ms-1"></i>
+
+                                    </span>
+
+
+                                    <div>
+
+                                       <span
+                                          class="btn btn-primary btn-sm px-4">
+
+                                          Lihat Hasil Seleksi
+
+                                          <i class="uil uil-arrow-right ms-1"></i>
+
+                                       </span>
+
+                                    </div>
+
+                                 </div>
+
+                              </div>
+
 
                            </div>
 
@@ -1471,7 +1519,7 @@ $page = 'Kartu Peserta PMB';
 
                      </div>
 
-                  </div>
+                  </a>
 
                </div>
 

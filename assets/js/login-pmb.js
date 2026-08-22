@@ -93,7 +93,7 @@ document.addEventListener("DOMContentLoaded", function () {
      * =================================================
      */
 
-    const controllerUrl = "controllers/login-pmb.php";
+    const controllerUrl = "controllers/login-pmb";
 
     console.log("POST LOGIN:", controllerUrl);
 

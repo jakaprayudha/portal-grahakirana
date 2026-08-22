@@ -381,7 +381,7 @@
                         ================================================== -->
 
                         <form
-                           action="controllers/login-pmb.php"
+                           action="controllers/login-pmb"
                            method="POST"
                            id="formLoginPMB"
                            novalidate>

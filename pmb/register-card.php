@@ -14,7 +14,7 @@ if (
    empty($_SESSION['pmb_logged_in']) ||
    empty($_SESSION['pmb_user_id'])
 ) {
-   header('Location: ./login-pmb.php');
+   header('Location: ./login-pmb');
    exit;
 }
 
@@ -91,7 +91,7 @@ if (!$pmbUser) {
 
    session_destroy();
 
-   header('Location: ./login-pmb.php');
+   header('Location: ./login-pmb');
    exit;
 }
 
