@@ -4,6 +4,7 @@ session_start();
 
 require_once '../../config/connect.php';
 
+
 /**
  * =========================================================
  * AUTHENTICATION
@@ -14,9 +15,12 @@ if (
    empty($_SESSION['pmb_logged_in']) ||
    empty($_SESSION['pmb_user_id'])
 ) {
-   header('Location: ./login-pmb');
+
+   header('Location: ./login-pmb.php');
+
    exit;
 }
+
 
 $userId = (int) $_SESSION['pmb_user_id'];
 
@@ -57,7 +61,8 @@ if (!$pmbUser) {
 
    session_destroy();
 
-   header('Location: ./login-pmb');
+   header('Location: ./login-pmb.php');
+
    exit;
 }
 
@@ -71,6 +76,7 @@ if (!$pmbUser) {
 if ((int) $pmbUser['tahap_aktif'] < 2) {
 
    header('Location: ./welcome.php');
+
    exit;
 }
 
@@ -90,75 +96,222 @@ $idPendaftaran =
 $jalur =
    $pmbUser['register_type'] ?: '-';
 
-$tahunPmb =
-   '2026/2027';
+
+/**
+ * =========================================================
+ * TAHUN PMB
+ * =========================================================
+ */
+
+$tahunPmb = '2026/2027';
 
 
 /**
  * =========================================================
- * JADWAL STATIS
+ * AMBIL JADWAL SELEKSI DARI DATABASE
  * =========================================================
  *
- * Sementara mengikuti data pada halaman
- * register-schedule.php.
+ * Tabel:
+ * pmb_jadwal_seleksi
  *
- * Nanti bisa dipindahkan ke database.
+ * Data yang diambil:
+ * - nama_seleksi
+ * - kategori
+ * - tanggal
+ * - jam_mulai
+ * - jam_selesai
+ * - lokasi
+ * - ruangan
+ * - metode
+ * - keterangan
+ * - urutan
+ * - status
+ * - tahun_akademik
+ *
  * =========================================================
  */
 
-$jadwalSeleksi = [
+$stmtJadwal = $pdo->prepare("
 
-   [
-      'no' => 1,
+   SELECT
 
-      'jenis' => 'Tes Potensi Akademik',
+      id,
 
-      'kategori' => 'SELEKSI AKADEMIK',
+      nama_seleksi,
 
-      'tanggal' => 'Selasa, 15 September 2026',
+      kategori,
 
-      'hari' => 'Selasa',
+      tanggal,
 
-      'tanggal_short' => '15 September 2026',
+      jam_mulai,
 
-      'waktu' => '09.00 – 11.00 WIB',
+      jam_selesai,
 
-      'lokasi' => 'Kampus STIH Graha Kirana',
+      lokasi,
 
-      'ruangan' => 'Ruang Ujian 01',
+      ruangan,
 
-      'metode' => 'Offline',
+      metode,
 
-      'keterangan' =>
-      'Harap hadir 30 menit sebelum ujian.'
-   ],
+      keterangan,
 
-   [
-      'no' => 2,
+      urutan,
 
-      'jenis' => 'Wawancara',
+      status,
 
-      'kategori' => 'SELEKSI LANJUTAN',
+      tahun_akademik
 
-      'tanggal' => 'Rabu, 16 September 2026',
+   FROM pmb_jadwal_seleksi
 
-      'hari' => 'Rabu',
+   WHERE tahun_akademik = :tahun_akademik
 
-      'tanggal_short' => '16 September 2026',
+     AND status = 'TERJADWAL'
 
-      'waktu' => '13.00 – 15.00 WIB',
+   ORDER BY
+      urutan ASC,
+      tanggal ASC,
+      jam_mulai ASC
 
-      'lokasi' => 'Kampus STIH Graha Kirana',
+");
 
-      'ruangan' => 'Ruang Wawancara 02',
 
-      'metode' => 'Offline / Tatap Muka',
+$stmtJadwal->execute([
 
-      'keterangan' =>
-      'Siapkan dokumen pendukung.'
-   ]
+   'tahun_akademik' =>
+   $tahunPmb
 
-];
+]);
+
+
+$jadwalSeleksi =
+   $stmtJadwal->fetchAll(
+      PDO::FETCH_ASSOC
+   );
+
+
+/**
+ * =========================================================
+ * FORMAT HELPER
+ * =========================================================
+ */
+
+function tanggalIndonesia(
+   ?string $tanggal
+): string {
+
+   if (
+      empty($tanggal)
+   ) {
+
+      return '-';
+   }
+
+
+   $timestamp =
+      strtotime($tanggal);
+
+
+   if (!$timestamp) {
+
+      return '-';
+   }
+
+
+   $hariIndonesia = [
+
+      'Sunday'    => 'Minggu',
+      'Monday'    => 'Senin',
+      'Tuesday'   => 'Selasa',
+      'Wednesday' => 'Rabu',
+      'Thursday'  => 'Kamis',
+      'Friday'    => 'Jumat',
+      'Saturday'  => 'Sabtu'
+
+   ];
+
+
+   $bulanIndonesia = [
+
+      'January'   => 'Januari',
+      'February'  => 'Februari',
+      'March'     => 'Maret',
+      'April'     => 'April',
+      'May'       => 'Mei',
+      'June'      => 'Juni',
+      'July'      => 'Juli',
+      'August'    => 'Agustus',
+      'September' => 'September',
+      'October'   => 'Oktober',
+      'November'  => 'November',
+      'December'  => 'Desember'
+
+   ];
+
+
+   $hari =
+      $hariIndonesia[date('l', $timestamp)]
+      ?? date('l', $timestamp);
+
+
+   $bulan =
+      $bulanIndonesia[date('F', $timestamp)]
+      ?? date('F', $timestamp);
+
+
+   return
+      $hari .
+      ', ' .
+      date('d', $timestamp) .
+      ' ' .
+      $bulan .
+      ' ' .
+      date('Y', $timestamp);
+}
+
+
+/**
+ * =========================================================
+ * FORMAT JAM
+ * =========================================================
+ */
+
+function formatJam(
+   ?string $jam
+): string {
+
+   if (
+      empty($jam)
+   ) {
+
+      return '-';
+   }
+
+
+   $timestamp =
+      strtotime($jam);
+
+
+   if (!$timestamp) {
+
+      return '-';
+   }
+
+
+   return date(
+      'H.i',
+      $timestamp
+   );
+}
+
+
+/**
+ * =========================================================
+ * PAGE
+ * =========================================================
+ */
+
+$page =
+   'Cetak Jadwal Seleksi PMB';
 
 ?>
 <!DOCTYPE html>
@@ -174,8 +327,14 @@ $jadwalSeleksi = [
       content="width=device-width, initial-scale=1.0">
 
    <title>
+
       Jadwal Seleksi PMB -
-      <?= htmlspecialchars($namaPeserta) ?>
+      <?= htmlspecialchars(
+         $namaPeserta,
+         ENT_QUOTES,
+         'UTF-8'
+      ) ?>
+
    </title>
 
 
@@ -189,6 +348,7 @@ $jadwalSeleksi = [
       body {
 
          margin: 0;
+
          padding: 0;
 
          background: #e5e7eb;
@@ -203,11 +363,9 @@ $jadwalSeleksi = [
       }
 
 
-      /*
-        =====================================================
-        TOOLBAR
-        =====================================================
-        */
+      /* =====================================================
+         TOOLBAR
+      ===================================================== */
 
       .print-toolbar {
 
@@ -217,9 +375,39 @@ $jadwalSeleksi = [
 
          display: flex;
 
-         justify-content: flex-end;
+         justify-content: space-between;
+
+         align-items: center;
 
          gap: 10px;
+
+      }
+
+
+      .toolbar-back {
+
+         text-decoration: none;
+
+         padding: 10px 16px;
+
+         border-radius: 6px;
+
+         border: 1px solid #d4d9e0;
+
+         background: #fff;
+
+         color: #4d5560;
+
+         font-size: 13px;
+
+         font-weight: 600;
+
+      }
+
+
+      .toolbar-back:hover {
+
+         background: #f5f6f8;
 
       }
 
@@ -252,11 +440,9 @@ $jadwalSeleksi = [
       }
 
 
-      /*
-        =====================================================
-        A4 PAGE
-        =====================================================
-        */
+      /* =====================================================
+         A4
+      ===================================================== */
 
       .a4-page {
 
@@ -273,11 +459,9 @@ $jadwalSeleksi = [
       }
 
 
-      /*
-        =====================================================
-        DOCUMENT HEADER
-        =====================================================
-        */
+      /* =====================================================
+         HEADER
+      ===================================================== */
 
       .document-header {
 
@@ -374,11 +558,9 @@ $jadwalSeleksi = [
       }
 
 
-      /*
-        =====================================================
-        TITLE
-        =====================================================
-        */
+      /* =====================================================
+         TITLE
+      ===================================================== */
 
       .document-title {
 
@@ -413,11 +595,9 @@ $jadwalSeleksi = [
       }
 
 
-      /*
-        =====================================================
-        PARTICIPANT BOX
-        =====================================================
-        */
+      /* =====================================================
+         PARTICIPANT
+      ===================================================== */
 
       .participant-box {
 
@@ -479,11 +659,9 @@ $jadwalSeleksi = [
       }
 
 
-      /*
-        =====================================================
-        SCHEDULE TABLE
-        =====================================================
-        */
+      /* =====================================================
+         SECTION
+      ===================================================== */
 
       .section-label {
 
@@ -501,6 +679,10 @@ $jadwalSeleksi = [
 
       }
 
+
+      /* =====================================================
+         SCHEDULE TABLE
+      ===================================================== */
 
       .schedule-table {
 
@@ -607,6 +789,8 @@ $jadwalSeleksi = [
 
          color: #3f78e0;
 
+         white-space: nowrap;
+
       }
 
 
@@ -633,11 +817,20 @@ $jadwalSeleksi = [
       }
 
 
-      /*
-        =====================================================
-        IMPORTANT INFORMATION
-        =====================================================
-        */
+      .empty-schedule {
+
+         text-align: center;
+
+         padding: 10mm !important;
+
+         color: #777;
+
+      }
+
+
+      /* =====================================================
+         INFORMATION
+      ===================================================== */
 
       .information-box {
 
@@ -694,11 +887,9 @@ $jadwalSeleksi = [
       }
 
 
-      /*
-        =====================================================
-        FOOTER
-        =====================================================
-        */
+      /* =====================================================
+         FOOTER
+      ===================================================== */
 
       .document-footer {
 
@@ -738,11 +929,88 @@ $jadwalSeleksi = [
       }
 
 
-      /*
-        =====================================================
-        PRINT
-        =====================================================
-        */
+      /* =====================================================
+         MOBILE PREVIEW
+      ===================================================== */
+
+      @media screen and (max-width: 800px) {
+
+         .print-toolbar {
+
+            width: 100%;
+
+            padding: 0 15px;
+
+         }
+
+
+         .a4-page {
+
+            width: 100%;
+
+            min-height: auto;
+
+            padding: 25px 20px;
+
+         }
+
+
+         .header-table,
+         .participant-table {
+
+            display: block;
+
+         }
+
+
+         .header-table tr,
+         .participant-table tr {
+
+            display: block;
+
+         }
+
+
+         .header-table td,
+         .participant-table td {
+
+            display: block;
+
+            width: 100%;
+
+            text-align: left;
+
+         }
+
+
+         .year-box {
+
+            text-align: left;
+
+            margin-top: 10px;
+
+         }
+
+
+         .schedule-table {
+
+            min-width: 900px;
+
+         }
+
+
+         .a4-page {
+
+            overflow-x: auto;
+
+         }
+
+      }
+
+
+      /* =====================================================
+         PRINT
+      ===================================================== */
 
       @media print {
 
@@ -809,33 +1077,12 @@ $jadwalSeleksi = [
 
          }
 
-      }
 
+         tr {
 
-      /*
-        =====================================================
-        SCREEN PREVIEW
-        =====================================================
-        */
+            break-inside: avoid;
 
-      @media screen and (max-width: 800px) {
-
-         .print-toolbar {
-
-            width: 100%;
-
-            padding: 0 15px;
-
-         }
-
-
-         .a4-page {
-
-            width: 100%;
-
-            min-height: auto;
-
-            padding: 25px 20px;
+            page-break-inside: avoid;
 
          }
 
@@ -849,10 +1096,19 @@ $jadwalSeleksi = [
 
 
    <!-- =====================================================
-     PRINT TOOLBAR
-====================================================== -->
+        TOOLBAR
+   ====================================================== -->
 
    <div class="print-toolbar">
+
+      <a
+         href="javascript:history.back();"
+         class="toolbar-back">
+
+         ← Kembali
+
+      </a>
+
 
       <button
          type="button"
@@ -867,15 +1123,15 @@ $jadwalSeleksi = [
 
 
    <!-- =====================================================
-     A4 DOCUMENT
-====================================================== -->
+        A4 DOCUMENT
+   ====================================================== -->
 
    <main class="a4-page">
 
 
       <!-- =================================================
-         HEADER
-    ================================================== -->
+           HEADER
+      ================================================== -->
 
       <header class="document-header">
 
@@ -886,7 +1142,7 @@ $jadwalSeleksi = [
                <td class="logo-cell">
 
                   <img
-                     src="./assets/img/logo-stih.png"
+                     src="./../../assets/img/logo-card.png"
                      class="logo"
                      alt="Logo STIH Graha Kirana">
 
@@ -900,6 +1156,7 @@ $jadwalSeleksi = [
                      STIH GRAHA KIRANA
 
                   </div>
+
 
                   <div class="institution-subtitle">
 
@@ -918,9 +1175,14 @@ $jadwalSeleksi = [
 
                   </div>
 
+
                   <div class="year-value">
 
-                     <?= htmlspecialchars($tahunPmb) ?>
+                     <?= htmlspecialchars(
+                        $tahunPmb,
+                        ENT_QUOTES,
+                        'UTF-8'
+                     ) ?>
 
                   </div>
 
@@ -934,8 +1196,8 @@ $jadwalSeleksi = [
 
 
       <!-- =================================================
-         TITLE
-    ================================================== -->
+           TITLE
+      ================================================== -->
 
       <div class="document-title">
 
@@ -944,6 +1206,7 @@ $jadwalSeleksi = [
             JADWAL SELEKSI PMB
 
          </h1>
+
 
          <p>
 
@@ -956,8 +1219,8 @@ $jadwalSeleksi = [
 
 
       <!-- =================================================
-         PARTICIPANT
-    ================================================== -->
+           PARTICIPANT
+      ================================================== -->
 
       <section class="participant-box">
 
@@ -971,9 +1234,14 @@ $jadwalSeleksi = [
 
                </td>
 
+
                <td class="participant-value">
 
-                  <?= htmlspecialchars($namaPeserta) ?>
+                  <?= htmlspecialchars(
+                     $namaPeserta,
+                     ENT_QUOTES,
+                     'UTF-8'
+                  ) ?>
 
                </td>
 
@@ -984,9 +1252,14 @@ $jadwalSeleksi = [
 
                </td>
 
+
                <td class="participant-value participant-id">
 
-                  <?= htmlspecialchars($idPendaftaran) ?>
+                  <?= htmlspecialchars(
+                     $idPendaftaran,
+                     ENT_QUOTES,
+                     'UTF-8'
+                  ) ?>
 
                </td>
 
@@ -1001,9 +1274,14 @@ $jadwalSeleksi = [
 
                </td>
 
+
                <td class="participant-value">
 
-                  <?= htmlspecialchars($jalur) ?>
+                  <?= htmlspecialchars(
+                     $jalur,
+                     ENT_QUOTES,
+                     'UTF-8'
+                  ) ?>
 
                </td>
 
@@ -1013,6 +1291,7 @@ $jadwalSeleksi = [
                   Status
 
                </td>
+
 
                <td class="participant-value">
 
@@ -1028,8 +1307,8 @@ $jadwalSeleksi = [
 
 
       <!-- =================================================
-         SCHEDULE
-    ================================================== -->
+           SCHEDULE
+      ================================================== -->
 
       <div class="section-label">
 
@@ -1075,100 +1354,188 @@ $jadwalSeleksi = [
 
          <tbody>
 
-            <?php foreach ($jadwalSeleksi as $jadwal): ?>
+            <?php if (empty($jadwalSeleksi)): ?>
 
                <tr>
 
-                  <td class="schedule-number">
+                  <td
+                     colspan="6"
+                     class="empty-schedule">
 
-                     <?= $jadwal['no'] ?>
+                     <strong>
+                        Jadwal seleksi belum tersedia.
+                     </strong>
 
-                  </td>
+                     <br>
 
-
-                  <td>
-
-                     <div class="schedule-name">
-
-                        <?= htmlspecialchars(
-                           $jadwal['jenis']
-                        ) ?>
-
-                     </div>
-
-                     <span class="schedule-category">
-
-                        <?= htmlspecialchars(
-                           $jadwal['kategori']
-                        ) ?>
-
-                     </span>
-
-                  </td>
-
-
-                  <td>
-
-                     <div class="schedule-date">
-
-                        <?= htmlspecialchars(
-                           $jadwal['tanggal']
-                        ) ?>
-
-                     </div>
-
-                  </td>
-
-
-                  <td>
-
-                     <div class="schedule-time">
-
-                        <?= htmlspecialchars(
-                           $jadwal['waktu']
-                        ) ?>
-
-                     </div>
-
-                  </td>
-
-
-                  <td>
-
-                     <div class="schedule-location">
-
-                        <?= htmlspecialchars(
-                           $jadwal['lokasi']
-                        ) ?>
-
-                     </div>
-
-                     <div class="schedule-room">
-
-                        <?= htmlspecialchars(
-                           $jadwal['ruangan']
-                        ) ?>
-
-                     </div>
-
-                  </td>
-
-
-                  <td>
-
-                     <div class="schedule-method">
-
-                        <?= htmlspecialchars(
-                           $jadwal['metode']
-                        ) ?>
-
-                     </div>
+                     Silakan periksa kembali
+                     Portal PMB secara berkala.
 
                   </td>
 
                </tr>
 
-            <?php endforeach; ?>
+            <?php else: ?>
+
+
+               <?php foreach (
+                  $jadwalSeleksi
+                  as $index => $jadwal
+               ): ?>
+
+                  <tr>
+
+                     <!-- NOMOR -->
+
+                     <td class="schedule-number">
+
+                        <?= $index + 1 ?>
+
+                     </td>
+
+
+                     <!-- KEGIATAN -->
+
+                     <td>
+
+                        <div class="schedule-name">
+
+                           <?= htmlspecialchars(
+                              $jadwal['nama_seleksi'] ?: '-',
+                              ENT_QUOTES,
+                              'UTF-8'
+                           ) ?>
+
+                        </div>
+
+
+                        <?php if (
+                           !empty($jadwal['kategori'])
+                        ): ?>
+
+                           <span
+                              class="schedule-category">
+
+                              <?= htmlspecialchars(
+                                 $jadwal['kategori'],
+                                 ENT_QUOTES,
+                                 'UTF-8'
+                              ) ?>
+
+                           </span>
+
+                        <?php endif; ?>
+
+                     </td>
+
+
+                     <!-- TANGGAL -->
+
+                     <td>
+
+                        <div class="schedule-date">
+
+                           <?= htmlspecialchars(
+                              tanggalIndonesia(
+                                 $jadwal['tanggal']
+                              ),
+                              ENT_QUOTES,
+                              'UTF-8'
+                           ) ?>
+
+                        </div>
+
+                     </td>
+
+
+                     <!-- WAKTU -->
+
+                     <td>
+
+                        <div class="schedule-time">
+
+                           <?= htmlspecialchars(
+                              formatJam(
+                                 $jadwal['jam_mulai']
+                              ),
+                              ENT_QUOTES,
+                              'UTF-8'
+                           ) ?>
+
+                           –
+
+                           <?= htmlspecialchars(
+                              formatJam(
+                                 $jadwal['jam_selesai']
+                              ),
+                              ENT_QUOTES,
+                              'UTF-8'
+                           ) ?>
+
+                           WIB
+
+                        </div>
+
+                     </td>
+
+
+                     <!-- LOKASI -->
+
+                     <td>
+
+                        <div class="schedule-location">
+
+                           <?= htmlspecialchars(
+                              $jadwal['lokasi'] ?: '-',
+                              ENT_QUOTES,
+                              'UTF-8'
+                           ) ?>
+
+                        </div>
+
+
+                        <?php if (
+                           !empty($jadwal['ruangan'])
+                        ): ?>
+
+                           <div class="schedule-room">
+
+                              <?= htmlspecialchars(
+                                 $jadwal['ruangan'],
+                                 ENT_QUOTES,
+                                 'UTF-8'
+                              ) ?>
+
+                           </div>
+
+                        <?php endif; ?>
+
+                     </td>
+
+
+                     <!-- METODE -->
+
+                     <td>
+
+                        <div class="schedule-method">
+
+                           <?= htmlspecialchars(
+                              $jadwal['metode'] ?: '-',
+                              ENT_QUOTES,
+                              'UTF-8'
+                           ) ?>
+
+                        </div>
+
+                     </td>
+
+                  </tr>
+
+
+               <?php endforeach; ?>
+
+
+            <?php endif; ?>
 
          </tbody>
 
@@ -1176,8 +1543,8 @@ $jadwalSeleksi = [
 
 
       <!-- =================================================
-         INFORMATION
-    ================================================== -->
+           INFORMATION
+      ================================================== -->
 
       <div class="information-box">
 
@@ -1198,6 +1565,7 @@ $jadwalSeleksi = [
 
             </li>
 
+
             <li>
 
                Peserta wajib membawa
@@ -1207,21 +1575,15 @@ $jadwalSeleksi = [
 
             </li>
 
-            <li>
-
-               Untuk Tes Potensi Akademik,
-               peserta wajib membawa alat tulis
-               yang diperlukan.
-
-            </li>
 
             <li>
 
-               Untuk wawancara, peserta diharapkan
-               membawa dokumen pendukung apabila
-               diperlukan oleh panitia.
+               Peserta wajib mengikuti
+               ketentuan dan arahan panitia
+               selama pelaksanaan seleksi.
 
             </li>
+
 
             <li>
 
@@ -1234,11 +1596,9 @@ $jadwalSeleksi = [
          </ul>
 
       </div>
-
-
       <!-- =================================================
-         FOOTER
-    ================================================== -->
+     FOOTER
+================================================== -->
 
       <footer class="document-footer">
 
@@ -1258,7 +1618,18 @@ $jadwalSeleksi = [
                <td class="footer-right">
 
                   ID:
-                  <?= htmlspecialchars($idPendaftaran) ?><br>
+                  <?= htmlspecialchars(
+                     $idPendaftaran,
+                     ENT_QUOTES,
+                     'UTF-8'
+                  ) ?>
+
+                  <br>
+
+                  Dicetak:
+                  <?= date('d-m-Y H:i') ?> WIB
+
+                  <br>
 
                   Dicetak melalui Portal PMB
 
@@ -1270,14 +1641,18 @@ $jadwalSeleksi = [
 
       </footer>
 
-
    </main>
 
 
    <script>
       /*
-       * Otomatis membuka print dialog
-       * ketika halaman selesai dimuat.
+       * =====================================================
+       * AUTO PRINT
+       * =====================================================
+       *
+       * Kalau halaman ini memang dibuka khusus dari tombol
+       * "Cetak Jadwal", print dialog langsung muncul.
+       *
        */
 
       window.addEventListener(
