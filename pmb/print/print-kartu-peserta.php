@@ -43,17 +43,19 @@ $stmt = $pdo->prepare("
         register_uid,
         register_type,
 
-        id_program,
+        register_pmb.id_program,
         id_provider,
 
         file_dokumen,
 
         tahap_aktif,
         status_pendaftaran,
-
+        ms_program_studi.program_name,
+        ms_program_studi.program_degree,
         created_at
 
     FROM register_pmb
+   LEFT JOIN ms_program_studi ON ms_program_studi.id_program = register_pmb.id_program
 
     WHERE id = :id
 
@@ -104,6 +106,9 @@ $idPendaftaran =
 $jalur =
    $pmbUser['register_type'] ?: '-';
 
+$programname =
+   $pmbUser['program_degree'] . " - " .  $pmbUser['program_name'] ?: '-';
+
 $tahunPmb =
    '2026/2027';
 
@@ -114,22 +119,22 @@ $tahunPmb =
  * =========================================================
  */
 
-$foto =
-   null;
+
+$fotoPeserta = null;
 
 if (!empty($pmbUser['file_dokumen'])) {
 
-   $fotoFile =
-      '../uploads/pmb/' . $pmbUser['file_dokumen'];
+   $fotoPath =
+      '../../uploads/pmb/' . $pmbUser['file_dokumen'];
 
-   if (is_file($fotoFile)) {
+   if (is_file($fotoPath)) {
 
-      $foto =
-         'uploads/pmb/' .
-         rawurlencode($pmbUser['file_dokumen']);
+      $fotoPeserta =
+         '../../uploads/pmb/' . rawurlencode(
+            $pmbUser['file_dokumen']
+         );
    }
 }
-
 
 /**
  * =========================================================
@@ -612,60 +617,83 @@ $qrData =
       @media print {
 
          @page {
-
             size: A4 portrait;
-
             margin: 0;
-
          }
-
 
          html,
          body {
-
             width: 210mm;
-
-            min-height: 297mm;
+            height: 297mm;
 
             margin: 0;
-
             padding: 0;
 
             background: #fff;
 
+            overflow: hidden;
          }
-
 
          .print-toolbar {
-
-            display: none;
-
+            display: none !important;
          }
 
-
          .print-page {
-
             width: 210mm;
+            height: 297mm;
+
+            min-width: 210mm;
+            max-width: 210mm;
 
             min-height: 297mm;
+            max-height: 297mm;
 
             margin: 0;
-
-            padding: 20mm;
+            padding: 15mm;
 
             background: #fff;
 
-         }
+            overflow: hidden;
 
+            page-break-after: avoid;
+            page-break-before: avoid;
+            break-after: avoid;
+            break-before: avoid;
+         }
 
          .participant-card {
+            width: 100%;
 
-            break-inside: avoid;
+            max-height: 267mm;
+
+            overflow: hidden;
 
             page-break-inside: avoid;
+            break-inside: avoid;
 
+            page-break-before: avoid;
+            page-break-after: avoid;
+
+            break-before: avoid;
+            break-after: avoid;
          }
 
+         .card-header,
+         .card-body,
+         .card-footer {
+            page-break-inside: avoid;
+            break-inside: avoid;
+         }
+
+         .body-table {
+            page-break-inside: avoid;
+            break-inside: avoid;
+         }
+
+         img {
+            page-break-inside: avoid;
+            break-inside: avoid;
+         }
       }
 
 
@@ -678,15 +706,15 @@ $qrData =
       @media screen and (max-width: 800px) {
 
          .print-page {
+            width: 210mm;
+            height: 297mm;
 
-            width: 100%;
+            margin: 0 auto;
 
-            min-height: auto;
+            padding: 12mm 15mm;
 
-            padding: 20px;
-
+            background: #fff;
          }
-
 
          .print-toolbar {
 
@@ -748,7 +776,7 @@ $qrData =
                   <td width="28mm">
 
                      <img
-                        src="./assets/img/logo-stih.png"
+                        src="../../assets/img/logo-card.png"
                         class="header-logo"
                         alt="Logo STIH Graha Kirana">
 
@@ -804,10 +832,10 @@ $qrData =
 
                   <td class="photo-cell">
 
-                     <?php if ($foto): ?>
+                     <?php if ($fotoPeserta): ?>
 
                         <img
-                           src="<?= htmlspecialchars($foto) ?>"
+                           src="<?= htmlspecialchars($fotoPeserta) ?>"
                            class="photo"
                            alt="Foto Peserta">
 
@@ -869,12 +897,7 @@ $qrData =
 
                            <td class="info-value">
 
-                              <?=
-                              !empty($pmbUser['id_program'])
-                                 ? 'Program Studi #' .
-                                 (int)$pmbUser['id_program']
-                                 : '-'
-                              ?>
+                              <?= htmlspecialchars($programname) ?>
 
                            </td>
 
@@ -923,11 +946,19 @@ $qrData =
 
                   <td class="qr-cell">
 
+                     <!--
+                                    Ganti dengan QR Code hasil generate server
+                                 -->
+                     <?php
+                     $qrToken = $pmbUser['register_uid'];
+                     $verifyUrl =
+                        'https://grahakirana-stih.ac.id/pmb/verifikasi-pmb?token=' .
+                        urlencode($qrToken);
+                     ?>
                      <img
-                        src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=<?= urlencode($qrData) ?>"
-                        class="qr"
-                        alt="QR Peserta">
-
+                        src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=<?= urlencode($verifyUrl) ?>"
+                        class="img-fluid"
+                        alt="QR Code Verifikasi Peserta">
                      <div class="qr-note">
 
                         Scan untuk<br>
