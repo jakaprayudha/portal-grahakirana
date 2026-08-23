@@ -42,7 +42,8 @@ $stmt = $pdo->prepare("
         tahap_aktif,
         status_pendaftaran,
         register_uid,
-        register_type
+        register_type,
+        id_program
     FROM register_pmb
     WHERE id = :id
     LIMIT 1
@@ -93,7 +94,8 @@ $requiredCheck = [
    'name_mother',
    'file_ktp',
    'file_kk',
-   'file_ijazah'
+   'file_ijazah',
+   'id_program'
 
 ];
 
@@ -968,7 +970,7 @@ $completion =
                                        value="<?= htmlspecialchars($pmbUser['email_register'] ?? '') ?>"
                                        name="email"
                                        placeholder="Email"
-                                       required>
+                                       readonly>
 
                                     <label for="email">
                                        Email Aktif <span class="required">*</span>
@@ -1025,6 +1027,55 @@ $completion =
 
                               </div>
 
+                              <!-- Program Studi -->
+
+                              <div class="col-md-6">
+
+                                 <div class="form-select-wrapper mb-4">
+
+                                    <select
+                                       class="form-select"
+                                       name="id_program"
+                                       id="id_program"
+                                       required>
+
+                                       <option value="">
+                                          -- Pilih Program Studi --
+                                       </option>
+
+                                       <?php
+                                       $stmtProdi = $pdo->prepare("SELECT *
+                                    FROM ms_program_studi
+                                    WHERE id_collage = :id_collage AND program_status=1
+                                    ORDER BY id_program ASC");
+
+                                       $stmtProdi->execute([
+                                          'id_collage' => 5
+                                       ]);
+
+                                       $prodiList = $stmtProdi->fetchAll(PDO::FETCH_ASSOC);
+
+                                       foreach ($prodiList as $prodi):
+
+                                       ?>
+
+                                          <option
+                                             value="<?= htmlspecialchars($prodi['id_program']) ?>"
+                                             <?= (string)($pmbUser['id_program'] ?? '') === (string)$prodi['id_program']
+                                                ? 'selected'
+                                                : '' ?>>
+                                             <?= htmlspecialchars($prodi['program_degree']) ?>
+                                             -
+                                             <?= htmlspecialchars($prodi['program_name']) ?>
+                                          </option>
+
+                                       <?php endforeach; ?>
+
+                                    </select>
+
+                                 </div>
+
+                              </div>
 
                            </div>
 

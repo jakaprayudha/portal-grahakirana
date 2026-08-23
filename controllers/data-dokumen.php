@@ -162,6 +162,11 @@ $agama = trim($_POST['agama'] ?? '');
 $ukuranBaju = trim(
    $_POST['ukuran_baju'] ?? ''
 );
+
+$id_program = trim(
+   $_POST['id_program'] ?? ''
+);
+
 $nameMother =
    trim($_POST['nama_ibu'] ?? '');
 
@@ -268,6 +273,16 @@ if ($agama === '') {
       false,
       'Agama wajib dipilih.',
       ['field' => 'agama'],
+      422
+   );
+}
+
+if ($id_program === '') {
+
+   responseJson(
+      false,
+      'Program Studi wajib dipilih.',
+      ['field' => 'id_program'],
       422
    );
 }
@@ -706,7 +721,8 @@ try {
             kelurahan = :kelurahan,
             year_graduation = :year_graduation,
             name_mother = :name_mother,
-            number_kip = :number_kip
+            number_kip = :number_kip,
+            id_program = :id_program
     ";
 
 
@@ -780,6 +796,9 @@ try {
 
       'ukuran_baju' =>
       $ukuranBaju,
+
+      'id_program' =>
+      $id_program,
 
       /**
        * region menggunakan provinsi
@@ -896,7 +915,8 @@ try {
         file_ktp,
         file_kk,
         file_ijazah,
-        file_dokumen
+        file_dokumen,
+        id_program
     FROM register_pmb
     WHERE id = :id
     LIMIT 1
@@ -943,7 +963,8 @@ try {
       'file_ktp',
       'file_kk',
       'file_ijazah',
-      'file_dokumen'
+      'file_dokumen',
+      'id_program'
 
    ];
 
@@ -983,19 +1004,16 @@ try {
 
    if ($isComplete) {
 
-      $stageStmt = $pdo->prepare("
-        UPDATE register_pmb
-        SET
-            tahap_aktif = CASE
-                WHEN tahap_aktif < 3 THEN 3
-                ELSE tahap_aktif
-            END,
-            status_pendaftaran = CASE
-                WHEN tahap_aktif < 3 THEN 'DATA_DOKUMEN'
-                ELSE status_pendaftaran
-            END
-        WHERE id = :id
-    ");
+      $stageStmt = $pdo->prepare("UPDATE register_pmb
+    SET
+        tahap_aktif = 2,
+        status_pendaftaran = 'DATA_DOKUMEN'
+    WHERE id = :id
+");
+
+      $stageStmt->execute([
+         'id' => (int) $_SESSION['pmb_user_id']
+      ]);
 
       $stageStmt->execute([
          'id' => $userId
@@ -1037,7 +1055,7 @@ try {
 
          'redirect' =>
          $isComplete
-            ? './kartu-peserta.php'
+            ? './pmb/register-card.php'
             : null
       ],
       200
