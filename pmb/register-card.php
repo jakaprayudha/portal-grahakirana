@@ -59,7 +59,7 @@ $stmt = $pdo->prepare("
         register_uid,
         register_type,
 
-        id_program,
+        ms_program_studi.id_program,
         id_provider,
 
         file_ktp,
@@ -71,12 +71,13 @@ $stmt = $pdo->prepare("
         status_pendaftaran,
         account_status,
 
-        created_at
+        created_at,
+        ms_program_studi.program_name,
+        ms_program_studi.program_degree
 
     FROM register_pmb
-
+    LEFT JOIN ms_program_studi ON ms_program_studi.id_program = register_pmb.id_program
     WHERE id = :id
-
     LIMIT 1
 ");
 
@@ -126,6 +127,9 @@ $idPendaftaran =
 
 $jalur =
    $pmbUser['register_type'] ?: '-';
+
+$programname =
+   $pmbUser['program_degree'] . " - " .  $pmbUser['program_name'] ?: '-';
 
 
 /**
@@ -671,7 +675,7 @@ $page = 'Kartu Peserta PMB';
                                  <div class="participant-logo">
 
                                     <img
-                                       src="./assets/img/logo-stih.png"
+                                       src="./assets/img/logo-card.png"
                                        alt="Logo STIH Graha Kirana"
                                        class="img-fluid">
 
@@ -795,10 +799,7 @@ $page = 'Kartu Peserta PMB';
 
                               <div class="participant-info-value">
 
-                                 <?= !empty($pmbUser['id_program'])
-                                    ? 'Program Studi #' . (int)$pmbUser['id_program']
-                                    : '-'
-                                 ?>
+                                 <?= htmlspecialchars($programname) ?>
 
                               </div>
 
@@ -852,11 +853,16 @@ $page = 'Kartu Peserta PMB';
                                  <!--
                                     Ganti dengan QR Code hasil generate server
                                  -->
-
+                                 <?php
+                                 $qrToken = $pmbUser['register_uid'];
+                                 $verifyUrl =
+                                    'https://grahakirana-stih.ac.id/pmb/verifikasi-pmb?token=' .
+                                    urlencode($qrToken);
+                                 ?>
                                  <img
-                                    src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=<?= urlencode($qrData) ?>"
+                                    src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=<?= urlencode($verifyUrl) ?>"
                                     class="img-fluid"
-                                    alt="QR Code Peserta">
+                                    alt="QR Code Verifikasi Peserta">
 
                               </div>
 
