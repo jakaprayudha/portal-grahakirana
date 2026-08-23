@@ -1355,7 +1355,7 @@ $pageTitle =
 
 
             <a
-               href="./dashboard.php"
+               href="./dashboard"
                class="admin-nav-link active">
 
                <i class="uil uil-dashboard"></i>
@@ -1366,7 +1366,7 @@ $pageTitle =
 
 
             <a
-               href="./peserta.php"
+               href="./peserta"
                class="admin-nav-link">
 
                <i class="uil uil-users-alt"></i>
@@ -1377,7 +1377,7 @@ $pageTitle =
 
 
             <a
-               href="./seleksi.php"
+               href="./seleksi"
                class="admin-nav-link">
 
                <i class="uil uil-clipboard-alt"></i>
@@ -1388,7 +1388,7 @@ $pageTitle =
 
 
             <a
-               href="./hasil-seleksi.php"
+               href="./hasil-seleksi"
                class="admin-nav-link">
 
                <i class="uil uil-award"></i>
@@ -1399,7 +1399,7 @@ $pageTitle =
 
 
             <a
-               href="./daftar-ulang.php"
+               href="./daftar-ulang"
                class="admin-nav-link">
 
                <i class="uil uil-user-check"></i>
