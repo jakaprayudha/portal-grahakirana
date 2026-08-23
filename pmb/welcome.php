@@ -140,43 +140,43 @@ $pmbStages = [
    2 => [
       'name' => 'Data & Dokumen',
       'icon' => 'uil-file-alt',
-      'page' => 'pmb/register-data.php'
+      'page' => 'pmb/register-data'
    ],
 
    3 => [
       'name' => 'Kartu Peserta',
       'icon' => 'uil-credit-card',
-      'page' => 'kartu-peserta.php'
+      'page' => 'pmb/register-card'
    ],
 
    4 => [
       'name' => 'Jadwal Seleksi',
       'icon' => 'uil-calendar-alt',
-      'page' => 'jadwal-seleksi.php'
+      'page' => 'pmb/register-schedule'
    ],
 
    5 => [
       'name' => 'Seleksi',
       'icon' => 'uil-clipboard-alt',
-      'page' => 'hasil-seleksi.php'
+      'page' => 'pmb/register-test'
    ],
 
    6 => [
       'name' => 'Kelulusan',
       'icon' => 'uil-trophy',
-      'page' => 'pengumuman-kelulusan.php'
+      'page' => 'pmb/register-final'
    ],
 
    7 => [
       'name' => 'Daftar Ulang',
       'icon' => 'uil-file-check-alt',
-      'page' => 'daftar-ulang.php'
+      'page' => 'pmb/register-repeat'
    ],
 
    8 => [
       'name' => 'SIAKAD',
       'icon' => 'uil-graduation-cap',
-      'page' => 'siakad.php'
+      'page' => 'pmb/register-siakad'
    ]
 
 ];
