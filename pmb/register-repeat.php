@@ -1,11 +1,413 @@
+<?php
+
+session_start();
+
+require_once '../config/connect.php';
+
+
+/**
+ * =========================================================
+ * AUTHENTICATION
+ * =========================================================
+ */
+
+if (
+   empty($_SESSION['pmb_logged_in']) ||
+   empty($_SESSION['pmb_user_id'])
+) {
+
+   header('Location: ./login-pmb.php');
+   exit;
+}
+
+
+$userId = (int) $_SESSION['pmb_user_id'];
+
+
+/**
+ * =========================================================
+ * GET DATA PESERTA
+ * =========================================================
+ */
+
+try {
+
+   $stmt = $pdo->prepare("
+
+        SELECT
+
+            id,
+            fullname,
+            gender,
+            place,
+            datebirth,
+
+            number_id,
+            phone_number,
+            email_register,
+
+            address_card,
+
+            provinsi,
+            kabupaten,
+            kecamatan,
+            kelurahan,
+
+            school_name,
+            school_npsn,
+            school_address,
+            number_nisn,
+            year_graduation,
+
+            name_father,
+            name_mother,
+
+            number_kk,
+            number_nik_kk,
+
+            register_uid,
+            register_type,
+
+            id_program,
+            id_provider,
+
+            file_ktp,
+            file_kk,
+            file_ijazah,
+            file_dokumen,
+
+            tahap_aktif,
+            status_pendaftaran,
+            account_status,
+
+            status_daftar_ulang,
+
+            created_at,
+            updated_at
+
+        FROM register_pmb
+
+        WHERE id = :id
+
+        LIMIT 1
+
+    ");
+
+
+   $stmt->execute([
+      'id' => $userId
+   ]);
+
+
+   $pmbUser =
+      $stmt->fetch(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+
+   die('Gagal mengambil data peserta.');
+}
+
+
+/**
+ * =========================================================
+ * DATA TIDAK DITEMUKAN
+ * =========================================================
+ */
+
+if (!$pmbUser) {
+
+   session_unset();
+   session_destroy();
+
+   header('Location: ./login-pmb.php');
+   exit;
+}
+
+
+/**
+ * =========================================================
+ * NORMALISASI DATA
+ * =========================================================
+ */
+
+$namaPeserta =
+   $pmbUser['fullname']
+   ?: '-';
+
+
+$idPendaftaran =
+   $pmbUser['register_uid']
+   ?: '-';
+
+
+$emailPeserta =
+   $pmbUser['email_register']
+   ?: '-';
+
+
+$nomorHP =
+   $pmbUser['phone_number']
+   ?: '-';
+
+
+$nikPeserta =
+   $pmbUser['number_id']
+   ?: '';
+
+
+$alamatPeserta =
+   $pmbUser['address_card']
+   ?: '';
+
+
+$jalurPendaftaran =
+   $pmbUser['register_type']
+   ?: '-';
+
+
+$statusPendaftaran =
+   strtoupper(
+      trim(
+         $pmbUser['status_pendaftaran']
+            ?: ''
+      )
+   );
+
+
+$statusDaftarUlang =
+   strtoupper(
+      trim(
+         $pmbUser['status_daftar_ulang']
+            ?: 'BELUM_DIAJUKAN'
+      )
+   );
+
+
+$tahapAktif =
+   (int) (
+      $pmbUser['tahap_aktif']
+      ?: 1
+   );
+
+
+/**
+ * =========================================================
+ * PROGRAM STUDI
+ *
+ * Kalau nanti id_program ingin mengambil nama dari tabel
+ * program studi, query bisa ditambahkan di sini.
+ *
+ * Untuk sementara gunakan fallback berdasarkan id_program.
+ * =========================================================
+ */
+
+$namaProgram = '-';
+
+
+if (!empty($pmbUser['id_program'])) {
+
+   try {
+
+      /*
+         * Sesuaikan nama tabel jika tabel program studi
+         * kamu berbeda.
+         *
+         * Untuk mencegah error Unknown Table,
+         * sementara tidak melakukan query.
+         */
+
+      $namaProgram = 'Program Studi';
+   } catch (Throwable $e) {
+
+      $namaProgram = 'Program Studi';
+   }
+}
+
+
+/**
+ * =========================================================
+ * LABEL JALUR
+ * =========================================================
+ */
+
+$labelJalur = $jalurPendaftaran;
+
+
+switch ($jalurPendaftaran) {
+
+   case '01':
+      $labelJalur = 'Reguler';
+      break;
+
+   case '02':
+      $labelJalur = 'Prestasi';
+      break;
+
+   case '03':
+      $labelJalur = 'Beasiswa';
+      break;
+}
+
+
+/**
+ * =========================================================
+ * STATUS DAFTAR ULANG
+ * =========================================================
+ */
+
+$statusLabel =
+   'Belum Diajukan';
+
+$statusClass =
+   'bg-soft-primary text-primary';
+
+$statusIcon =
+   'uil-edit';
+
+
+switch ($statusDaftarUlang) {
+
+   case 'DIAJUKAN':
+
+      $statusLabel =
+         'Menunggu Verifikasi';
+
+      $statusClass =
+         'bg-soft-yellow text-yellow';
+
+      $statusIcon =
+         'uil-clock';
+
+      break;
+
+
+   case 'DIVERIFIKASI':
+
+      $statusLabel =
+         'Sedang Diverifikasi';
+
+      $statusClass =
+         'bg-soft-primary text-primary';
+
+      $statusIcon =
+         'uil-search';
+
+      break;
+
+
+   case 'DITERIMA':
+
+      $statusLabel =
+         'Diterima';
+
+      $statusClass =
+         'bg-soft-green text-green';
+
+      $statusIcon =
+         'uil-check-circle';
+
+      break;
+
+
+   case 'DITOLAK':
+
+      $statusLabel =
+         'Ditolak';
+
+      $statusClass =
+         'bg-soft-red text-red';
+
+      $statusIcon =
+         'uil-times-circle';
+
+      break;
+}
+
+
+/**
+ * =========================================================
+ * STATUS BOLEH AJUKAN
+ * =========================================================
+ */
+
+$canSubmitReregistration =
+   in_array(
+      $statusDaftarUlang,
+      [
+         'BELUM_DIAJUKAN',
+         'DITOLAK'
+      ],
+      true
+   );
+
+
+/**
+ * =========================================================
+ * CHECKLIST
+ *
+ * Berdasarkan data yang memang tersedia di register_pmb.
+ * =========================================================
+ */
+
+$kartuPesertaReady =
+   $tahapAktif >= 3;
+
+
+$identitasReady =
+   !empty($pmbUser['number_id']);
+
+
+$dokumenReady =
+   (
+      !empty($pmbUser['file_ktp']) &&
+      !empty($pmbUser['file_kk']) &&
+      !empty($pmbUser['file_ijazah'])
+   );
+
+
+/**
+ * Pembayaran belum mempunyai kolom pembayaran
+ * pada register_pmb yang diberikan.
+ *
+ * Jadi jangan mengklaim sudah dibayar.
+ */
+
+$pembayaranReady =
+   false;
+
+
+/**
+ * =========================================================
+ * STATUS HERO
+ * =========================================================
+ */
+
+$isAccepted =
+   (
+      $statusPendaftaran === 'LULUS'
+      ||
+      $statusDaftarUlang !== 'BELUM_DIAJUKAN'
+   );
+
+
+/**
+ * =========================================================
+ * PAGE
+ * =========================================================
+ */
+
+$page =
+   'Daftar Ulang PMB';
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
+
    <base href="../">
 
    <?php
-   $page = 'Daftar Ulang PMB';
    require '../head.php';
    ?>
 
@@ -494,7 +896,13 @@
                               </span>
 
                               <h4 class="mb-1">
-                                 Jaka Prayudha
+
+                                 <?= htmlspecialchars(
+                                    $namaPeserta,
+                                    ENT_QUOTES,
+                                    'UTF-8'
+                                 ) ?>
+
                               </h4>
 
                               <p class="mb-0 text-muted pmb-participant-id">
@@ -502,7 +910,13 @@
                                  ID Pendaftaran:
 
                                  <span class="text-primary">
-                                    99-26-69-74-01-001
+
+                                    <?= htmlspecialchars(
+                                       $idPendaftaran,
+                                       ENT_QUOTES,
+                                       'UTF-8'
+                                    ) ?>
+
                                  </span>
 
                               </p>
@@ -516,13 +930,41 @@
 
                      <div class="col-lg-auto mt-4 mt-lg-0">
 
-                        <span class="badge bg-soft-green text-green rounded-pill px-4 py-2">
+                        <?php if ($statusDaftarUlang === 'DITERIMA'): ?>
 
-                           <i class="uil uil-check me-1"></i>
+                           <span class="badge bg-soft-green text-green rounded-pill px-4 py-2">
 
-                           LULUS SELEKSI
+                              <i class="uil uil-check me-1"></i>
 
-                        </span>
+                              DAFTAR ULANG DITERIMA
+
+                           </span>
+
+                        <?php elseif ($statusDaftarUlang === 'DIAJUKAN'): ?>
+
+                           <span class="badge bg-soft-yellow text-yellow rounded-pill px-4 py-2">
+
+                              <i class="uil uil-clock me-1"></i>
+
+                              MENUNGGU VERIFIKASI
+
+                           </span>
+
+                        <?php else: ?>
+
+                           <span class="badge bg-soft-green text-green rounded-pill px-4 py-2">
+
+                              <i class="uil uil-check me-1"></i>
+
+                              <?= htmlspecialchars(
+                                 $statusPendaftaran ?: 'LULUS SELEKSI',
+                                 ENT_QUOTES,
+                                 'UTF-8'
+                              ) ?>
+
+                           </span>
+
+                        <?php endif; ?>
 
                      </div>
 
@@ -561,13 +1003,41 @@
                            </span>
 
                            <h3 class="text-white mt-1 mb-2">
-                              Selamat! Anda Berhak Daftar Ulang
+
+                              <?php if ($statusDaftarUlang === 'DITERIMA'): ?>
+
+                                 Daftar Ulang Telah Diterima
+
+                              <?php elseif ($statusDaftarUlang === 'DIAJUKAN'): ?>
+
+                                 Pengajuan Daftar Ulang Sedang Diproses
+
+                              <?php else: ?>
+
+                                 Selamat! Anda Berhak Daftar Ulang
+
+                              <?php endif; ?>
+
                            </h3>
 
                            <p class="text-white opacity-75 mb-0">
 
-                              Lengkapi persyaratan daftar ulang sesuai
-                              batas waktu yang ditentukan oleh panitia PMB.
+                              <?php if ($statusDaftarUlang === 'DITERIMA'): ?>
+
+                                 Seluruh proses daftar ulang Anda telah
+                                 diterima oleh panitia PMB.
+
+                              <?php elseif ($statusDaftarUlang === 'DIAJUKAN'): ?>
+
+                                 Pengajuan daftar ulang Anda telah diterima
+                                 dan sedang menunggu verifikasi panitia.
+
+                              <?php else: ?>
+
+                                 Lengkapi persyaratan daftar ulang sesuai
+                                 batas waktu yang ditentukan oleh panitia PMB.
+
+                              <?php endif; ?>
 
                            </p>
 
@@ -628,9 +1098,17 @@
 
                         <div class="pmb-check-item">
 
-                           <div class="pmb-check-icon bg-soft-green text-green">
+                           <div class="pmb-check-icon
+                              <?= $kartuPesertaReady
+                                 ? 'bg-soft-green text-green'
+                                 : 'bg-soft-yellow text-yellow' ?>">
 
-                              <i class="uil uil-check-circle fs-20"></i>
+                              <i class="uil
+                                 <?= $kartuPesertaReady
+                                    ? 'uil-check-circle'
+                                    : 'uil-clock' ?>
+                                 fs-20">
+                              </i>
 
                            </div>
 
@@ -649,8 +1127,16 @@
 
                            <div class="pmb-check-status">
 
-                              <span class="badge bg-soft-green text-green rounded-pill">
-                                 Siap
+                              <span class="badge
+                                 <?= $kartuPesertaReady
+                                    ? 'bg-soft-green text-green'
+                                    : 'bg-soft-yellow text-yellow' ?>
+                                 rounded-pill">
+
+                                 <?= $kartuPesertaReady
+                                    ? 'Siap'
+                                    : 'Belum' ?>
+
                               </span>
 
                            </div>
@@ -662,9 +1148,17 @@
 
                         <div class="pmb-check-item">
 
-                           <div class="pmb-check-icon bg-soft-green text-green">
+                           <div class="pmb-check-icon
+                              <?= $identitasReady
+                                 ? 'bg-soft-green text-green'
+                                 : 'bg-soft-yellow text-yellow' ?>">
 
-                              <i class="uil uil-check-circle fs-20"></i>
+                              <i class="uil
+                                 <?= $identitasReady
+                                    ? 'uil-check-circle'
+                                    : 'uil-clock' ?>
+                                 fs-20">
+                              </i>
 
                            </div>
 
@@ -682,8 +1176,16 @@
 
                            <div class="pmb-check-status">
 
-                              <span class="badge bg-soft-green text-green rounded-pill">
-                                 Siap
+                              <span class="badge
+                                 <?= $identitasReady
+                                    ? 'bg-soft-green text-green'
+                                    : 'bg-soft-yellow text-yellow' ?>
+                                 rounded-pill">
+
+                                 <?= $identitasReady
+                                    ? 'Siap'
+                                    : 'Belum' ?>
+
                               </span>
 
                            </div>
@@ -695,9 +1197,17 @@
 
                         <div class="pmb-check-item">
 
-                           <div class="pmb-check-icon bg-soft-green text-green">
+                           <div class="pmb-check-icon
+                              <?= $dokumenReady
+                                 ? 'bg-soft-green text-green'
+                                 : 'bg-soft-yellow text-yellow' ?>">
 
-                              <i class="uil uil-check-circle fs-20"></i>
+                              <i class="uil
+                                 <?= $dokumenReady
+                                    ? 'uil-check-circle'
+                                    : 'uil-clock' ?>
+                                 fs-20">
+                              </i>
 
                            </div>
 
@@ -716,8 +1226,16 @@
 
                            <div class="pmb-check-status">
 
-                              <span class="badge bg-soft-green text-green rounded-pill">
-                                 Siap
+                              <span class="badge
+                                 <?= $dokumenReady
+                                    ? 'bg-soft-green text-green'
+                                    : 'bg-soft-yellow text-yellow' ?>
+                                 rounded-pill">
+
+                                 <?= $dokumenReady
+                                    ? 'Siap'
+                                    : 'Belum' ?>
+
                               </span>
 
                            </div>
@@ -751,7 +1269,10 @@
                            <div class="pmb-check-status">
 
                               <span class="badge bg-soft-yellow text-yellow rounded-pill">
-                                 Belum
+
+                                 <?= $pembayaranReady
+                                    ? 'Siap'
+                                    : 'Belum' ?>
 
                               </span>
 
@@ -829,7 +1350,11 @@
                               <input
                                  type="text"
                                  class="form-control"
-                                 value="Jaka Prayudha"
+                                 value="<?= htmlspecialchars(
+                                             $namaPeserta,
+                                             ENT_QUOTES,
+                                             'UTF-8'
+                                          ) ?>"
                                  readonly>
 
                            </div>
@@ -844,7 +1369,11 @@
                               <input
                                  type="text"
                                  class="form-control"
-                                 value="99-26-69-74-01-001"
+                                 value="<?= htmlspecialchars(
+                                             $idPendaftaran,
+                                             ENT_QUOTES,
+                                             'UTF-8'
+                                          ) ?>"
                                  readonly>
 
                            </div>
@@ -859,7 +1388,11 @@
                               <input
                                  type="text"
                                  class="form-control"
-                                 value="Ilmu Hukum"
+                                 value="<?= htmlspecialchars(
+                                             $namaProgram,
+                                             ENT_QUOTES,
+                                             'UTF-8'
+                                          ) ?>"
                                  readonly>
 
                            </div>
@@ -874,7 +1407,11 @@
                               <input
                                  type="text"
                                  class="form-control"
-                                 value="Reguler"
+                                 value="<?= htmlspecialchars(
+                                             $labelJalur,
+                                             ENT_QUOTES,
+                                             'UTF-8'
+                                          ) ?>"
                                  readonly>
 
                            </div>
@@ -931,7 +1468,12 @@
                               <input
                                  type="text"
                                  class="form-control"
-                                 placeholder="Masukkan NIK">
+                                 value="<?= htmlspecialchars(
+                                             $nikPeserta,
+                                             ENT_QUOTES,
+                                             'UTF-8'
+                                          ) ?>"
+                                 readonly>
 
                            </div>
 
@@ -953,7 +1495,12 @@
                               <input
                                  type="tel"
                                  class="form-control"
-                                 placeholder="08xxxxxxxxxx">
+                                 value="<?= htmlspecialchars(
+                                             $nomorHP,
+                                             ENT_QUOTES,
+                                             'UTF-8'
+                                          ) ?>"
+                                 readonly>
 
                            </div>
 
@@ -969,7 +1516,12 @@
                               <input
                                  type="email"
                                  class="form-control"
-                                 value="jaka@example.com">
+                                 value="<?= htmlspecialchars(
+                                             $emailPeserta,
+                                             ENT_QUOTES,
+                                             'UTF-8'
+                                          ) ?>"
+                                 readonly>
 
                            </div>
 
@@ -991,7 +1543,11 @@
                               <textarea
                                  class="form-control"
                                  rows="3"
-                                 placeholder="Masukkan alamat domisili"></textarea>
+                                 readonly><?= htmlspecialchars(
+                                             $alamatPeserta,
+                                             ENT_QUOTES,
+                                             'UTF-8'
+                                          ) ?></textarea>
 
                            </div>
 
@@ -1053,7 +1609,8 @@
                                  <input
                                     type="file"
                                     class="form-control form-control-sm"
-                                    accept=".pdf,.jpg,.jpeg,.png">
+                                    accept=".pdf,.jpg,.jpeg,.png"
+                                    disabled>
 
                               </div>
 
@@ -1083,7 +1640,8 @@
                                  <input
                                     type="file"
                                     class="form-control form-control-sm"
-                                    accept=".pdf,.jpg,.jpeg,.png">
+                                    accept=".pdf,.jpg,.jpeg,.png"
+                                    disabled>
 
                               </div>
 
@@ -1113,7 +1671,8 @@
                                  <input
                                     type="file"
                                     class="form-control form-control-sm"
-                                    accept=".pdf,.jpg,.jpeg,.png">
+                                    accept=".pdf,.jpg,.jpeg,.png"
+                                    disabled>
 
                               </div>
 
@@ -1143,7 +1702,8 @@
                                  <input
                                     type="file"
                                     class="form-control form-control-sm"
-                                    accept=".jpg,.jpeg,.png">
+                                    accept=".jpg,.jpeg,.png"
+                                    disabled>
 
                               </div>
 
@@ -1279,7 +1839,8 @@
                            <input
                               type="file"
                               class="form-control"
-                              accept=".pdf,.jpg,.jpeg,.png">
+                              accept=".pdf,.jpg,.jpeg,.png"
+                              disabled>
 
                         </div>
 
@@ -1317,7 +1878,10 @@
                            <input
                               class="form-check-input"
                               type="checkbox"
-                              id="agreement">
+                              id="agreement"
+                              <?= !$canSubmitReregistration
+                                 ? 'disabled'
+                                 : '' ?>>
 
                            <label
                               class="form-check-label fs-14"
@@ -1337,7 +1901,10 @@
                            <input
                               class="form-check-input"
                               type="checkbox"
-                              id="agreement2">
+                              id="agreement2"
+                              <?= !$canSubmitReregistration
+                                 ? 'disabled'
+                                 : '' ?>>
 
                            <label
                               class="form-check-label fs-14"
@@ -1370,15 +1937,72 @@
 
                         <div class="d-flex justify-content-end">
 
-                           <button
-                              type="button"
-                              class="btn btn-primary btn-lg rounded btn-icon btn-icon-end">
+                           <?php if ($statusDaftarUlang === 'BELUM_DIAJUKAN'): ?>
 
-                              Ajukan Daftar Ulang
+                              <button
+                                 type="button"
+                                 id="btnAjukanDaftarUlang"
+                                 class="btn btn-primary btn-lg rounded btn-icon btn-icon-end">
 
-                              <i class="uil uil-arrow-right"></i>
+                                 Ajukan Daftar Ulang
 
-                           </button>
+                                 <i class="uil uil-arrow-right"></i>
+
+                              </button>
+
+                           <?php elseif ($statusDaftarUlang === 'DIAJUKAN'): ?>
+
+                              <button
+                                 type="button"
+                                 class="btn btn-warning btn-lg rounded"
+                                 disabled>
+
+                                 <i class="uil uil-clock me-1"></i>
+
+                                 Menunggu Verifikasi
+
+                              </button>
+
+                           <?php elseif ($statusDaftarUlang === 'DIVERIFIKASI'): ?>
+
+                              <button
+                                 type="button"
+                                 class="btn btn-primary btn-lg rounded"
+                                 disabled>
+
+                                 <i class="uil uil-search me-1"></i>
+
+                                 Sedang Diverifikasi
+
+                              </button>
+
+                           <?php elseif ($statusDaftarUlang === 'DITERIMA'): ?>
+
+                              <button
+                                 type="button"
+                                 class="btn btn-success btn-lg rounded"
+                                 disabled>
+
+                                 <i class="uil uil-check me-1"></i>
+
+                                 Daftar Ulang Diterima
+
+                              </button>
+
+                           <?php elseif ($statusDaftarUlang === 'DITOLAK'): ?>
+
+                              <button
+                                 type="button"
+                                 id="btnAjukanDaftarUlang"
+                                 class="btn btn-primary btn-lg rounded btn-icon btn-icon-end">
+
+                                 Ajukan Kembali
+
+                                 <i class="uil uil-arrow-right"></i>
+
+                              </button>
+
+                           <?php endif; ?>
 
                         </div>
 
@@ -1418,179 +2042,122 @@
                         <div class="pmb-process">
 
 
-                           <!-- 01 -->
+                           <?php
 
-                           <div class="pmb-process-item">
+                           $processSteps = [
 
-                              <div class="pmb-process-number complete">
+                              1 => [
+                                 'title' => 'Registrasi',
+                                 'desc'  => 'Selesai'
+                              ],
 
-                                 <i class="uil uil-check"></i>
+                              2 => [
+                                 'title' => 'Data & Dokumen',
+                                 'desc'  => 'Lengkap'
+                              ],
 
-                              </div>
+                              3 => [
+                                 'title' => 'Kartu Peserta',
+                                 'desc'  => 'Diterbitkan'
+                              ],
 
-                              <div>
+                              4 => [
+                                 'title' => 'Jadwal Seleksi',
+                                 'desc'  => 'Selesai'
+                              ],
 
-                                 <h6 class="mb-1">
-                                    Registrasi
-                                 </h6>
+                              5 => [
+                                 'title' => 'Seleksi',
+                                 'desc'  => 'Selesai'
+                              ],
 
-                                 <p class="text-muted fs-13 mb-0">
-                                    Selesai
-                                 </p>
+                              6 => [
+                                 'title' => 'Pengumuman',
+                                 'desc'  => 'Lulus'
+                              ],
 
-                              </div>
+                              7 => [
+                                 'title' => 'Daftar Ulang',
+                                 'desc'  => 'Aktif'
+                              ]
 
-                           </div>
-
-
-                           <!-- 02 -->
-
-                           <div class="pmb-process-item">
-
-                              <div class="pmb-process-number complete">
-
-                                 <i class="uil uil-check"></i>
-
-                              </div>
-
-                              <div>
-
-                                 <h6 class="mb-1">
-                                    Data & Dokumen
-                                 </h6>
-
-                                 <p class="text-muted fs-13 mb-0">
-                                    Lengkap
-                                 </p>
-
-                              </div>
-
-                           </div>
+                           ];
 
 
-                           <!-- 03 -->
+                           foreach (
+                              $processSteps
+                              as $stepNo => $step
+                           ):
 
-                           <div class="pmb-process-item">
+                              $isComplete =
+                                 $tahapAktif > $stepNo;
 
-                              <div class="pmb-process-number complete">
-
-                                 <i class="uil uil-check"></i>
-
-                              </div>
-
-                              <div>
-
-                                 <h6 class="mb-1">
-                                    Kartu Peserta
-                                 </h6>
-
-                                 <p class="text-muted fs-13 mb-0">
-                                    Diterbitkan
-                                 </p>
-
-                              </div>
-
-                           </div>
+                              $isActive =
+                                 $tahapAktif === $stepNo;
 
 
-                           <!-- 04 -->
+                           ?>
 
-                           <div class="pmb-process-item">
+                              <div class="pmb-process-item">
 
-                              <div class="pmb-process-number complete">
+                                 <div class="pmb-process-number
+                                    <?= $isComplete
+                                       ? 'complete'
+                                       : ($isActive
+                                          ? 'active'
+                                          : '') ?>">
 
-                                 <i class="uil uil-check"></i>
+                                    <?php if ($isComplete): ?>
 
-                              </div>
+                                       <i class="uil uil-check"></i>
 
-                              <div>
+                                    <?php else: ?>
 
-                                 <h6 class="mb-1">
-                                    Jadwal Seleksi
-                                 </h6>
+                                       <?= $stepNo ?>
 
-                                 <p class="text-muted fs-13 mb-0">
-                                    Selesai
-                                 </p>
+                                    <?php endif; ?>
 
-                              </div>
+                                 </div>
 
-                           </div>
+                                 <div>
 
+                                    <h6 class="mb-1">
+                                       <?= htmlspecialchars(
+                                          $step['title'],
+                                          ENT_QUOTES,
+                                          'UTF-8'
+                                       ) ?>
+                                    </h6>
 
-                           <!-- 05 -->
+                                    <?php if ($isActive): ?>
 
-                           <div class="pmb-process-item">
+                                       <span class="badge bg-soft-primary text-primary rounded-pill">
+                                          Aktif
+                                       </span>
 
-                              <div class="pmb-process-number complete">
+                                    <?php elseif ($isComplete): ?>
 
-                                 <i class="uil uil-check"></i>
+                                       <p class="text-muted fs-13 mb-0">
+                                          <?= htmlspecialchars(
+                                             $step['desc'],
+                                             ENT_QUOTES,
+                                             'UTF-8'
+                                          ) ?>
+                                       </p>
 
-                              </div>
+                                    <?php else: ?>
 
-                              <div>
+                                       <p class="text-muted fs-13 mb-0">
+                                          Belum
+                                       </p>
 
-                                 <h6 class="mb-1">
-                                    Seleksi
-                                 </h6>
+                                    <?php endif; ?>
 
-                                 <p class="text-muted fs-13 mb-0">
-                                    Selesai
-                                 </p>
+                                 </div>
 
                               </div>
 
-                           </div>
-
-
-                           <!-- 06 -->
-
-                           <div class="pmb-process-item">
-
-                              <div class="pmb-process-number complete">
-
-                                 <i class="uil uil-check"></i>
-
-                              </div>
-
-                              <div>
-
-                                 <h6 class="mb-1">
-                                    Pengumuman
-                                 </h6>
-
-                                 <p class="text-muted fs-13 mb-0">
-                                    Lulus
-                                 </p>
-
-                              </div>
-
-                           </div>
-
-
-                           <!-- 07 -->
-
-                           <div class="pmb-process-item">
-
-                              <div class="pmb-process-number active">
-
-                                 7
-
-                              </div>
-
-                              <div>
-
-                                 <h6 class="mb-1">
-                                    Daftar Ulang
-                                 </h6>
-
-                                 <span class="badge bg-soft-primary text-primary rounded-pill">
-                                    Aktif
-                                 </span>
-
-                              </div>
-
-                           </div>
+                           <?php endforeach; ?>
 
 
                         </div>
@@ -1771,7 +2338,19 @@
                                     </span>
 
                                     <h4 class="mb-1">
-                                       Menjadi Mahasiswa Resmi
+
+                                       <?php if (
+                                          $statusDaftarUlang === 'DITERIMA'
+                                       ): ?>
+
+                                          Mahasiswa Resmi Terdaftar
+
+                                       <?php else: ?>
+
+                                          Menjadi Mahasiswa Resmi
+
+                                       <?php endif; ?>
+
                                     </h4>
 
                                     <p class="mb-0 text-muted">
@@ -1793,9 +2372,21 @@
 
                               <span class="badge bg-soft-primary text-primary rounded-pill px-4 py-2">
 
-                                 SELESAI
+                                 <?php if (
+                                    $statusDaftarUlang === 'DITERIMA'
+                                 ): ?>
 
-                                 <i class="uil uil-check ms-1"></i>
+                                    DITERIMA
+
+                                    <i class="uil uil-check ms-1"></i>
+
+                                 <?php else: ?>
+
+                                    SELESAI
+
+                                    <i class="uil uil-check ms-1"></i>
+
+                                 <?php endif; ?>
 
                               </span>
 
@@ -1857,6 +2448,8 @@
    <script src="./assets/js/plugins.js"></script>
 
    <script src="./assets/js/theme.js"></script>
+
+   <script src="./assets/js/daftar-ulang.js"></script>
 
 </body>
 
