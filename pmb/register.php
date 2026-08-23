@@ -39,6 +39,122 @@
 
       }
 
+      /* ==================================================
+   JALUR PENDAFTARAN
+   ================================================== */
+
+      .pmb-path-row {
+         margin-left: -5px;
+         margin-right: -5px;
+      }
+
+      .pmb-path-col {
+         padding-left: 5px;
+         padding-right: 5px;
+      }
+
+
+      /* ==================================================
+   CARD
+   ================================================== */
+
+      .pmb-path-card {
+         width: 100%;
+         height: 100%;
+         cursor: pointer;
+         transition: all 0.2s ease;
+      }
+
+      .pmb-path-card .card-body {
+         padding: 1rem 0.5rem !important;
+         text-align: center;
+      }
+
+      .pmb-path-card .icon {
+         margin-bottom: 0.7rem !important;
+      }
+
+      .pmb-path-card h5 {
+         font-size: 14px;
+         margin-bottom: 3px !important;
+      }
+
+      .pmb-path-card p {
+         font-size: 11px !important;
+         margin-bottom: 0 !important;
+      }
+
+
+      /* ==================================================
+   RADIO BUTTON
+   ================================================== */
+
+      /* Tetap terlihat */
+      .pmb-path-col .form-check-input {
+         position: absolute;
+         top: 10px;
+         right: 10px;
+         z-index: 20;
+
+         width: 18px;
+         height: 18px;
+
+         margin: 0;
+         cursor: pointer;
+      }
+
+
+      /* ==================================================
+   HOVER
+   ================================================== */
+
+      .pmb-path-card:hover {
+         transform: translateY(-2px);
+         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+      }
+
+
+      /* ==================================================
+   REGULER SELECTED
+   ================================================== */
+
+      #jalur_reguler:checked+.form-check-label .pmb-path-card {
+         border: 2px solid var(--bs-primary) !important;
+         background-color: rgba(var(--bs-primary-rgb), 0.06);
+
+         box-shadow:
+            0 0 0 3px rgba(var(--bs-primary-rgb), 0.12),
+            0 6px 18px rgba(0, 0, 0, 0.08);
+      }
+
+
+      /* ==================================================
+   EKSEKUTIF SELECTED
+   ================================================== */
+
+      #jalur_eksekutif:checked+.form-check-label .pmb-path-card {
+         border: 2px solid var(--bs-info) !important;
+         background-color: rgba(var(--bs-info-rgb), 0.06);
+
+         box-shadow:
+            0 0 0 3px rgba(var(--bs-info-rgb), 0.12),
+            0 6px 18px rgba(0, 0, 0, 0.08);
+      }
+
+
+      /* ==================================================
+   PINDAHAN SELECTED
+   ================================================== */
+
+      #jalur_pindahan:checked+.form-check-label .pmb-path-card {
+         border: 2px solid #2fb344 !important;
+         background-color: rgba(47, 179, 68, 0.06);
+
+         box-shadow:
+            0 0 0 3px rgba(47, 179, 68, 0.12),
+            0 6px 18px rgba(0, 0, 0, 0.08);
+      }
+
 
       /* ---------------------------------------------------------
          Mobile
@@ -97,34 +213,6 @@
          }
 
 
-         /* Jalur Pendaftaran */
-         .pmb-path-row {
-            margin-left: -5px;
-            margin-right: -5px;
-         }
-
-         .pmb-path-col {
-            padding-left: 5px;
-            padding-right: 5px;
-         }
-
-         .pmb-path-card .card-body {
-            padding: 1rem 0.5rem !important;
-            text-align: center;
-         }
-
-         .pmb-path-card .icon {
-            margin-bottom: 0.7rem !important;
-         }
-
-         .pmb-path-card h5 {
-            font-size: 14px;
-            margin-bottom: 3px !important;
-         }
-
-         .pmb-path-card p {
-            font-size: 11px !important;
-         }
 
 
          /* Input */
