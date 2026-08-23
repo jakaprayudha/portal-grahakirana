@@ -941,7 +941,7 @@ $page = 'Kartu Peserta PMB';
                <div class="col-lg-10 mx-auto">
 
                   <a
-                     href="./pmb/register-schedule.php"
+                     href="./pmb/register-schedule"
                      class="text-decoration-none d-block">
 
                      <div

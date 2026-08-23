@@ -4,6 +4,7 @@ session_start();
 
 require_once '../config/connect.php';
 
+
 /**
  * =========================================================
  * AUTHENTICATION
@@ -17,6 +18,7 @@ if (
    header('Location: ./login-pmb');
    exit;
 }
+
 
 $userId = (int) $_SESSION['pmb_user_id'];
 
@@ -43,40 +45,29 @@ $stmt = $pdo->prepare("
         kabupaten,
         kecamatan,
         kelurahan,
-
         school_name,
         school_npsn,
         school_address,
         number_nisn,
         year_graduation,
-
         name_father,
         name_mother,
-
         number_kk,
         number_nik_kk,
-
         register_uid,
         register_type,
-
         id_program,
         id_provider,
-
         file_ktp,
         file_kk,
         file_ijazah,
         file_dokumen,
-
         tahap_aktif,
         status_pendaftaran,
         account_status,
-
         created_at
-
     FROM register_pmb
-
     WHERE id = :id
-
     LIMIT 1
 ");
 
@@ -105,6 +96,7 @@ if (!$pmbUser) {
 if ((int) $pmbUser['tahap_aktif'] < 2) {
 
    header('Location: ./welcome.php');
+
    exit;
 }
 
@@ -129,9 +121,9 @@ $jalur =
 
 
 /**
- * Tahun PMB
- *
- * Bisa nanti dipindahkan ke tabel setting.
+ * =========================================================
+ * TAHUN PMB
+ * =========================================================
  */
 
 $tahunPmb = '2026/2027';
@@ -142,20 +134,23 @@ $tahunPmb = '2026/2027';
  * FOTO PESERTA
  * =========================================================
  *
- * file_dokumen saat ini kita gunakan sebagai pasfoto.
+ * file_dokumen saat ini digunakan sebagai pasfoto.
  */
 
 $fotoPeserta = null;
 
+
 if (!empty($pmbUser['file_dokumen'])) {
 
    $fotoPath =
-      '../uploads/pmb/' . $pmbUser['file_dokumen'];
+      '../uploads/pmb/' .
+      $pmbUser['file_dokumen'];
 
    if (is_file($fotoPath)) {
 
       $fotoPeserta =
-         'uploads/pmb/' . rawurlencode(
+         'uploads/pmb/' .
+         rawurlencode(
             $pmbUser['file_dokumen']
          );
    }
@@ -167,15 +162,211 @@ if (!empty($pmbUser['file_dokumen'])) {
  * QR DATA
  * =========================================================
  *
- * Jangan gunakan ID database sebagai QR utama.
- * Gunakan register_uid karena itu identifier peserta.
+ * Gunakan register_uid.
  */
 
 $qrData =
    $idPendaftaran;
 
-$page = 'Kartu Peserta PMB';
 
+/**
+ * =========================================================
+ * GET JADWAL SELEKSI
+ * =========================================================
+ *
+ * Sumber:
+ * pmb_jadwal_seleksi
+ *
+ * Hanya mengambil jadwal aktif / terjadwal.
+ */
+
+$stmtJadwal = $pdo->prepare("
+    SELECT
+        id,
+        nama_seleksi,
+        kategori,
+        tanggal,
+        jam_mulai,
+        jam_selesai,
+        lokasi,
+        ruangan,
+        metode,
+        keterangan,
+        urutan,
+        status,
+        tahun_akademik
+    FROM pmb_jadwal_seleksi
+    WHERE tahun_akademik = :tahun_akademik
+      AND status = 'TERJADWAL'
+    ORDER BY
+        urutan ASC,
+        tanggal ASC,
+        jam_mulai ASC
+");
+
+$stmtJadwal->execute([
+   'tahun_akademik' => $tahunPmb
+]);
+
+$jadwalSeleksi =
+   $stmtJadwal->fetchAll(PDO::FETCH_ASSOC);
+
+
+/**
+ * =========================================================
+ * JUMLAH JADWAL
+ * =========================================================
+ */
+
+$totalJadwal =
+   count($jadwalSeleksi);
+
+
+/**
+ * =========================================================
+ * JADWAL SELEKSI BERIKUTNYA
+ * =========================================================
+ *
+ * Digunakan untuk countdown.
+ */
+
+$jadwalBerikutnya = null;
+
+foreach ($jadwalSeleksi as $jadwal) {
+
+   $tanggalJamMulai =
+      $jadwal['tanggal'] .
+      ' ' .
+      $jadwal['jam_mulai'];
+
+   $timestamp =
+      strtotime($tanggalJamMulai);
+
+   if (
+      $timestamp !== false &&
+      $timestamp >= time()
+   ) {
+
+      $jadwalBerikutnya =
+         $jadwal;
+
+      break;
+   }
+}
+
+
+/**
+ * =========================================================
+ * DATA COUNTDOWN
+ * =========================================================
+ */
+
+$countdownTarget = null;
+
+if ($jadwalBerikutnya) {
+
+   $countdownTarget =
+      $jadwalBerikutnya['tanggal'] .
+      'T' .
+      $jadwalBerikutnya['jam_mulai'];
+}
+
+/**
+ * =========================================================
+ * DISPLAY JADWAL BERIKUTNYA
+ * =========================================================
+ */
+
+$seleksiBerikutnyaNama = 'Belum Ada Jadwal';
+
+$seleksiBerikutnyaTanggal = '-';
+
+$seleksiBerikutnyaWaktu = '-';
+
+if ($jadwalBerikutnya) {
+
+   $seleksiBerikutnyaNama =
+      $jadwalBerikutnya['nama_seleksi'];
+
+   /**
+    * Format tanggal Indonesia
+    */
+
+   $hariIndonesia = [
+      'Sunday'    => 'Minggu',
+      'Monday'    => 'Senin',
+      'Tuesday'   => 'Selasa',
+      'Wednesday' => 'Rabu',
+      'Thursday'  => 'Kamis',
+      'Friday'    => 'Jumat',
+      'Saturday'  => 'Sabtu'
+   ];
+
+   $bulanIndonesia = [
+      'January'   => 'Januari',
+      'February'  => 'Februari',
+      'March'     => 'Maret',
+      'April'     => 'April',
+      'May'       => 'Mei',
+      'June'      => 'Juni',
+      'July'      => 'Juli',
+      'August'    => 'Agustus',
+      'September' => 'September',
+      'October'   => 'Oktober',
+      'November'  => 'November',
+      'December'  => 'Desember'
+   ];
+
+   $timestamp =
+      strtotime($jadwalBerikutnya['tanggal']);
+
+   $hari =
+      $hariIndonesia[date('l', $timestamp)] ?? date('l', $timestamp);
+
+   $bulan =
+      $bulanIndonesia[date('F', $timestamp)] ?? date('F', $timestamp);
+
+   $seleksiBerikutnyaTanggal =
+      $hari . ', ' .
+      date('d', $timestamp) . ' ' .
+      $bulan . ' ' .
+      date('Y', $timestamp);
+
+
+   /**
+    * Format jam
+    */
+
+   $jamMulai =
+      date(
+         'H.i',
+         strtotime(
+            $jadwalBerikutnya['jam_mulai']
+         )
+      );
+
+   $jamSelesai =
+      date(
+         'H.i',
+         strtotime(
+            $jadwalBerikutnya['jam_selesai']
+         )
+      );
+
+   $seleksiBerikutnyaWaktu =
+      $jamMulai .
+      ' – ' .
+      $jamSelesai .
+      ' WIB';
+}
+
+/**
+ * =========================================================
+ * PAGE
+ * =========================================================
+ */
+
+$page = 'Jadwal Seleksi PMB';
 
 ?>
 <!DOCTYPE html>
@@ -677,199 +868,496 @@ $page = 'Kartu Peserta PMB';
                         </div>
 
 
-                        <div class="pmb-timeline">
+                        <?php if (empty($jadwalSeleksi)): ?>
+
+                           <div class="alert alert-info">
+
+                              <i class="uil uil-info-circle me-2"></i>
+
+                              Jadwal seleksi belum tersedia.
+                              Silakan periksa kembali Portal PMB secara berkala.
+
+                           </div>
+
+                        <?php else: ?>
 
 
-                           <!-- =================================================
-                                TPA
-                           ================================================== -->
+                           <?php foreach ($jadwalSeleksi as $index => $jadwal): ?>
 
-                           <div class="pmb-timeline-item">
+                              <?php
 
-
-                              <div class="pmb-timeline-number active">
-                                 1
-                              </div>
+                              $nomor =
+                                 $index + 1;
 
 
-                              <div class="flex-grow-1">
+                              /*
+       * Format tanggal
+       */
 
-                                 <div class="card pmb-schedule-card mb-0">
+                              $timestamp =
+                                 strtotime($jadwal['tanggal']);
 
-                                    <div class="pmb-schedule-header">
+                              $tanggalHari =
+                                 date('l', $timestamp);
 
-                                       <div class="d-flex align-items-center">
+                              $tanggalAngka =
+                                 date('d', $timestamp);
 
-                                          <div class="pmb-schedule-icon bg-soft-primary text-primary me-4">
+                              $tanggalBulan =
+                                 date('F', $timestamp);
 
-                                             <i class="uil uil-file-alt fs-24"></i>
+                              $tanggalTahun =
+                                 date('Y', $timestamp);
 
-                                          </div>
 
-                                          <div class="flex-grow-1">
+                              /*
+       * Bahasa Indonesia
+       */
 
-                                             <span class="badge bg-soft-primary text-primary rounded-pill mb-2">
-                                                SELEKSI AKADEMIK
+                              $hariIndonesia = [
+
+                                 'Sunday'    => 'Minggu',
+                                 'Monday'    => 'Senin',
+                                 'Tuesday'   => 'Selasa',
+                                 'Wednesday' => 'Rabu',
+                                 'Thursday'  => 'Kamis',
+                                 'Friday'    => 'Jumat',
+                                 'Saturday'  => 'Sabtu'
+
+                              ];
+
+
+                              $bulanIndonesia = [
+
+                                 'January'   => 'Januari',
+                                 'February'  => 'Februari',
+                                 'March'     => 'Maret',
+                                 'April'     => 'April',
+                                 'May'       => 'Mei',
+                                 'June'      => 'Juni',
+                                 'July'      => 'Juli',
+                                 'August'    => 'Agustus',
+                                 'September' => 'September',
+                                 'October'   => 'Oktober',
+                                 'November'  => 'November',
+                                 'December'  => 'Desember'
+
+                              ];
+
+
+                              $hari =
+                                 $hariIndonesia[$tanggalHari]
+                                 ?? $tanggalHari;
+
+
+                              $bulan =
+                                 $bulanIndonesia[$tanggalBulan]
+                                 ?? $tanggalBulan;
+
+
+                              /*
+       * Jam
+       */
+
+                              $jamMulai =
+                                 date(
+                                    'H.i',
+                                    strtotime($jadwal['jam_mulai'])
+                                 );
+
+                              $jamSelesai =
+                                 date(
+                                    'H.i',
+                                    strtotime($jadwal['jam_selesai'])
+                                 );
+
+
+                              $waktu =
+                                 $jamMulai .
+                                 ' – ' .
+                                 $jamSelesai .
+                                 ' WIB';
+
+
+                              /*
+       * Warna berdasarkan urutan
+       */
+
+                              if ($nomor === 1) {
+
+                                 $icon =
+                                    'uil-file-alt';
+
+                                 $iconBg =
+                                    'bg-soft-primary';
+
+                                 $iconColor =
+                                    'text-primary';
+
+                                 $badgeBg =
+                                    'bg-soft-primary';
+
+                                 $badgeColor =
+                                    'text-primary';
+                              } else {
+
+                                 $icon =
+                                    'uil-comments';
+
+                                 $iconBg =
+                                    'bg-soft-green';
+
+                                 $iconColor =
+                                    'text-green';
+
+                                 $badgeBg =
+                                    'bg-soft-green';
+
+                                 $badgeColor =
+                                    'text-green';
+                              }
+
+                              ?>
+
+
+                              <!-- =================================================
+           TIMELINE ITEM
+      ================================================== -->
+
+                              <div class="pmb-timeline-item">
+
+
+                                 <!-- Number -->
+
+                                 <div
+                                    class="pmb-timeline-number
+            <?= $nomor === 1 ? 'active' : '' ?>">
+
+                                    <?= $nomor ?>
+
+                                 </div>
+
+
+                                 <div class="flex-grow-1">
+
+
+                                    <div class="card pmb-schedule-card mb-0">
+
+
+                                       <!-- HEADER -->
+
+                                       <div class="pmb-schedule-header">
+
+                                          <div class="d-flex align-items-center">
+
+
+                                             <div
+                                                class="pmb-schedule-icon
+                        <?= $iconBg ?>
+                        <?= $iconColor ?>
+                        me-4">
+
+                                                <i
+                                                   class="uil
+                           <?= $icon ?>
+                           fs-24">
+                                                </i>
+
+                                             </div>
+
+
+                                             <div class="flex-grow-1">
+
+
+                                                <span
+                                                   class="badge
+                           <?= $badgeBg ?>
+                           <?= $badgeColor ?>
+                           rounded-pill mb-2">
+
+                                                   <?= htmlspecialchars(
+                                                      $jadwal['kategori']
+                                                   ) ?>
+
+                                                </span>
+
+
+                                                <h4 class="mb-0">
+
+                                                   <?= htmlspecialchars(
+                                                      $jadwal['nama_seleksi']
+                                                   ) ?>
+
+                                                </h4>
+
+                                             </div>
+
+
+                                             <span
+                                                class="badge
+                        bg-soft-green
+                        text-green
+                        rounded-pill">
+
+                                                Terjadwal
+
                                              </span>
 
-                                             <h4 class="mb-0">
-                                                Tes Potensi Akademik
-                                             </h4>
-
-                                          </div>
-
-                                          <span class="badge bg-soft-green text-green rounded-pill">
-                                             Terjadwal
-                                          </span>
-
-                                       </div>
-
-                                    </div>
-
-
-                                    <div class="pmb-schedule-body">
-
-
-                                       <!-- Date -->
-
-                                       <div class="d-flex align-items-center mb-5">
-
-                                          <div class="text-center me-4">
-
-                                             <div class="pmb-schedule-date text-primary">
-                                                15
-                                             </div>
-
-                                             <div class="pmb-schedule-month">
-                                                September
-                                             </div>
-
-                                          </div>
-
-                                          <div>
-
-                                             <h5 class="mb-1">
-                                                Selasa, 15 September 2026
-                                             </h5>
-
-                                             <p class="text-muted mb-0 fs-14">
-                                                Tahun Akademik 2026/2027
-                                             </p>
 
                                           </div>
 
                                        </div>
 
 
-                                       <!-- Time -->
+                                       <!-- BODY -->
 
-                                       <div class="pmb-schedule-info">
+                                       <div class="pmb-schedule-body">
 
-                                          <i class="uil uil-clock"></i>
 
-                                          <div>
+                                          <!-- DATE -->
 
-                                             <div class="pmb-schedule-info-label">
-                                                Waktu
+                                          <div
+                                             class="d-flex
+                     align-items-center
+                     mb-5">
+
+                                             <div
+                                                class="text-center
+                        me-4">
+
+                                                <div
+                                                   class="pmb-schedule-date
+                           <?= $iconColor ?>">
+
+                                                   <?= htmlspecialchars(
+                                                      $tanggalAngka
+                                                   ) ?>
+
+                                                </div>
+
+
+                                                <div
+                                                   class="pmb-schedule-month">
+
+                                                   <?= htmlspecialchars(
+                                                      $bulan
+                                                   ) ?>
+
+                                                </div>
+
                                              </div>
 
-                                             <div class="pmb-schedule-info-value">
-                                                09.00 – 11.00 WIB
-                                             </div>
 
-                                          </div>
+                                             <div>
 
-                                       </div>
+                                                <h5 class="mb-1">
 
+                                                   <?= htmlspecialchars(
+                                                      $hari
+                                                   ) ?>,
 
-                                       <!-- Location -->
+                                                   <?= htmlspecialchars(
+                                                      $tanggalAngka
+                                                   ) ?>
 
-                                       <div class="pmb-schedule-info">
+                                                   <?= htmlspecialchars(
+                                                      $bulan
+                                                   ) ?>
 
-                                          <i class="uil uil-location-point"></i>
+                                                   <?= htmlspecialchars(
+                                                      $tanggalTahun
+                                                   ) ?>
 
-                                          <div>
-
-                                             <div class="pmb-schedule-info-label">
-                                                Lokasi
-                                             </div>
-
-                                             <div class="pmb-schedule-info-value">
-                                                Kampus STIH Graha Kirana
-                                             </div>
-
-                                          </div>
-
-                                       </div>
+                                                </h5>
 
 
-                                       <!-- Room -->
+                                                <p
+                                                   class="text-muted
+                           mb-0
+                           fs-14">
 
-                                       <div class="pmb-schedule-info">
+                                                   Tahun Akademik
+                                                   <?= htmlspecialchars(
+                                                      $jadwal['tahun_akademik']
+                                                   ) ?>
 
-                                          <i class="uil uil-building"></i>
+                                                </p>
 
-                                          <div>
-
-                                             <div class="pmb-schedule-info-label">
-                                                Ruangan
-                                             </div>
-
-                                             <div class="pmb-schedule-info-value">
-                                                Ruang Ujian 01
-                                             </div>
-
-                                          </div>
-
-                                       </div>
-
-
-                                       <!-- Method -->
-
-                                       <div class="pmb-schedule-info">
-
-                                          <i class="uil uil-monitor"></i>
-
-                                          <div>
-
-                                             <div class="pmb-schedule-info-label">
-                                                Metode
-                                             </div>
-
-                                             <div class="pmb-schedule-info-value">
-                                                Offline
                                              </div>
 
                                           </div>
 
+
+                                          <!-- TIME -->
+
+                                          <div class="pmb-schedule-info">
+
+                                             <i
+                                                class="uil uil-clock
+                        <?= $iconColor ?>">
+                                             </i>
+
+                                             <div>
+
+                                                <div
+                                                   class="pmb-schedule-info-label">
+
+                                                   Waktu
+
+                                                </div>
+
+                                                <div
+                                                   class="pmb-schedule-info-value">
+
+                                                   <?= htmlspecialchars(
+                                                      $waktu
+                                                   ) ?>
+
+                                                </div>
+
+                                             </div>
+
+                                          </div>
+
+
+                                          <!-- LOCATION -->
+
+                                          <div class="pmb-schedule-info">
+
+                                             <i
+                                                class="uil uil-location-point
+                        <?= $iconColor ?>">
+                                             </i>
+
+                                             <div>
+
+                                                <div
+                                                   class="pmb-schedule-info-label">
+
+                                                   Lokasi
+
+                                                </div>
+
+                                                <div
+                                                   class="pmb-schedule-info-value">
+
+                                                   <?= htmlspecialchars(
+                                                      $jadwal['lokasi']
+                                                   ) ?>
+
+                                                </div>
+
+                                             </div>
+
+                                          </div>
+
+
+                                          <!-- ROOM -->
+
+                                          <div class="pmb-schedule-info">
+
+                                             <i
+                                                class="uil uil-building
+                        <?= $iconColor ?>">
+                                             </i>
+
+                                             <div>
+
+                                                <div
+                                                   class="pmb-schedule-info-label">
+
+                                                   Ruangan
+
+                                                </div>
+
+                                                <div
+                                                   class="pmb-schedule-info-value">
+
+                                                   <?= htmlspecialchars(
+                                                      $jadwal['ruangan'] ?: '-'
+                                                   ) ?>
+
+                                                </div>
+
+                                             </div>
+
+                                          </div>
+
+
+                                          <!-- METHOD -->
+
+                                          <div class="pmb-schedule-info">
+
+                                             <i
+                                                class="uil uil-monitor
+                        <?= $iconColor ?>">
+                                             </i>
+
+                                             <div>
+
+                                                <div
+                                                   class="pmb-schedule-info-label">
+
+                                                   Metode
+
+                                                </div>
+
+                                                <div
+                                                   class="pmb-schedule-info-value">
+
+                                                   <?= htmlspecialchars(
+                                                      $jadwal['metode']
+                                                   ) ?>
+
+                                                </div>
+
+                                             </div>
+
+                                          </div>
+
+
+                                          <hr class="my-5">
+
+
+                                          <!-- NOTE -->
+
+                                          <div
+                                             class="d-flex
+                     justify-content-between
+                     align-items-center
+                     flex-wrap
+                     gap-3">
+
+                                             <span
+                                                class="text-muted fs-13">
+
+                                                <i
+                                                   class="uil
+                           uil-info-circle
+                           me-1">
+                                                </i>
+
+                                                <?= htmlspecialchars(
+                                                   $jadwal['keterangan']
+                                                      ?: 'Tidak ada keterangan.'
+                                                ) ?>
+
+                                             </span>
+
+                                             <a
+                                                href="./pmb/register-schedule-details?id=<?= (int) $jadwal['id'] ?>"
+                                                class="btn btn-sm btn-outline-primary rounded">
+
+                                                Lihat Detail
+
+                                                <i class="uil uil-arrow-right ms-1"></i>
+
+                                             </a>
+
+                                          </div>
+
+
                                        </div>
-
-
-                                       <hr class="my-5">
-
-
-                                       <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
-
-                                          <span class="text-muted fs-13">
-
-                                             <i class="uil uil-info-circle me-1"></i>
-
-                                             Harap hadir 30 menit sebelum ujian.
-
-                                          </span>
-
-                                          <button
-                                             type="button"
-                                             class="btn btn-sm btn-outline-primary rounded">
-
-                                             Lihat Detail
-
-                                             <i class="uil uil-arrow-right ms-1"></i>
-
-                                          </button>
-
-                                       </div>
-
 
                                     </div>
 
@@ -877,211 +1365,11 @@ $page = 'Kartu Peserta PMB';
 
                               </div>
 
-                           </div>
 
+                           <?php endforeach; ?>
 
-                           <!-- =================================================
-                                INTERVIEW
-                           ================================================== -->
 
-                           <div class="pmb-timeline-item">
-
-
-                              <div class="pmb-timeline-number">
-                                 2
-                              </div>
-
-
-                              <div class="flex-grow-1">
-
-                                 <div class="card pmb-schedule-card mb-0">
-
-                                    <div class="pmb-schedule-header">
-
-                                       <div class="d-flex align-items-center">
-
-                                          <div class="pmb-schedule-icon bg-soft-green text-green me-4">
-
-                                             <i class="uil uil-comments fs-24"></i>
-
-                                          </div>
-
-                                          <div class="flex-grow-1">
-
-                                             <span class="badge bg-soft-green text-green rounded-pill mb-2">
-                                                SELEKSI LANJUTAN
-                                             </span>
-
-                                             <h4 class="mb-0">
-                                                Wawancara
-                                             </h4>
-
-                                          </div>
-
-                                          <span class="badge bg-soft-yellow text-yellow rounded-pill">
-                                             Terjadwal
-                                          </span>
-
-                                       </div>
-
-                                    </div>
-
-
-                                    <div class="pmb-schedule-body">
-
-
-                                       <!-- Date -->
-
-                                       <div class="d-flex align-items-center mb-5">
-
-                                          <div class="text-center me-4">
-
-                                             <div class="pmb-schedule-date text-green">
-                                                16
-                                             </div>
-
-                                             <div class="pmb-schedule-month">
-                                                September
-                                             </div>
-
-                                          </div>
-
-                                          <div>
-
-                                             <h5 class="mb-1">
-                                                Rabu, 16 September 2026
-                                             </h5>
-
-                                             <p class="text-muted mb-0 fs-14">
-                                                Setelah pelaksanaan TPA
-                                             </p>
-
-                                          </div>
-
-                                       </div>
-
-
-                                       <!-- Time -->
-
-                                       <div class="pmb-schedule-info">
-
-                                          <i class="uil uil-clock text-green"></i>
-
-                                          <div>
-
-                                             <div class="pmb-schedule-info-label">
-                                                Waktu
-                                             </div>
-
-                                             <div class="pmb-schedule-info-value">
-                                                13.00 – 15.00 WIB
-                                             </div>
-
-                                          </div>
-
-                                       </div>
-
-
-                                       <!-- Location -->
-
-                                       <div class="pmb-schedule-info">
-
-                                          <i class="uil uil-location-point text-green"></i>
-
-                                          <div>
-
-                                             <div class="pmb-schedule-info-label">
-                                                Lokasi
-                                             </div>
-
-                                             <div class="pmb-schedule-info-value">
-                                                Kampus STIH Graha Kirana
-                                             </div>
-
-                                          </div>
-
-                                       </div>
-
-
-                                       <!-- Room -->
-
-                                       <div class="pmb-schedule-info">
-
-                                          <i class="uil uil-building text-green"></i>
-
-                                          <div>
-
-                                             <div class="pmb-schedule-info-label">
-                                                Ruangan
-                                             </div>
-
-                                             <div class="pmb-schedule-info-value">
-                                                Ruang Wawancara 02
-                                             </div>
-
-                                          </div>
-
-                                       </div>
-
-
-                                       <!-- Method -->
-
-                                       <div class="pmb-schedule-info">
-
-                                          <i class="uil uil-video text-green"></i>
-
-                                          <div>
-
-                                             <div class="pmb-schedule-info-label">
-                                                Metode
-                                             </div>
-
-                                             <div class="pmb-schedule-info-value">
-                                                Offline / Tatap Muka
-                                             </div>
-
-                                          </div>
-
-                                       </div>
-
-
-                                       <hr class="my-5">
-
-
-                                       <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
-
-                                          <span class="text-muted fs-13">
-
-                                             <i class="uil uil-info-circle me-1"></i>
-
-                                             Siapkan dokumen pendukung.
-
-                                          </span>
-
-                                          <button
-                                             type="button"
-                                             class="btn btn-sm btn-outline-primary rounded">
-
-                                             Lihat Detail
-
-                                             <i class="uil uil-arrow-right ms-1"></i>
-
-                                          </button>
-
-                                       </div>
-
-
-                                    </div>
-
-                                 </div>
-
-                              </div>
-
-                           </div>
-
-
-                        </div>
-
+                        <?php endif; ?>
                      </div>
 
                   </div>
@@ -1160,21 +1448,76 @@ $page = 'Kartu Peserta PMB';
                        COUNTDOWN
                   ================================================== -->
 
+                  <!-- =================================================
+     NEXT SELECTION COUNTDOWN
+================================================== -->
+
                   <div class="card bg-primary text-white border-0 shadow-lg mb-6">
 
                      <div class="card-body p-6">
 
+
+                        <!-- Label -->
+
                         <span class="text-uppercase text-white opacity-75 fs-13 fw-bold">
+
                            Seleksi Berikutnya
+
                         </span>
 
-                        <h3 class="text-white mt-2 mb-5">
-                           Tes Potensi Akademik
+
+                        <!-- Nama Seleksi -->
+
+                        <h3 class="text-white mt-2 mb-2">
+
+                           <?= htmlspecialchars(
+                              $seleksiBerikutnyaNama
+                           ) ?>
+
                         </h3>
 
 
+                        <!-- Tanggal & Waktu -->
+
+                        <?php if ($jadwalBerikutnya): ?>
+
+                           <p class="text-white opacity-75 mb-5 fs-14">
+
+                              <i class="uil uil-calendar-alt me-1"></i>
+
+                              <?= htmlspecialchars(
+                                 $seleksiBerikutnyaTanggal
+                              ) ?>
+
+
+                              <span class="mx-2">•</span>
+
+
+                              <i class="uil uil-clock me-1"></i>
+
+                              <?= htmlspecialchars(
+                                 $seleksiBerikutnyaWaktu
+                              ) ?>
+
+                           </p>
+
+                        <?php else: ?>
+
+                           <p class="text-white opacity-75 mb-5 fs-14">
+
+                              Jadwal seleksi belum tersedia.
+
+                           </p>
+
+                        <?php endif; ?>
+
+
+                        <!-- Countdown -->
+
                         <div class="row text-center gx-2">
 
+
+                           <!-- HARI -->
 
                            <div class="col-3">
 
@@ -1183,17 +1526,23 @@ $page = 'Kartu Peserta PMB';
                                  <div
                                     class="fs-24 fw-bold text-white"
                                     id="countDays">
-                                    12
+
+                                    00
+
                                  </div>
 
                                  <small class="text-white opacity-75">
+
                                     Hari
+
                                  </small>
 
                               </div>
 
                            </div>
 
+
+                           <!-- JAM -->
 
                            <div class="col-3">
 
@@ -1202,17 +1551,23 @@ $page = 'Kartu Peserta PMB';
                                  <div
                                     class="fs-24 fw-bold text-white"
                                     id="countHours">
-                                    08
+
+                                    00
+
                                  </div>
 
                                  <small class="text-white opacity-75">
+
                                     Jam
+
                                  </small>
 
                               </div>
 
                            </div>
 
+
+                           <!-- MENIT -->
 
                            <div class="col-3">
 
@@ -1221,17 +1576,23 @@ $page = 'Kartu Peserta PMB';
                                  <div
                                     class="fs-24 fw-bold text-white"
                                     id="countMinutes">
-                                    25
+
+                                    00
+
                                  </div>
 
                                  <small class="text-white opacity-75">
+
                                     Menit
+
                                  </small>
 
                               </div>
 
                            </div>
 
+
+                           <!-- DETIK -->
 
                            <div class="col-3">
 
@@ -1240,11 +1601,15 @@ $page = 'Kartu Peserta PMB';
                                  <div
                                     class="fs-24 fw-bold text-white"
                                     id="countSeconds">
-                                    40
+
+                                    00
+
                                  </div>
 
                                  <small class="text-white opacity-75">
+
                                     Detik
+
                                  </small>
 
                               </div>
@@ -1391,12 +1756,14 @@ $page = 'Kartu Peserta PMB';
                         </p>
 
                         <a
-                           href="#"
+                           href="https://wa.me/6281367969843?text=Halo%20Panitia%20PMB%20STIH%20Graha%20Kirana%2C%20saya%20ingin%20bertanya%20mengenai%20pendaftaran%20mahasiswa%20baru."
+                           target="_blank"
+                           rel="noopener noreferrer"
                            class="btn btn-sm btn-outline-primary rounded">
 
                            Hubungi Panitia
 
-                           <i class="uil uil-arrow-right ms-1"></i>
+                           <i class="uil uil-whatsapp ms-1"></i>
 
                         </a>
 
@@ -1570,78 +1937,197 @@ $page = 'Kartu Peserta PMB';
    <script src="./assets/js/plugins.js"></script>
 
    <script src="./assets/js/theme.js"></script>
-
-
    <script>
       /* =========================================================
-         COUNTDOWN SELEKSI
-      ========================================================= */
+   COUNTDOWN SELEKSI PMB
+   Target diambil dari pmb_jadwal_seleksi
+========================================================= */
 
-      const targetDate = new Date(
-         "September 15, 2026 09:00:00"
-      ).getTime();
+      /**
+       * Target countdown dari PHP
+       *
+       * Contoh:
+       * 2026-09-15T09:00:00
+       */
+
+      const countdownTarget =
+         <?= $countdownTarget
+            ? json_encode($countdownTarget)
+            : 'null' ?>;
 
 
       function updateCountdown() {
 
-         const now = new Date().getTime();
+         const daysElement =
+            document.getElementById("countDays");
 
-         const distance = targetDate - now;
+         const hoursElement =
+            document.getElementById("countHours");
+
+         const minutesElement =
+            document.getElementById("countMinutes");
+
+         const secondsElement =
+            document.getElementById("countSeconds");
 
 
-         if (distance <= 0) {
+         /*
+          * Pastikan element tersedia
+          */
 
-            document.getElementById("countDays").innerText = "00";
-            document.getElementById("countHours").innerText = "00";
-            document.getElementById("countMinutes").innerText = "00";
-            document.getElementById("countSeconds").innerText = "00";
-
+         if (
+            !daysElement ||
+            !hoursElement ||
+            !minutesElement ||
+            !secondsElement
+         ) {
             return;
-
          }
 
 
-         const days = Math.floor(
-            distance / (1000 * 60 * 60 * 24)
-         );
+         /*
+          * Tidak ada jadwal
+          */
+
+         if (!countdownTarget) {
+
+            daysElement.innerText = "00";
+            hoursElement.innerText = "00";
+            minutesElement.innerText = "00";
+            secondsElement.innerText = "00";
+
+            return;
+         }
 
 
-         const hours = Math.floor(
-            (distance % (1000 * 60 * 60 * 24)) /
-            (1000 * 60 * 60)
-         );
+         /*
+          * Konversi target
+          *
+          * Server:
+          * 2026-09-15T09:00:00
+          */
+
+         const targetDate =
+            new Date(countdownTarget).getTime();
 
 
-         const minutes = Math.floor(
-            (distance % (1000 * 60 * 60)) /
-            (1000 * 60)
-         );
+         const now =
+            new Date().getTime();
 
 
-         const seconds = Math.floor(
-            (distance % (1000 * 60)) /
-            1000
-         );
+         const distance =
+            targetDate - now;
 
 
-         document.getElementById("countDays").innerText =
+         /*
+          * Jadwal sudah dimulai / lewat
+          */
+
+         if (distance <= 0) {
+
+            daysElement.innerText = "00";
+            hoursElement.innerText = "00";
+            minutesElement.innerText = "00";
+            secondsElement.innerText = "00";
+
+            return;
+         }
+
+
+         /*
+          * Hitung hari
+          */
+
+         const days =
+            Math.floor(
+               distance /
+               (1000 * 60 * 60 * 24)
+            );
+
+
+         /*
+          * Hitung jam
+          */
+
+         const hours =
+            Math.floor(
+               (
+                  distance %
+                  (1000 * 60 * 60 * 24)
+               ) /
+               (1000 * 60 * 60)
+            );
+
+
+         /*
+          * Hitung menit
+          */
+
+         const minutes =
+            Math.floor(
+               (
+                  distance %
+                  (1000 * 60 * 60)
+               ) /
+               (1000 * 60)
+            );
+
+
+         /*
+          * Hitung detik
+          */
+
+         const seconds =
+            Math.floor(
+               (
+                  distance %
+                  (1000 * 60)
+               ) /
+               1000
+            );
+
+
+         /*
+          * Tampilkan
+          */
+
+         daysElement.innerText =
             String(days).padStart(2, "0");
 
-         document.getElementById("countHours").innerText =
+
+         hoursElement.innerText =
             String(hours).padStart(2, "0");
 
-         document.getElementById("countMinutes").innerText =
+
+         minutesElement.innerText =
             String(minutes).padStart(2, "0");
 
-         document.getElementById("countSeconds").innerText =
+
+         secondsElement.innerText =
             String(seconds).padStart(2, "0");
 
       }
 
 
+      /*
+      =========================================================
+      INITIAL
+      =========================================================
+      */
+
       updateCountdown();
 
-      setInterval(updateCountdown, 1000);
+
+      /*
+      =========================================================
+      UPDATE SETIAP 1 DETIK
+      =========================================================
+      */
+
+      setInterval(
+         updateCountdown,
+         1000
+      );
    </script>
 
 </body>
