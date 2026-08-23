@@ -1281,7 +1281,7 @@ $page =
 
 
                            <a
-                              href="./pmb/cetak-ktm.php"
+                              href="./pmb/ktm.php"
                               target="_blank"
                               class="btn btn-outline-primary rounded btn-icon btn-icon-end">
 
