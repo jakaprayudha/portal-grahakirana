@@ -1,11 +1,457 @@
+<?php
+
+session_start();
+
+require_once '../config/connect.php';
+
+
+/**
+ * =========================================================
+ * AUTHENTICATION
+ * =========================================================
+ */
+
+if (
+   empty($_SESSION['pmb_logged_in']) ||
+   empty($_SESSION['pmb_user_id'])
+) {
+
+   header('Location: ./login-pmb.php');
+   exit;
+}
+
+
+$userId = (int) $_SESSION['pmb_user_id'];
+
+
+/**
+ * =========================================================
+ * AMBIL DATA PESERTA
+ * =========================================================
+ */
+
+$stmt = $pdo->prepare("
+
+    SELECT
+
+        id,
+        fullname,
+        gender,
+        place,
+        datebirth,
+
+        number_id,
+        phone_number,
+        email_register,
+
+        register_uid,
+        register_type,
+
+        register_pmb.id_program,
+        id_provider,
+
+        tahap_aktif,
+        status_pendaftaran,
+        status_daftar_ulang,
+
+        nilai_tpa,
+        nilai_wawancara,
+        nilai_akhir,
+
+        account_status,
+
+        created_at,
+        updated_at,
+        ms_program_studi.program_name,
+        ms_program_studi.program_degree
+
+    FROM register_pmb
+      LEFT JOIN ms_program_studi ON ms_program_studi.id_program = register_pmb.id_program
+
+
+    WHERE id = :id
+
+    LIMIT 1
+
+");
+
+
+$stmt->execute([
+   'id' => $userId
+]);
+
+
+$pmbUser = $stmt->fetch(
+   PDO::FETCH_ASSOC
+);
+
+
+/**
+ * =========================================================
+ * USER TIDAK DITEMUKAN
+ * =========================================================
+ */
+
+if (!$pmbUser) {
+
+   session_destroy();
+
+   header('Location: ./login-pmb.php');
+
+   exit;
+}
+
+
+/**
+ * =========================================================
+ * GUARD TAHAP
+ * =========================================================
+ *
+ * Tahap 06 = Pengumuman
+ *
+ */
+
+$tahapAktif =
+   (int) (
+      $pmbUser['tahap_aktif']
+      ?? 1
+   );
+
+
+if ($tahapAktif < 6) {
+
+   header('Location: ./welcome.php');
+
+   exit;
+}
+
+
+/**
+ * =========================================================
+ * DATA PESERTA
+ * =========================================================
+ */
+
+$namaPeserta =
+   trim(
+      $pmbUser['fullname'] ?? ''
+   );
+
+if ($namaPeserta === '') {
+
+   $namaPeserta = '-';
+}
+
+
+$idPendaftaran =
+   trim(
+      $pmbUser['register_uid'] ?? ''
+   );
+
+if ($idPendaftaran === '') {
+
+   $idPendaftaran = '-';
+}
+
+
+$jalur =
+   trim(
+      $pmbUser['register_type'] ?? ''
+   );
+
+if ($jalur === '') {
+
+   $jalur = '-';
+}
+
+
+/**
+ * =========================================================
+ * NORMALISASI JALUR
+ * =========================================================
+ */
+
+$jalurDisplay = $jalur;
+
+switch (strtoupper($jalur)) {
+
+   case '01':
+      $jalurDisplay = 'Reguler';
+      break;
+
+   case '02':
+      $jalurDisplay = 'Prestasi';
+      break;
+
+   case '03':
+      $jalurDisplay = 'Beasiswa';
+      break;
+}
+
+
+/**
+ * =========================================================
+ * PROGRAM STUDI
+ * =========================================================
+ *
+ * Untuk sementara menggunakan id_program.
+ *
+ * Jika nanti tabel master program studi sudah tersedia,
+ * bagian ini bisa langsung diganti JOIN.
+ *
+ */
+
+$programStudi = '-';
+
+if (
+   !empty($pmbUser['id_program'])
+) {
+
+   $programStudi =
+      $pmbUser['program_degree'] . " - " . $pmbUser['program_name'];
+}
+
+
+/**
+ * =========================================================
+ * TAHUN AKADEMIK
+ * =========================================================
+ */
+
+$tahunPmb = '2026/2027';
+
+
+/**
+ * =========================================================
+ * STATUS KELULUSAN
+ * =========================================================
+ */
+
+$statusKelulusan =
+   strtoupper(
+      trim(
+         $pmbUser['status_pendaftaran']
+            ?? ''
+      )
+   );
+
+
+/**
+ * =========================================================
+ * STATUS DAFTAR ULANG
+ * =========================================================
+ */
+
+$statusDaftarUlang =
+   strtoupper(
+      trim(
+         $pmbUser['status_daftar_ulang']
+            ?? 'BELUM_DIAJUKAN'
+      )
+   );
+
+
+/**
+ * =========================================================
+ * STATUS DISPLAY
+ * =========================================================
+ */
+
+$statusDaftarUlangDisplay =
+   'Belum Diajukan';
+
+
+switch ($statusDaftarUlang) {
+
+   case 'DIAJUKAN':
+
+      $statusDaftarUlangDisplay =
+         'Sedang Diproses';
+
+      break;
+
+
+   case 'DIVERIFIKASI':
+
+      $statusDaftarUlangDisplay =
+         'Sedang Diverifikasi';
+
+      break;
+
+
+   case 'DITERIMA':
+
+      $statusDaftarUlangDisplay =
+         'Diterima';
+
+      break;
+
+
+   case 'DITOLAK':
+
+      $statusDaftarUlangDisplay =
+         'Ditolak';
+
+      break;
+}
+
+
+/**
+ * =========================================================
+ * STATUS LULUS
+ * =========================================================
+ */
+
+$isLulus =
+   ($statusKelulusan === 'LULUS');
+
+
+$isTidakLulus =
+   ($statusKelulusan === 'TIDAK_LULUS');
+
+
+/**
+ * =========================================================
+ * NILAI
+ * =========================================================
+ */
+
+$nilaiTPA =
+   $pmbUser['nilai_tpa'];
+
+
+$nilaiWawancara =
+   $pmbUser['nilai_wawancara'];
+
+
+$nilaiAkhir =
+   $pmbUser['nilai_akhir'];
+
+
+/**
+ * =========================================================
+ * FORMAT NILAI
+ * =========================================================
+ */
+
+function formatNilai($nilai): string
+{
+
+   if (
+      $nilai === null ||
+      $nilai === ''
+   ) {
+
+      return '—';
+   }
+
+
+   return number_format(
+      (float) $nilai,
+      2,
+      ',',
+      '.'
+   );
+}
+
+
+/**
+ * =========================================================
+ * TANGGAL PENGUMUMAN
+ * =========================================================
+ */
+
+$tanggalPengumuman = '—';
+
+
+if (
+   !empty($pmbUser['updated_at'])
+) {
+
+   $timestamp =
+      strtotime(
+         $pmbUser['updated_at']
+      );
+
+
+   if ($timestamp !== false) {
+
+      $tanggalPengumuman =
+         date(
+            'd/m/Y H:i',
+            $timestamp
+         );
+   }
+}
+
+
+/**
+ * =========================================================
+ * LABEL HASIL
+ * =========================================================
+ */
+
+if ($isLulus) {
+
+   $resultTitle =
+      'SELAMAT, ANDA LULUS!';
+
+   $resultDescription =
+      'Berdasarkan hasil seleksi Penerimaan Mahasiswa Baru, Anda dinyatakan LULUS dan berhak melanjutkan ke tahap daftar ulang.';
+
+   $resultIcon =
+      'uil-trophy';
+
+   $resultIconColor =
+      'text-primary';
+} elseif ($isTidakLulus) {
+
+   $resultTitle =
+      'ANDA BELUM LULUS';
+
+   $resultDescription =
+      'Berdasarkan hasil seleksi Penerimaan Mahasiswa Baru, Anda dinyatakan belum lulus pada periode penerimaan ini.';
+
+   $resultIcon =
+      'uil-info-circle';
+
+   $resultIconColor =
+      'text-primary';
+} else {
+
+   $resultTitle =
+      'HASIL SELEKSI BELUM TERSEDIA';
+
+   $resultDescription =
+      'Hasil seleksi Anda belum ditetapkan atau masih dalam proses pengumuman oleh panitia PMB.';
+
+   $resultIcon =
+      'uil-clock';
+
+   $resultIconColor =
+      'text-primary';
+}
+
+
+/**
+ * =========================================================
+ * PAGE
+ * =========================================================
+ */
+
+$page =
+   'Pengumuman Kelulusan PMB';
+
+?>
 <!DOCTYPE html>
+
 <html lang="en">
 
 <head>
+
    <base href="../">
 
    <?php
-   $page = 'Pengumuman Kelulusan PMB';
    require '../head.php';
    ?>
 
@@ -28,7 +474,6 @@
          font-size: 2.5rem;
       }
 
-      /* Participant */
       .pmb-participant-card {
          border: 0;
       }
@@ -39,7 +484,6 @@
          letter-spacing: .4px;
       }
 
-      /* Announcement Hero */
       .pmb-result-hero {
          position: relative;
          overflow: hidden;
@@ -104,7 +548,6 @@
          font-weight: 600;
       }
 
-      /* Result Detail */
       .pmb-detail-card {
          border: 0;
       }
@@ -143,7 +586,6 @@
          font-weight: 600;
       }
 
-      /* Score */
       .pmb-score-card {
          border: 1px solid #edf0f3;
          border-radius: 12px;
@@ -163,7 +605,6 @@
          margin-top: 4px;
       }
 
-      /* Status */
       .pmb-status-pill {
          display: inline-flex;
          align-items: center;
@@ -173,7 +614,6 @@
          font-weight: 700;
       }
 
-      /* Next Step */
       .pmb-next-card {
          border: 0;
       }
@@ -189,7 +629,6 @@
          margin-right: 20px;
       }
 
-      /* Timeline */
       .pmb-process {
          position: relative;
       }
@@ -242,7 +681,6 @@
          color: #fff;
       }
 
-      /* Mobile */
       @media (max-width: 991.98px) {
 
          .pmb-announcement-section {
@@ -373,14 +811,15 @@
 
    <div class="content-wrapper">
 
+
       <?php
       require '../navbar.php';
       ?>
 
 
       <!-- =====================================================
-           SECTION : TAHAP 06
-      ====================================================== -->
+        SECTION : TAHAP 06
+   ====================================================== -->
 
       <section class="wrapper bg-light pmb-announcement-section">
 
@@ -388,24 +827,32 @@
 
 
             <!-- =================================================
-                 HEADER
-            ================================================== -->
+              HEADER
+         ================================================== -->
 
             <div class="row pmb-page-header">
 
                <div class="col-lg-9">
 
                   <span class="badge bg-soft-primary text-primary rounded-pill mb-3">
+
                      TAHAP 06
+
                   </span>
 
+
                   <h2 class="display-4 mb-3">
+
                      Pengumuman Kelulusan
+
                   </h2>
 
+
                   <p class="lead fs-18 mb-0">
+
                      Lihat hasil akhir seleksi Penerimaan Mahasiswa Baru
                      dan informasi tahapan selanjutnya.
+
                   </p>
 
                </div>
@@ -414,8 +861,8 @@
 
 
             <!-- =================================================
-                 PARTICIPANT
-            ================================================== -->
+              PARTICIPANT
+         ================================================== -->
 
             <div class="card shadow-sm pmb-participant-card mb-7">
 
@@ -434,22 +881,39 @@
 
                            </div>
 
+
                            <div>
 
                               <span class="text-uppercase text-muted fs-13 fw-bold">
+
                                  Peserta PMB
+
                               </span>
 
+
                               <h4 class="mb-1">
-                                 Jaka Prayudha
+
+                                 <?= htmlspecialchars(
+                                    $namaPeserta,
+                                    ENT_QUOTES,
+                                    'UTF-8'
+                                 ) ?>
+
                               </h4>
+
 
                               <p class="mb-0 text-muted pmb-participant-id">
 
                                  ID Pendaftaran:
 
                                  <span class="text-primary">
-                                    99-26-69-74-01-001
+
+                                    <?= htmlspecialchars(
+                                       $idPendaftaran,
+                                       ENT_QUOTES,
+                                       'UTF-8'
+                                    ) ?>
+
                                  </span>
 
                               </p>
@@ -465,7 +929,11 @@
 
                         <span class="badge bg-soft-primary text-primary rounded-pill px-4 py-2">
 
-                           Jalur Reguler
+                           <?= htmlspecialchars(
+                              $jalurDisplay,
+                              ENT_QUOTES,
+                              'UTF-8'
+                           ) ?>
 
                         </span>
 
@@ -480,8 +948,8 @@
 
 
             <!-- =================================================
-                 RESULT HERO
-            ================================================== -->
+              RESULT HERO
+         ================================================== -->
 
             <div class="card bg-primary text-white shadow-lg pmb-result-hero mb-7">
 
@@ -490,9 +958,9 @@
                   <div class="pmb-result-content">
 
 
-                     <div class="pmb-result-icon text-primary">
+                     <div class="pmb-result-icon <?= $resultIconColor ?>">
 
-                        <i class="uil uil-trophy"></i>
+                        <i class="uil <?= $resultIcon ?>"></i>
 
                      </div>
 
@@ -506,14 +974,22 @@
 
                      <h1 class="pmb-result-title text-white mb-3">
 
-                        SELAMAT, ANDA LULUS!
+                        <?= htmlspecialchars(
+                           $resultTitle,
+                           ENT_QUOTES,
+                           'UTF-8'
+                        ) ?>
 
                      </h1>
 
 
                      <div class="pmb-result-name text-white mb-4">
 
-                        Jaka Prayudha
+                        <?= htmlspecialchars(
+                           $namaPeserta,
+                           ENT_QUOTES,
+                           'UTF-8'
+                        ) ?>
 
                      </div>
 
@@ -521,9 +997,11 @@
                      <p class="text-white opacity-75 mb-0 mx-auto"
                         style="max-width:650px;">
 
-                        Berdasarkan hasil seleksi Penerimaan Mahasiswa Baru,
-                        Anda dinyatakan <strong class="text-white">LULUS</strong>
-                        dan berhak melanjutkan ke tahap daftar ulang.
+                        <?= htmlspecialchars(
+                           $resultDescription,
+                           ENT_QUOTES,
+                           'UTF-8'
+                        ) ?>
 
                      </p>
 
@@ -536,22 +1014,22 @@
 
 
             <!-- =================================================
-                 RESULT DETAIL
-            ================================================== -->
+              RESULT DETAIL
+         ================================================== -->
 
             <div class="row gx-lg-8 gy-6">
 
 
                <!-- =================================================
-                    LEFT
-               ================================================== -->
+                 LEFT
+            ================================================== -->
 
                <div class="col-lg-8">
 
 
                   <!-- =================================================
-                       DETAIL KELULUSAN
-                  ================================================== -->
+                    DETAIL KELULUSAN
+               ================================================== -->
 
                   <div class="card shadow-sm pmb-detail-card mb-6">
 
@@ -561,21 +1039,29 @@
                         <div class="mb-6">
 
                            <span class="text-uppercase text-muted fs-13 fw-bold">
+
                               Detail Pengumuman
+
                            </span>
 
+
                            <h3 class="mt-2 mb-2">
+
                               Informasi Kelulusan
+
                            </h3>
 
+
                            <p class="text-muted mb-0">
+
                               Informasi resmi hasil seleksi peserta.
+
                            </p>
 
                         </div>
 
 
-                        <!-- Program Studi -->
+                        <!-- PROGRAM STUDI -->
 
                         <div class="pmb-detail-row">
 
@@ -585,14 +1071,24 @@
 
                            </div>
 
+
                            <div>
 
                               <div class="pmb-detail-label">
+
                                  Program Studi
+
                               </div>
 
+
                               <div class="pmb-detail-value">
-                                 Ilmu Hukum
+
+                                 <?= htmlspecialchars(
+                                    $programStudi,
+                                    ENT_QUOTES,
+                                    'UTF-8'
+                                 ) ?>
+
                               </div>
 
                            </div>
@@ -600,7 +1096,7 @@
                         </div>
 
 
-                        <!-- Jalur -->
+                        <!-- JALUR -->
 
                         <div class="pmb-detail-row">
 
@@ -610,14 +1106,24 @@
 
                            </div>
 
+
                            <div>
 
                               <div class="pmb-detail-label">
+
                                  Jalur Pendaftaran
+
                               </div>
 
+
                               <div class="pmb-detail-value">
-                                 Reguler
+
+                                 <?= htmlspecialchars(
+                                    $jalurDisplay,
+                                    ENT_QUOTES,
+                                    'UTF-8'
+                                 ) ?>
+
                               </div>
 
                            </div>
@@ -625,7 +1131,7 @@
                         </div>
 
 
-                        <!-- Tahun -->
+                        <!-- TAHUN -->
 
                         <div class="pmb-detail-row">
 
@@ -635,14 +1141,24 @@
 
                            </div>
 
+
                            <div>
 
                               <div class="pmb-detail-label">
+
                                  Tahun Akademik
+
                               </div>
 
+
                               <div class="pmb-detail-value">
-                                 2026/2027
+
+                                 <?= htmlspecialchars(
+                                    $tahunPmb,
+                                    ENT_QUOTES,
+                                    'UTF-8'
+                                 ) ?>
+
                               </div>
 
                            </div>
@@ -650,7 +1166,7 @@
                         </div>
 
 
-                        <!-- Status -->
+                        <!-- STATUS -->
 
                         <div class="pmb-detail-row">
 
@@ -660,14 +1176,24 @@
 
                            </div>
 
+
                            <div>
 
                               <div class="pmb-detail-label">
+
                                  Status Kelulusan
+
                               </div>
 
-                              <div class="pmb-detail-value text-green">
-                                 LULUS
+
+                              <div class="pmb-detail-value <?= $isLulus ? 'text-green' : '' ?>">
+
+                                 <?= htmlspecialchars(
+                                    $statusKelulusan ?: 'BELUM DITETAPKAN',
+                                    ENT_QUOTES,
+                                    'UTF-8'
+                                 ) ?>
+
                               </div>
 
                            </div>
@@ -675,7 +1201,7 @@
                         </div>
 
 
-                        <!-- Announcement Date -->
+                        <!-- TANGGAL -->
 
                         <div class="pmb-detail-row">
 
@@ -685,14 +1211,24 @@
 
                            </div>
 
+
                            <div>
 
                               <div class="pmb-detail-label">
+
                                  Tanggal Pengumuman
+
                               </div>
 
+
                               <div class="pmb-detail-value">
-                                 —
+
+                                 <?= htmlspecialchars(
+                                    $tanggalPengumuman,
+                                    ENT_QUOTES,
+                                    'UTF-8'
+                                 ) ?>
+
                               </div>
 
                            </div>
@@ -706,8 +1242,8 @@
 
 
                   <!-- =================================================
-                       NILAI
-                  ================================================== -->
+                    NILAI
+               ================================================== -->
 
                   <div class="card shadow-sm border-0 mb-6">
 
@@ -717,16 +1253,24 @@
                         <div class="mb-6">
 
                            <span class="text-uppercase text-muted fs-13 fw-bold">
+
                               Rekapitulasi
+
                            </span>
 
+
                            <h3 class="mt-2 mb-2">
+
                               Hasil Penilaian
+
                            </h3>
 
+
                            <p class="text-muted mb-0">
+
                               Rekap nilai seleksi yang digunakan dalam
                               proses penetapan hasil.
+
                            </p>
 
                         </div>
@@ -742,11 +1286,16 @@
                               <div class="pmb-score-card">
 
                                  <div class="pmb-score-value text-primary">
-                                    —
+
+                                    <?= formatNilai($nilaiTPA) ?>
+
                                  </div>
 
+
                                  <div class="pmb-score-label">
+
                                     Nilai TPA
+
                                  </div>
 
                               </div>
@@ -754,18 +1303,23 @@
                            </div>
 
 
-                           <!-- Interview -->
+                           <!-- WAWANCARA -->
 
                            <div class="col-md-4 mb-3 mb-md-0">
 
                               <div class="pmb-score-card">
 
                                  <div class="pmb-score-value text-green">
-                                    —
+
+                                    <?= formatNilai($nilaiWawancara) ?>
+
                                  </div>
 
+
                                  <div class="pmb-score-label">
+
                                     Nilai Wawancara
+
                                  </div>
 
                               </div>
@@ -773,18 +1327,23 @@
                            </div>
 
 
-                           <!-- Final -->
+                           <!-- FINAL -->
 
                            <div class="col-md-4">
 
                               <div class="pmb-score-card">
 
                                  <div class="pmb-score-value text-primary">
-                                    —
+
+                                    <?= formatNilai($nilaiAkhir) ?>
+
                                  </div>
 
+
                                  <div class="pmb-score-label">
+
                                     Nilai Akhir
+
                                  </div>
 
                               </div>
@@ -799,9 +1358,10 @@
 
                            <i class="uil uil-info-circle"></i>
 
+
                            <p class="mb-0 fs-14">
 
-                              Nilai dapat ditampilkan sesuai kebijakan
+                              Nilai yang ditampilkan mengikuti kebijakan
                               publikasi hasil seleksi yang ditetapkan oleh
                               panitia PMB.
 
@@ -816,91 +1376,127 @@
 
 
                   <!-- =================================================
-                       NEXT STEP
-                  ================================================== -->
+                    NEXT STEP
+               ================================================== -->
 
-                  <div class="card bg-soft-green border-0 pmb-next-card">
+                  <?php if ($isLulus): ?>
 
-                     <div class="card-body p-5">
+                     <div class="card bg-soft-green border-0 pmb-next-card">
+
+                        <div class="card-body p-5">
 
 
-                        <div class="d-flex align-items-center">
+                           <div class="d-flex align-items-center">
 
-                           <div class="pmb-next-icon bg-green text-white">
+                              <div class="pmb-next-icon bg-green text-white">
 
-                              <i class="uil uil-file-check-alt fs-25"></i>
+                                 <i class="uil uil-file-check-alt fs-25"></i>
+
+                              </div>
+
+
+                              <div class="flex-grow-1">
+
+                                 <span class="text-uppercase text-muted fs-13 fw-bold">
+
+                                    Tahap Berikutnya
+
+                                 </span>
+
+
+                                 <h4 class="mb-1">
+
+                                    Daftar Ulang
+
+                                 </h4>
+
+
+                                 <p class="text-muted mb-0 fs-14">
+
+                                    Lengkapi proses daftar ulang untuk
+                                    mengonfirmasi penerimaan Anda sebagai
+                                    mahasiswa baru.
+
+                                 </p>
+
+                              </div>
 
                            </div>
 
 
-                           <div class="flex-grow-1">
+                           <hr class="my-5">
 
-                              <span class="text-uppercase text-muted fs-13 fw-bold">
-                                 Tahap Berikutnya
+
+                           <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+
+
+                              <span class="text-muted fs-13">
+
+                                 <i class="uil uil-info-circle me-1"></i>
+
+                                 Pastikan memperhatikan batas waktu daftar ulang.
+
                               </span>
 
-                              <h4 class="mb-1">
-                                 Daftar Ulang
-                              </h4>
 
-                              <p class="text-muted mb-0 fs-14">
+                              <?php if ($statusDaftarUlang === 'DITERIMA'): ?>
 
-                                 Lengkapi proses daftar ulang untuk
-                                 mengonfirmasi penerimaan Anda sebagai
-                                 mahasiswa baru.
+                                 <span class="badge bg-soft-green text-green rounded-pill px-4 py-2">
 
-                              </p>
+                                    <i class="uil uil-check-circle me-1"></i>
+
+                                    Daftar Ulang Diterima
+
+                                 </span>
+
+                              <?php elseif ($statusDaftarUlang === 'DIAJUKAN'): ?>
+
+                                 <span class="badge bg-soft-primary text-primary rounded-pill px-4 py-2">
+
+                                    <i class="uil uil-clock me-1"></i>
+
+                                    Daftar Ulang Sedang Diproses
+
+                                 </span>
+
+                              <?php else: ?>
+
+                                 <a
+                                    href="./pmb/daftar-ulang.php"
+                                    class="btn btn-primary rounded btn-icon btn-icon-end">
+
+                                    Lanjut Daftar Ulang
+
+                                    <i class="uil uil-arrow-right"></i>
+
+                                 </a>
+
+                              <?php endif; ?>
+
 
                            </div>
 
-                        </div>
-
-
-                        <hr class="my-5">
-
-
-                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
-
-                           <span class="text-muted fs-13">
-
-                              <i class="uil uil-info-circle me-1"></i>
-
-                              Pastikan memperhatikan batas waktu daftar ulang.
-
-                           </span>
-
-
-                           <a
-                              href="#"
-                              class="btn btn-primary rounded btn-icon btn-icon-end">
-
-                              Lanjut Daftar Ulang
-
-                              <i class="uil uil-arrow-right"></i>
-
-                           </a>
 
                         </div>
-
 
                      </div>
 
-                  </div>
+                  <?php endif; ?>
 
 
                </div>
 
 
                <!-- =================================================
-                    RIGHT
-               ================================================== -->
+                 RIGHT
+            ================================================== -->
 
                <div class="col-lg-4">
 
 
                   <!-- =================================================
-                       STATUS CARD
-                  ================================================== -->
+                    STATUS CARD
+               ================================================== -->
 
                   <div class="card shadow-sm border-0 mb-6">
 
@@ -908,165 +1504,198 @@
 
 
                         <span class="text-uppercase text-muted fs-13 fw-bold">
+
                            Status Anda
+
                         </span>
 
+
                         <h4 class="mt-2 mb-5">
+
                            Tahapan PMB
+
                         </h4>
 
 
                         <div class="pmb-process">
 
 
-                           <!-- 01 -->
+                           <?php
 
-                           <div class="pmb-process-item">
+                           $steps = [
 
-                              <div class="pmb-process-number complete">
+                              1 => [
+                                 'title'  => 'Registrasi Akun',
+                                 'desc'   => 'Akun berhasil dibuat'
+                              ],
 
-                                 <i class="uil uil-check"></i>
+                              2 => [
+                                 'title'  => 'Data & Dokumen',
+                                 'desc'   => 'Data dan dokumen'
+                              ],
+
+                              3 => [
+                                 'title'  => 'Kartu Peserta',
+                                 'desc'   => 'Kartu peserta'
+                              ],
+
+                              4 => [
+                                 'title'  => 'Jadwal Seleksi',
+                                 'desc'   => 'Jadwal seleksi'
+                              ],
+
+                              5 => [
+                                 'title'  => 'Seleksi',
+                                 'desc'   => 'TPA & wawancara'
+                              ],
+
+                              6 => [
+                                 'title'  => 'Pengumuman',
+                                 'desc'   => 'Hasil seleksi'
+                              ],
+
+                              7 => [
+                                 'title'  => 'Daftar Ulang',
+                                 'desc'   => 'Pendaftaran ulang'
+                              ]
+
+                           ];
+
+
+                           foreach (
+                              $steps as $stepNo => $step
+                           ):
+
+                              if (
+                                 $tahapAktif > $stepNo
+                              ) {
+
+                                 $stepClass =
+                                    'complete';
+                              } elseif (
+                                 $tahapAktif === $stepNo
+                              ) {
+
+                                 $stepClass =
+                                    'active';
+                              } else {
+
+                                 $stepClass =
+                                    '';
+                              }
+
+
+                              $stepStatus =
+                                 'Belum dimulai';
+
+
+                              if (
+                                 $tahapAktif > $stepNo
+                              ) {
+
+                                 $stepStatus =
+                                    'Selesai';
+                              } elseif (
+                                 $tahapAktif === $stepNo
+                              ) {
+
+                                 $stepStatus =
+                                    'Sedang berlangsung';
+                              }
+
+
+                              if (
+                                 $stepNo === 6 &&
+                                 $isLulus
+                              ) {
+
+                                 $stepStatus =
+                                    'LULUS';
+                              }
+
+
+                              if (
+                                 $stepNo === 7 &&
+                                 $statusDaftarUlang === 'DIAJUKAN'
+                              ) {
+
+                                 $stepStatus =
+                                    'Diajukan';
+                              }
+
+
+                              if (
+                                 $stepNo === 7 &&
+                                 $statusDaftarUlang === 'DITERIMA'
+                              ) {
+
+                                 $stepStatus =
+                                    'Diterima';
+                              }
+
+                           ?>
+
+                              <div class="pmb-process-item">
+
+                                 <div class="pmb-process-number <?= $stepClass ?>">
+
+                                    <?php if ($stepClass === 'complete'): ?>
+
+                                       <i class="uil uil-check"></i>
+
+                                    <?php else: ?>
+
+                                       <?= $stepNo ?>
+
+                                    <?php endif; ?>
+
+                                 </div>
+
+
+                                 <div>
+
+                                    <h6 class="mb-1">
+
+                                       <?= htmlspecialchars(
+                                          $step['title'],
+                                          ENT_QUOTES,
+                                          'UTF-8'
+                                       ) ?>
+
+                                    </h6>
+
+
+                                    <?php if (
+                                       $stepNo === 6 &&
+                                       $isLulus
+                                    ): ?>
+
+                                       <span class="badge bg-soft-green text-green rounded-pill">
+
+                                          LULUS
+
+                                       </span>
+
+                                    <?php else: ?>
+
+                                       <p class="text-muted fs-13 mb-0">
+
+                                          <?= htmlspecialchars(
+                                             $stepStatus,
+                                             ENT_QUOTES,
+                                             'UTF-8'
+                                          ) ?>
+
+                                       </p>
+
+                                    <?php endif; ?>
+
+
+                                 </div>
 
                               </div>
 
-                              <div>
-
-                                 <h6 class="mb-1">
-                                    Registrasi Akun
-                                 </h6>
-
-                                 <p class="text-muted fs-13 mb-0">
-                                    Selesai
-                                 </p>
-
-                              </div>
-
-                           </div>
-
-
-                           <!-- 02 -->
-
-                           <div class="pmb-process-item">
-
-                              <div class="pmb-process-number complete">
-
-                                 <i class="uil uil-check"></i>
-
-                              </div>
-
-                              <div>
-
-                                 <h6 class="mb-1">
-                                    Data & Dokumen
-                                 </h6>
-
-                                 <p class="text-muted fs-13 mb-0">
-                                    Lengkap
-                                 </p>
-
-                              </div>
-
-                           </div>
-
-
-                           <!-- 03 -->
-
-                           <div class="pmb-process-item">
-
-                              <div class="pmb-process-number complete">
-
-                                 <i class="uil uil-check"></i>
-
-                              </div>
-
-                              <div>
-
-                                 <h6 class="mb-1">
-                                    Kartu Peserta
-                                 </h6>
-
-                                 <p class="text-muted fs-13 mb-0">
-                                    Diterbitkan
-                                 </p>
-
-                              </div>
-
-                           </div>
-
-
-                           <!-- 04 -->
-
-                           <div class="pmb-process-item">
-
-                              <div class="pmb-process-number complete">
-
-                                 <i class="uil uil-check"></i>
-
-                              </div>
-
-                              <div>
-
-                                 <h6 class="mb-1">
-                                    Jadwal Seleksi
-                                 </h6>
-
-                                 <p class="text-muted fs-13 mb-0">
-                                    Selesai
-                                 </p>
-
-                              </div>
-
-                           </div>
-
-
-                           <!-- 05 -->
-
-                           <div class="pmb-process-item">
-
-                              <div class="pmb-process-number complete">
-
-                                 <i class="uil uil-check"></i>
-
-                              </div>
-
-                              <div>
-
-                                 <h6 class="mb-1">
-                                    Seleksi
-                                 </h6>
-
-                                 <p class="text-muted fs-13 mb-0">
-                                    Selesai
-                                 </p>
-
-                              </div>
-
-                           </div>
-
-
-                           <!-- 06 -->
-
-                           <div class="pmb-process-item">
-
-                              <div class="pmb-process-number active">
-
-                                 6
-
-                              </div>
-
-                              <div>
-
-                                 <h6 class="mb-1">
-                                    Pengumuman
-                                 </h6>
-
-                                 <span class="badge bg-soft-green text-green rounded-pill">
-                                    LULUS
-                                 </span>
-
-                              </div>
-
-                           </div>
+                           <?php endforeach; ?>
 
 
                         </div>
@@ -1077,12 +1706,13 @@
 
 
                   <!-- =================================================
-                       IMPORTANT
-                  ================================================== -->
+                    IMPORTANT
+               ================================================== -->
 
                   <div class="card bg-soft-yellow border-0 mb-6">
 
                      <div class="card-body p-6">
+
 
                         <div class="icon btn btn-circle btn-sm btn-soft-yellow mb-4">
 
@@ -1090,9 +1720,13 @@
 
                         </div>
 
+
                         <h4 class="mb-3">
+
                            Perhatikan
+
                         </h4>
+
 
                         <p class="text-muted fs-14 mb-4">
 
@@ -1102,13 +1736,17 @@
 
                         </p>
 
+
                         <p class="text-muted fs-14 mb-0">
 
                            <strong>
+
                               Jangan melewati batas waktu daftar ulang.
+
                            </strong>
 
                         </p>
+
 
                      </div>
 
@@ -1116,12 +1754,13 @@
 
 
                   <!-- =================================================
-                       CONTACT
-                  ================================================== -->
+                    CONTACT
+               ================================================== -->
 
                   <div class="card bg-soft-primary border-0">
 
                      <div class="card-body p-6">
+
 
                         <div class="icon btn btn-circle btn-sm btn-soft-primary mb-4">
 
@@ -1129,9 +1768,13 @@
 
                         </div>
 
+
                         <h4 class="mb-2">
+
                            Butuh Bantuan?
+
                         </h4>
+
 
                         <p class="text-muted fs-14 mb-4">
 
@@ -1140,8 +1783,11 @@
 
                         </p>
 
+
                         <a
-                           href="#"
+                           href="https://wa.me/6281367969843"
+                           target="_blank"
+                           rel="noopener"
                            class="btn btn-sm btn-outline-primary rounded">
 
                            Hubungi Panitia
@@ -1150,6 +1796,7 @@
 
                         </a>
 
+
                      </div>
 
                   </div>
@@ -1157,66 +1804,110 @@
 
                </div>
 
+
             </div>
 
 
             <!-- =================================================
-                 FOOTER ACTION
-            ================================================== -->
+              FOOTER ACTION
+         ================================================== -->
 
-            <div class="row mt-8">
+            <?php if ($isLulus): ?>
 
-               <div class="col-lg-10 mx-auto">
+               <div class="row mt-8">
 
-                  <div class="card bg-soft-primary border-0">
+                  <div class="col-lg-10 mx-auto">
 
-                     <div class="card-body p-5">
+                     <div class="card bg-soft-primary border-0">
 
-                        <div class="row align-items-center">
+                        <div class="card-body p-5">
 
-                           <div class="col-lg">
+                           <div class="row align-items-center">
 
-                              <div class="d-flex align-items-center">
 
-                                 <div class="icon btn btn-circle btn-lg btn-primary me-4">
+                              <div class="col-lg">
 
-                                    <i class="uil uil-file-check-alt"></i>
+                                 <div class="d-flex align-items-center">
 
-                                 </div>
+                                    <div class="icon btn btn-circle btn-lg btn-primary me-4">
 
-                                 <div>
+                                       <i class="uil uil-file-check-alt"></i>
 
-                                    <span class="text-uppercase text-muted fs-13 fw-bold">
-                                       Tahap Berikutnya
-                                    </span>
+                                    </div>
 
-                                    <h4 class="mb-1">
-                                       Daftar Ulang Mahasiswa Baru
-                                    </h4>
 
-                                    <p class="mb-0 text-muted">
+                                    <div>
 
-                                       Lanjutkan ke proses daftar ulang
-                                       untuk menyelesaikan penerimaan mahasiswa baru.
+                                       <span class="text-uppercase text-muted fs-13 fw-bold">
 
-                                    </p>
+                                          Tahap Berikutnya
+
+                                       </span>
+
+
+                                       <h4 class="mb-1">
+
+                                          Daftar Ulang Mahasiswa Baru
+
+                                       </h4>
+
+
+                                       <p class="mb-0 text-muted">
+
+                                          Lanjutkan ke proses daftar ulang
+                                          untuk menyelesaikan penerimaan mahasiswa baru.
+
+                                       </p>
+
+                                    </div>
 
                                  </div>
 
                               </div>
 
-                           </div>
+
+                              <div class="col-lg-auto mt-4 mt-lg-0">
 
 
-                           <div class="col-lg-auto mt-4 mt-lg-0">
+                                 <?php if ($statusDaftarUlang === 'DIAJUKAN'): ?>
 
-                              <span class="badge bg-soft-primary text-primary rounded-pill px-4 py-2">
+                                    <span class="badge bg-soft-primary text-primary rounded-pill px-4 py-2">
 
-                                 TAHAP 07
+                                       <i class="uil uil-clock me-1"></i>
 
-                                 <i class="uil uil-arrow-right ms-1"></i>
+                                       Sedang Diproses
 
-                              </span>
+                                    </span>
+
+
+                                 <?php elseif ($statusDaftarUlang === 'DITERIMA'): ?>
+
+                                    <span class="badge bg-soft-green text-green rounded-pill px-4 py-2">
+
+                                       <i class="uil uil-check-circle me-1"></i>
+
+                                       Diterima
+
+                                    </span>
+
+
+                                 <?php else: ?>
+
+                                    <a
+                                       href="./pmb/daftar-ulang.php"
+                                       class="btn btn-primary rounded btn-icon btn-icon-end">
+
+                                       Daftar Ulang Sekarang
+
+                                       <i class="uil uil-arrow-right"></i>
+
+                                    </a>
+
+                                 <?php endif; ?>
+
+
+                              </div>
+
 
                            </div>
 
@@ -1228,7 +1919,7 @@
 
                </div>
 
-            </div>
+            <?php endif; ?>
 
 
          </div>
@@ -1240,8 +1931,8 @@
 
 
    <!-- =========================================================
-        FOOTER
-   ========================================================== -->
+     FOOTER
+========================================================== -->
 
    <?php
    require '../footer2.php';
@@ -1249,8 +1940,8 @@
 
 
    <!-- =========================================================
-        PROGRESS
-   ========================================================== -->
+     PROGRESS
+========================================================== -->
 
    <div class="progress-wrap">
 
@@ -1269,8 +1960,8 @@
 
 
    <!-- =========================================================
-        JS
-   ========================================================== -->
+     JS
+========================================================== -->
 
    <script src="./assets/js/plugins.js"></script>
 
