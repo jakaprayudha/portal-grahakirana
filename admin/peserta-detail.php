@@ -2551,12 +2551,413 @@ $pageTitle =
 
                </div>
 
+               <!-- =================================================
+     HASIL SELEKSI
+================================================== -->
+
+               <div class="detail-card">
+
+
+                  <div class="detail-header">
+
+
+                     <div
+                        class="detail-header-icon">
+
+                        <i class="uil uil-award"></i>
+
+                     </div>
+
+
+                     <div>
+
+                        <h5>
+                           Hasil Seleksi
+                        </h5>
+
+                        <p>
+                           Input dan pengelolaan hasil seleksi peserta
+                        </p>
+
+                     </div>
+
+
+                  </div>
+
+
+                  <div class="detail-body">
+
+
+                     <form
+                        id="formHasilSeleksi"
+                        method="POST"
+                        action="../controllers/update-hasil-seleksi.php"
+                        novalidate>
+
+
+                        <input
+                           type="hidden"
+                           name="id"
+                           value="<?= (int) $peserta['id'] ?>">
+
+
+                        <!-- =============================================
+              NILAI
+         ============================================== -->
+
+                        <div class="row g-3">
+
+
+                           <!-- TPA -->
+
+                           <div class="col-md-6">
+
+
+                              <div class="score-card">
+
+
+                                 <div class="score-label">
+
+                                    Nilai TPA
+
+                                 </div>
+
+
+                                 <input
+                                    type="number"
+                                    name="nilai_tpa"
+                                    id="nilaiTpa"
+                                    class="
+                        form-control
+                        text-center
+                        mt-2
+                     "
+                                    min="0"
+                                    max="100"
+                                    step="0.01"
+                                    value="<?= $peserta['nilai_tpa'] !== null
+                                                ? h($peserta['nilai_tpa'])
+                                                : '' ?>"
+                                    placeholder="0 - 100"
+                                    required>
+
+
+                              </div>
+
+
+                           </div>
+
+
+
+                           <!-- WAWANCARA -->
+
+                           <div class="col-md-6">
+
+
+                              <div class="score-card">
+
+
+                                 <div class="score-label">
+
+                                    Nilai Wawancara
+
+                                 </div>
+
+
+                                 <input
+                                    type="number"
+                                    name="nilai_wawancara"
+                                    id="nilaiWawancara"
+                                    class="
+                        form-control
+                        text-center
+                        mt-2
+                     "
+                                    min="0"
+                                    max="100"
+                                    step="0.01"
+                                    value="<?= $peserta['nilai_wawancara'] !== null
+                                                ? h($peserta['nilai_wawancara'])
+                                                : '' ?>"
+                                    placeholder="0 - 100"
+                                    required>
+
+
+                              </div>
+
+
+                           </div>
+
+
+
+                           <!-- NILAI AKHIR -->
+
+                           <div class="col-12">
+
+
+                              <div
+                                 class="
+                     score-card
+                     score-final
+                  ">
+
+
+                                 <div class="score-label">
+
+                                    Nilai Akhir
+
+                                 </div>
+
+
+                                 <div
+                                    id="nilaiAkhirPreview"
+                                    class="score-value">
+
+
+                                    <?= $peserta['nilai_akhir'] !== null
+                                       ? number_format(
+                                          (float)
+                                          $peserta['nilai_akhir'],
+                                          2,
+                                          ',',
+                                          '.'
+                                       )
+                                       : '0,00'
+                                    ?>
+
+
+                                 </div>
+
+
+                                 <small
+                                    class="text-muted">
+
+
+                                    TPA 50% + Wawancara 50%
+
+
+                                 </small>
+
+
+                                 <input
+                                    type="hidden"
+                                    name="nilai_akhir"
+                                    id="nilaiAkhir">
+
+
+                              </div>
+
+
+                           </div>
+
+
+                        </div>
+
+
+
+                        <hr class="my-4">
+
+
+
+                        <!-- =============================================
+              STATUS KELULUSAN
+         ============================================== -->
+
+                        <div class="mb-4">
+
+
+                           <label
+                              class="
+                  form-label
+                  fw-bold
+                  fs-13
+               ">
+
+                              Status Kelulusan
+
+                           </label>
+
+
+                           <select
+                              name="status_kelulusan"
+                              id="statusKelulusan"
+                              class="form-select"
+                              required>
+
+
+                              <option
+                                 value="">
+
+                                 Pilih Status Kelulusan
+
+                              </option>
+
+
+                              <option
+                                 value="LULUS"
+                                 <?= $statusKelulusan === 'LULUS'
+                                    ? 'selected'
+                                    : '' ?>>
+
+                                 LULUS
+
+                              </option>
+
+
+                              <option
+                                 value="TIDAK_LULUS"
+                                 <?= $statusKelulusan === 'TIDAK_LULUS'
+                                    ? 'selected'
+                                    : '' ?>>
+
+                                 TIDAK LULUS
+
+                              </option>
+
+
+                           </select>
+
+
+                        </div>
+
+
+
+                        <!-- =============================================
+              CATATAN
+         ============================================== -->
+
+                        <div class="mb-4">
+
+
+                           <label
+                              class="
+                  form-label
+                  fw-bold
+                  fs-13
+               ">
+
+                              Catatan Hasil
+
+                           </label>
+
+
+                           <textarea
+                              name="catatan_hasil"
+                              id="catatanHasil"
+                              class="form-control"
+                              rows="4"
+                              placeholder="
+                  Masukkan catatan atau keterangan hasil seleksi...
+               "><?= h(
+                     $peserta['catatan_hasil']
+                        ?? ''
+                  ) ?></textarea>
+
+
+                        </div>
+
+
+
+                        <!-- =============================================
+              INFO PENGUMUMAN
+         ============================================== -->
+
+                        <?php if (
+                           !empty($peserta['hasil_diumumkan_at'])
+                        ): ?>
+
+
+                           <div
+                              class="
+                  alert
+                  alert-info
+                  alert-icon
+                  mb-4">
+
+
+                              <i
+                                 class="uil uil-clock">
+                              </i>
+
+
+                              <div>
+
+
+                                 <strong>
+
+                                    Hasil terakhir disimpan
+
+                                 </strong>
+
+
+                                 <div
+                                    class="fs-12 mt-1">
+
+
+                                    <?= h(
+                                       date(
+                                          'd/m/Y H:i',
+                                          strtotime(
+                                             $peserta['hasil_diumumkan_at']
+                                          )
+                                       )
+                                    ) ?>
+
+
+                                 </div>
+
+
+                              </div>
+
+
+                           </div>
+
+
+                        <?php endif; ?>
+
+
+
+                        <!-- =============================================
+              BUTTON
+         ============================================== -->
+
+                        <button
+                           type="submit"
+                           id="btnSimpanHasil"
+                           class="
+               btn
+               btn-primary
+               rounded
+               btn-icon
+               btn-icon-end
+               w-100">
+
+
+                           Simpan Hasil Seleksi
+
+
+                           <i
+                              class="uil uil-check-circle">
+                           </i>
+
+
+                        </button>
+
+
+                     </form>
+
+
+                  </div>
+
+
+               </div>
+
 
                <!-- =================================================
                      HASIL SELEKSI
                 ================================================== -->
 
-               <div class="detail-card">
+               <!-- <div class="detail-card">
 
 
                   <div class="detail-header">
@@ -2796,7 +3197,7 @@ $pageTitle =
 
                   </div>
 
-               </div>
+               </div> -->
 
 
                <!-- =================================================
