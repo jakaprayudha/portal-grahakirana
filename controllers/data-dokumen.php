@@ -1055,7 +1055,7 @@ try {
 
          'redirect' =>
          $isComplete
-            ? './pmb/register-card.php'
+            ? './pmb/register-card'
             : null
       ],
       200

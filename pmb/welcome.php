@@ -36,20 +36,38 @@ require_once __DIR__ . '/../config/connect.php';
 try {
 
    $stmt = $pdo->prepare("
-        SELECT
-            id,
-            fullname,
-            email_register,
-            phone_number,
-            register_uid,
-            register_type,
-            tahap_aktif,
-            status_pendaftaran,
-            account_status
-        FROM register_pmb
-        WHERE id = :id
-        LIMIT 1
-    ");
+    SELECT
+        register_pmb.id,
+        register_pmb.fullname,
+        register_pmb.email_register,
+        register_pmb.phone_number,
+        register_pmb.register_uid,
+        register_pmb.register_type,
+
+        register_pmb.tahap_aktif,
+        register_pmb.status_pendaftaran,
+        register_pmb.account_status,
+
+        register_pmb.file_ktp,
+        register_pmb.file_kk,
+        register_pmb.file_ijazah,
+        register_pmb.file_dokumen,
+
+        register_pmb.id_program,
+
+        ms_program_studi.program_degree,
+        ms_program_studi.program_name
+
+    FROM register_pmb
+
+    LEFT JOIN ms_program_studi
+        ON ms_program_studi.id_program =
+           register_pmb.id_program
+
+    WHERE register_pmb.id = :id
+
+    LIMIT 1
+");
 
    $stmt->execute([
       'id' => (int) $_SESSION['pmb_user_id']
@@ -115,6 +133,69 @@ try {
             (int) $pmbUser['tahap_aktif']
          )
       );
+   /**
+    * =========================================================
+    * CEK KELENGKAPAN DOKUMEN
+    * =========================================================
+    *
+    * Jika seluruh dokumen sudah tersedia,
+    * maka Kartu Peserta dan Jadwal Seleksi
+    * otomatis dapat diakses.
+    *
+    */
+
+   $dokumenWajib = [
+
+      'file_ktp',
+      'file_kk',
+      'file_ijazah',
+      'file_dokumen'
+
+   ];
+
+
+   $dokumenLengkap = true;
+
+
+   foreach ($dokumenWajib as $dokumen) {
+
+      if (
+         empty($pmbUser[$dokumen])
+      ) {
+
+         $dokumenLengkap = false;
+
+         break;
+      }
+   }
+
+
+   /**
+    * =========================================================
+    * TAHAP AKSES
+    * =========================================================
+    *
+    * Minimal:
+    *
+    * Dokumen lengkap
+    *     → Tahap 03 terbuka
+    *
+    * Dokumen lengkap
+    *     → Tahap 04 terbuka
+    *
+    */
+
+   $tahapAkses =
+      $tahapAktif;
+
+
+   if (
+      $dokumenLengkap &&
+      $tahapAkses < 4
+   ) {
+
+      $tahapAkses = 4;
+   }
 } catch (PDOException $e) {
 
    http_response_code(500);
@@ -189,18 +270,31 @@ $pmbStages = [
  */
 
 $progress =
-   (($tahapAktif - 1) / 8) * 100;
+   (($tahapAkses - 1) / 8) * 100;
+
 
 $progress =
-   max(0, min(100, $progress));
+   max(
+      0,
+      min(
+         100,
+         $progress
+      )
+   );
+
 
 $progressFormatted =
-   number_format($progress, 1);
+   number_format(
+      $progress,
+      1
+   );
+
 
 $completedStages =
-   max(0, $tahapAktif - 1);
-
-
+   max(
+      0,
+      $tahapAkses - 1
+   );
 /**
  * =========================================================
  * STATUS TAHAP AKTIF
@@ -279,8 +373,7 @@ if (!empty($pmbUser['id_program'])) {
     */
 
    $programStudi =
-      'Program Studi #' .
-      (int) $pmbUser['id_program'];
+      $pmbUser['program_degree'] . " - " . $pmbUser['program_name'];
 }
 
 
@@ -1015,19 +1108,44 @@ if ($statusPendaftaran === 'MAHASISWA') {
                      <?php foreach ($pmbStages as $number => $stage): ?>
 
                         <?php
+                        $isComplete =
+                           $number < $tahapAktif;
 
-                        $isComplete = $number < $tahapAktif;
-                        $isActive   = $number === $tahapAktif;
-                        $isLocked   = $number > $tahapAktif;
+
+                        /**
+                         * Tahap aktif sebenarnya
+                         */
+                        $isActive =
+                           $number === $tahapAktif;
+
+
+                        /**
+                         * Tahap 03 dan 04 terbuka
+                         * apabila dokumen lengkap.
+                         */
+                        $isAccessible =
+                           $number <= $tahapAkses;
+
+
+                        /**
+                         * Yang benar-benar terkunci
+                         */
+                        $isLocked =
+                           !$isAccessible;
 
                         if ($isComplete) {
+
                            $class = 'complete';
                         } elseif ($isActive) {
+
                            $class = 'active';
+                        } elseif ($isAccessible) {
+
+                           $class = 'complete';
                         } else {
+
                            $class = 'locked';
                         }
-
                         ?>
 
                         <button
@@ -1569,6 +1687,10 @@ if ($statusPendaftaran === 'MAHASISWA') {
          <?= (int) $tahapAktif ?>;
 
 
+      const PMB_ACCESS_STAGE =
+         <?= (int) $tahapAkses ?>;
+
+
       const PMB_STAGES = <?= json_encode(
                               $pmbStages,
                               JSON_UNESCAPED_UNICODE |
@@ -1587,7 +1709,7 @@ if ($statusPendaftaran === 'MAHASISWA') {
                      10
                   );
 
-               if (stage > PMB_ACTIVE_STAGE) {
+               if (stage > PMB_ACCESS_STAGE) {
 
                   showToast(
                      'info',
@@ -1615,8 +1737,7 @@ if ($statusPendaftaran === 'MAHASISWA') {
          /*
           * Tahap yang belum dicapai
           */
-         if (stage > PMB_ACTIVE_STAGE) {
-
+         if (stage > PMB_ACCESS_STAGE) {
             showToast(
                'info',
                'Tahap ini belum dapat diakses.'
@@ -1706,7 +1827,7 @@ if ($statusPendaftaran === 'MAHASISWA') {
                         ${
                            isCurrent
                            ? 'Tahap ini sedang aktif.'
-                           : 'Tahap ini telah selesai.'
+                           : 'Tahap ini masih berlangsung.'
                         }
 
                      </p>
