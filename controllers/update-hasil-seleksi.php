@@ -98,15 +98,6 @@ $nilaiWawancara =
    ?? null;
 
 
-$statusKelulusan =
-   strtoupper(
-      trim(
-         $_POST['status_kelulusan']
-            ?? ''
-      )
-   );
-
-
 $catatanHasil =
    trim(
       $_POST['catatan_hasil']
@@ -216,37 +207,13 @@ if (
 
 /**
  * =========================================================
- * VALIDATION STATUS
- * =========================================================
- */
-
-if (
-   !in_array(
-      $statusKelulusan,
-      [
-         'LULUS',
-         'TIDAK_LULUS'
-      ],
-      true
-   )
-) {
-
-   responseJson(
-      false,
-      'Status kelulusan harus dipilih.'
-   );
-}
-
-
-/**
- * =========================================================
  * NILAI AKHIR
  * =========================================================
  *
  * Bobot:
  *
- * TPA        = 50%
- * Wawancara  = 50%
+ * TPA       = 50%
+ * Wawancara = 50%
  *
  */
 
@@ -269,64 +236,47 @@ $nilaiAkhir =
 
 /**
  * =========================================================
- * CEK PESERTA
+ * PENENTUAN KELULUSAN OTOMATIS
  * =========================================================
+ *
+ * Nilai akhir >= 75
+ *      -> LULUS
+ *
+ * Nilai akhir < 75
+ *      -> TIDAK_LULUS
+ *
  */
 
-$stmt = $pdo->prepare("
+if (
+   $nilaiAkhir >= 75
+) {
 
-    SELECT
-        id,
-        fullname
+   $statusKelulusan =
+      'LULUS';
 
-    FROM register_pmb
+   $statusPendaftaran =
+      'LULUS';
+} else {
 
-    WHERE id = :id
+   $statusKelulusan =
+      'TIDAK_LULUS';
 
-    LIMIT 1
-
-");
-
-
-$stmt->execute(
-   [
-      'id' => $id
-   ]
-);
-
-
-$peserta =
-   $stmt->fetch(
-      PDO::FETCH_ASSOC
-   );
-
-
-if (!$peserta) {
-
-   responseJson(
-      false,
-      'Data peserta tidak ditemukan.'
-   );
+   $statusPendaftaran =
+      'TIDAK_LULUS';
 }
 
 
 /**
  * =========================================================
- * STATUS PENDAFTARAN
+ * TAHAP AKTIF
  * =========================================================
  *
- * LULUS
- *     -> LULUS
- *
- * TIDAK_LULUS
- *     -> TIDAK_LULUS
+ * Setelah hasil seleksi diproses,
+ * peserta masuk tahap 05.
  *
  */
 
-$statusPendaftaran =
-   $statusKelulusan === 'LULUS'
-   ? 'LULUS'
-   : 'TIDAK_LULUS';
+$tahapAktif = 5;
 
 
 /**
@@ -364,6 +314,51 @@ $nilaiAkhirDb =
 
 /**
  * =========================================================
+ * CEK PESERTA
+ * =========================================================
+ */
+
+$stmt = $pdo->prepare("
+
+    SELECT
+        id,
+        fullname,
+        tahap_aktif,
+        status_pendaftaran
+
+    FROM register_pmb
+
+    WHERE id = :id
+
+    LIMIT 1
+
+");
+
+
+$stmt->execute(
+   [
+      'id' => $id
+   ]
+);
+
+
+$peserta =
+   $stmt->fetch(
+      PDO::FETCH_ASSOC
+   );
+
+
+if (!$peserta) {
+
+   responseJson(
+      false,
+      'Data peserta tidak ditemukan.'
+   );
+}
+
+
+/**
+ * =========================================================
  * UPDATE DATABASE
  * =========================================================
  */
@@ -376,39 +371,42 @@ try {
    $stmt =
       $pdo->prepare("
 
-            UPDATE register_pmb
+         UPDATE register_pmb
 
-            SET
+         SET
 
-                nilai_tpa =
-                    :nilai_tpa,
+            nilai_tpa =
+               :nilai_tpa,
 
-                nilai_wawancara =
-                    :nilai_wawancara,
+            nilai_wawancara =
+               :nilai_wawancara,
 
-                nilai_akhir =
-                    :nilai_akhir,
+            nilai_akhir =
+               :nilai_akhir,
 
-                status_kelulusan =
-                    :status_kelulusan,
+            status_kelulusan =
+               :status_kelulusan,
 
-                status_pendaftaran =
-                    :status_pendaftaran,
+            status_pendaftaran =
+               :status_pendaftaran,
 
-                catatan_hasil =
-                    :catatan_hasil,
+            tahap_aktif =
+               :tahap_aktif,
 
-                hasil_diumumkan_at =
-                    NOW(),
+            catatan_hasil =
+               :catatan_hasil,
 
-                updated_at =
-                    NOW()
+            hasil_diumumkan_at =
+               NOW(),
 
-            WHERE id = :id
+            updated_at =
+               NOW()
 
-            LIMIT 1
+         WHERE id = :id
 
-        ");
+         LIMIT 1
+
+      ");
 
 
    $stmt->execute(
@@ -429,6 +427,9 @@ try {
          'status_pendaftaran' =>
          $statusPendaftaran,
 
+         'tahap_aktif' =>
+         $tahapAktif,
+
          'catatan_hasil' =>
          $catatanHasil !== ''
             ? $catatanHasil
@@ -443,23 +444,9 @@ try {
 
    /**
     * =====================================================
-    * CHECK UPDATE
+    * COMMIT
     * =====================================================
     */
-
-   if (
-      $stmt->rowCount() < 1
-   ) {
-
-      /**
-       * rowCount() bisa 0 jika
-       * data sebenarnya sama persis.
-       *
-       * Jadi kita tidak langsung
-       * menganggap sebagai error.
-       */
-   }
-
 
    $pdo->commit();
 
@@ -472,7 +459,9 @@ try {
 
    responseJson(
       true,
+
       'Hasil seleksi berhasil disimpan.',
+
       [
 
          'id' =>
@@ -490,16 +479,20 @@ try {
          'nilai_akhir' =>
          $nilaiAkhirDb,
 
+         'batas_kelulusan' =>
+         '75.00',
+
          'status_kelulusan' =>
          $statusKelulusan,
 
          'status_pendaftaran' =>
          $statusPendaftaran,
 
+         'tahap_aktif' =>
+         $tahapAktif,
+
          'hasil_diumumkan_at' =>
-         date(
-            'Y-m-d H:i:s'
-         )
+         date('Y-m-d H:i:s')
 
       ]
    );

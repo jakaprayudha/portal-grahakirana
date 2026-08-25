@@ -2098,7 +2098,7 @@ $pageTitle =
 
 
                                     <a
-                                       href="./peserta-detail.php?id=<?= (int) $row['id'] ?>"
+                                       href="./peserta-detail?id=<?= (int) $row['id'] ?>"
                                        class="btn btn-sm btn-soft-primary rounded action-button"
                                        title="Lihat detail">
 

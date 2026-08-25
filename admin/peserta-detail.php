@@ -143,7 +143,9 @@ $stmt = $pdo->prepare("
         register_uid,
         register_type,
 
-        id_program,
+        register_pmb.id_program,
+        ms_program_studi.program_degree,
+        ms_program_studi.program_name,
         id_provider,
 
         provinsi,
@@ -187,6 +189,7 @@ $stmt = $pdo->prepare("
         file_dokumen
 
     FROM register_pmb
+    LEFT JOIN ms_program_studi ON ms_program_studi.id_program = register_pmb.id_program
 
     WHERE id = :id
 
@@ -260,11 +263,7 @@ $statusColor =
  *
  */
 
-$programStudi =
-   !empty($peserta['id_program'])
-   ? 'Program #' .
-   $peserta['id_program']
-   : '-';
+$programStudi =  $peserta['program_degree'] . ' - ' . $peserta['program_name'];
 
 
 /**
@@ -3532,7 +3531,611 @@ $pageTitle =
 
 
    </main>
+   <script>
+      document.addEventListener("DOMContentLoaded", function() {
 
+         const form =
+            document.getElementById("formHasilSeleksi");
+
+         const button =
+            document.getElementById("btnSimpanHasil");
+
+         const nilaiTpa =
+            document.getElementById("nilaiTpa");
+
+         const nilaiWawancara =
+            document.getElementById("nilaiWawancara");
+
+         const nilaiAkhir =
+            document.getElementById("nilaiAkhir");
+
+         const nilaiAkhirPreview =
+            document.getElementById("nilaiAkhirPreview");
+
+
+         /**
+          * =====================================================
+          * HITUNG NILAI AKHIR
+          * =====================================================
+          */
+
+         function hitungNilaiAkhir() {
+
+            const tpa =
+               parseFloat(nilaiTpa.value) || 0;
+
+            const wawancara =
+               parseFloat(nilaiWawancara.value) || 0;
+
+            const akhir =
+               (tpa * 0.50) +
+               (wawancara * 0.50);
+
+
+            nilaiAkhir.value =
+               akhir.toFixed(2);
+
+
+            nilaiAkhirPreview.textContent =
+               akhir.toLocaleString("id-ID", {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2
+               });
+
+         }
+
+
+         nilaiTpa.addEventListener(
+            "input",
+            hitungNilaiAkhir
+         );
+
+
+         nilaiWawancara.addEventListener(
+            "input",
+            hitungNilaiAkhir
+         );
+
+
+         /**
+          * =====================================================
+          * TOAST
+          * =====================================================
+          */
+
+         function showToast(
+            type,
+            message
+         ) {
+
+            let container =
+               document.getElementById(
+                  "adminToastContainer"
+               );
+
+
+            if (!container) {
+
+               container =
+                  document.createElement("div");
+
+               container.id =
+                  "adminToastContainer";
+
+               container.style.position =
+                  "fixed";
+
+               container.style.top =
+                  "25px";
+
+               container.style.right =
+                  "25px";
+
+               container.style.zIndex =
+                  "999999";
+
+               container.style.width =
+                  "380px";
+
+               container.style.maxWidth =
+                  "calc(100% - 30px)";
+
+               document.body.appendChild(
+                  container
+               );
+
+            }
+
+
+            const toast =
+               document.createElement("div");
+
+
+            let icon =
+               "uil-info-circle";
+
+            let alertClass =
+               "alert-info";
+
+
+            if (type === "success") {
+
+               icon =
+                  "uil-check-circle";
+
+               alertClass =
+                  "alert-success";
+
+            }
+
+
+            if (type === "danger") {
+
+               icon =
+                  "uil-times-circle";
+
+               alertClass =
+                  "alert-danger";
+
+            }
+
+
+            if (type === "warning") {
+
+               icon =
+                  "uil-exclamation-triangle";
+
+               alertClass =
+                  "alert-warning";
+
+            }
+
+
+            toast.className =
+               `alert ${alertClass} shadow-lg border-0 mb-2`;
+
+
+            toast.innerHTML = `
+
+         <div class="d-flex align-items-start">
+
+            <i
+               class="uil ${icon} fs-20 me-2">
+            </i>
+
+            <div class="fw-semibold">
+               ${escapeHtml(message)}
+            </div>
+
+         </div>
+
+      `;
+
+
+            container.appendChild(
+               toast
+            );
+
+
+            setTimeout(function() {
+
+               toast.style.transition =
+                  "all .3s ease";
+
+               toast.style.opacity =
+                  "0";
+
+               toast.style.transform =
+                  "translateX(20px)";
+
+
+               setTimeout(function() {
+
+                  toast.remove();
+
+               }, 300);
+
+            }, 3500);
+
+         }
+
+
+         /**
+          * =====================================================
+          * ESCAPE HTML
+          * =====================================================
+          */
+
+         function escapeHtml(text) {
+
+            const div =
+               document.createElement("div");
+
+            div.textContent =
+               text;
+
+            return div.innerHTML;
+
+         }
+
+
+         /**
+          * =====================================================
+          * SUBMIT HASIL SELEKSI
+          * =====================================================
+          */
+
+         if (!form || !button) {
+
+            console.warn(
+               "Form hasil seleksi tidak ditemukan."
+            );
+
+            return;
+
+         }
+
+
+         form.addEventListener(
+            "submit",
+            async function(e) {
+
+               e.preventDefault();
+
+
+               /**
+                * ===============================================
+                * VALIDASI
+                * ===============================================
+                */
+
+               const tpa =
+                  parseFloat(
+                     nilaiTpa.value
+                  );
+
+               const wawancara =
+                  parseFloat(
+                     nilaiWawancara.value
+                  );
+
+
+               if (
+                  isNaN(tpa) ||
+                  tpa < 0 ||
+                  tpa > 100
+               ) {
+
+                  showToast(
+                     "warning",
+                     "Nilai TPA harus berada antara 0 sampai 100."
+                  );
+
+                  nilaiTpa.focus();
+
+                  return;
+
+               }
+
+
+               if (
+                  isNaN(wawancara) ||
+                  wawancara < 0 ||
+                  wawancara > 100
+               ) {
+
+                  showToast(
+                     "warning",
+                     "Nilai wawancara harus berada antara 0 sampai 100."
+                  );
+
+                  nilaiWawancara.focus();
+
+                  return;
+
+               }
+
+
+               /**
+                * ===============================================
+                * HITUNG NILAI
+                * ===============================================
+                */
+
+               hitungNilaiAkhir();
+
+
+               const nilaiFinal =
+                  parseFloat(
+                     nilaiAkhir.value
+                  );
+
+
+               const status =
+                  nilaiFinal >= 75 ?
+                  "LULUS" :
+                  "TIDAK_LULUS";
+
+
+               /**
+                * ===============================================
+                * KONFIRMASI
+                * ===============================================
+                */
+
+               const confirmMessage =
+                  `Simpan hasil seleksi?\n\n` +
+                  `Nilai TPA       : ${tpa.toFixed(2)}\n` +
+                  `Nilai Wawancara : ${wawancara.toFixed(2)}\n` +
+                  `Nilai Akhir     : ${nilaiFinal.toFixed(2)}\n` +
+                  `Status          : ${status === "LULUS" ? "LULUS" : "TIDAK LULUS"}\n\n` +
+                  `Tahap peserta akan diperbarui menjadi Tahap 5.`;
+
+
+               if (
+                  !window.confirm(
+                     confirmMessage
+                  )
+               ) {
+
+                  return;
+
+               }
+
+
+               /**
+                * ===============================================
+                * LOADING
+                * ===============================================
+                */
+
+               const originalHTML =
+                  button.innerHTML;
+
+
+               button.disabled =
+                  true;
+
+
+               button.innerHTML = `
+
+            <span
+               class="spinner-border
+                      spinner-border-sm
+                      me-2"
+               role="status"
+               aria-hidden="true">
+            </span>
+
+            Menyimpan...
+
+         `;
+
+
+               try {
+
+                  /**
+                   * ============================================
+                   * FORM DATA
+                   * ============================================
+                   */
+
+                  const formData =
+                     new FormData(form);
+
+
+                  /**
+                   * Controller sekarang menentukan
+                   * status berdasarkan nilai akhir.
+                   */
+
+                  formData.set(
+                     "nilai_akhir",
+                     nilaiFinal.toFixed(2)
+                  );
+
+
+                  /**
+                   * ============================================
+                   * REQUEST
+                   * ============================================
+                   */
+
+                  const response =
+                     await fetch(
+                        form.action, {
+                           method: "POST",
+                           body: formData,
+                           headers: {
+                              "X-Requested-With": "XMLHttpRequest"
+                           }
+                        }
+                     );
+
+
+                  console.log(
+                     "HTTP STATUS:",
+                     response.status
+                  );
+
+
+                  const text =
+                     await response.text();
+
+
+                  console.log(
+                     "CONTROLLER RESPONSE:",
+                     text
+                  );
+
+
+                  /**
+                   * ============================================
+                   * PARSE JSON
+                   * ============================================
+                   */
+
+                  let result;
+
+
+                  try {
+
+                     result =
+                        JSON.parse(text);
+
+                  } catch (jsonError) {
+
+                     console.error(
+                        "JSON ERROR:",
+                        jsonError
+                     );
+
+                     throw new Error(
+                        "Controller tidak mengembalikan JSON."
+                     );
+
+                  }
+
+
+                  console.log(
+                     "RESULT:",
+                     result
+                  );
+
+
+                  /**
+                   * ============================================
+                   * SESSION EXPIRED
+                   * ============================================
+                   */
+
+                  if (
+                     response.status === 401
+                  ) {
+
+                     showToast(
+                        "warning",
+                        result.message ||
+                        "Sesi admin telah berakhir."
+                     );
+
+
+                     setTimeout(
+                        function() {
+
+                           window.location.href =
+                              "./index.php";
+
+                        },
+                        1500
+                     );
+
+
+                     return;
+
+                  }
+
+
+                  /**
+                   * ============================================
+                   * ERROR
+                   * ============================================
+                   */
+
+                  if (
+                     !response.ok ||
+                     !result.success
+                  ) {
+
+                     showToast(
+                        "danger",
+                        result.message ||
+                        "Gagal menyimpan hasil seleksi."
+                     );
+
+                     return;
+
+                  }
+
+
+                  /**
+                   * ============================================
+                   * SUCCESS
+                   * ============================================
+                   */
+
+                  const data =
+                     result.data || {};
+
+
+                  const statusText =
+                     data.status_kelulusan ===
+                     "LULUS" ?
+                     "LULUS" :
+                     "TIDAK LULUS";
+
+
+                  showToast(
+                     "success",
+                     `Berhasil! Hasil seleksi ${data.fullname || ""} telah diperbarui. Status: ${statusText}.`
+                  );
+
+
+                  /**
+                   * ============================================
+                   * UPDATE UI LANGSUNG
+                   * ============================================
+                   */
+
+                  setTimeout(
+                     function() {
+
+                        window.location.reload();
+
+                     },
+                     1800
+                  );
+
+
+               } catch (error) {
+
+                  console.error(
+                     "UPDATE HASIL SELEKSI ERROR:",
+                     error
+                  );
+
+
+                  showToast(
+                     "danger",
+                     error.message ||
+                     "Terjadi kesalahan saat menyimpan hasil seleksi."
+                  );
+
+
+               } finally {
+
+                  button.disabled =
+                     false;
+
+                  button.innerHTML =
+                     originalHTML;
+
+               }
+
+            }
+         );
+
+
+         /**
+          * =====================================================
+          * INITIAL CALCULATION
+          * =====================================================
+          */
+
+         hitungNilaiAkhir();
+
+      });
+   </script>
 
 </body>
 
