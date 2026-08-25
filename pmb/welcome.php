@@ -1404,24 +1404,29 @@ if ($statusPendaftaran === 'MAHASISWA') {
 
                   </div>
 
-
                   <!-- =================================================
-                    SIDE
-               ================================================== -->
+     SIDE
+================================================== -->
 
                   <div class="col-lg-4">
 
+
+                     <!-- =================================================
+        STATUS TAHAPAN
+   ================================================== -->
 
                      <div class="card shadow-sm border-0 mb-6">
 
                         <div class="card-body p-5">
 
 
-                           <span class="text-uppercase text-muted fs-13 fw-bold">
+                           <span
+                              class="text-uppercase text-muted fs-13 fw-bold">
 
                               Status Tahapan
 
                            </span>
+
 
                            <h4 class="mt-2 mb-5">
 
@@ -1430,91 +1435,234 @@ if ($statusPendaftaran === 'MAHASISWA') {
                            </h4>
 
 
+
                            <div class="pmb-timeline">
 
-                              <?php foreach ($pmbStages as $number => $stage): ?>
+
+                              <?php foreach (
+                                 $pmbStages
+                                 as $number => $stage
+                              ): ?>
+
 
                                  <?php
 
-                                 if ($number < $tahapAktif) {
+                                 /**
+                                  * =========================================
+                                  * TAHAP SELESAI SEBENARNYA
+                                  * =========================================
+                                  */
 
-                                    $timelineClass = 'complete';
-                                    $timelineIcon = '✓';
-                                    $timelineStatus = 'Selesai';
-                                 } elseif ($number === $tahapAktif) {
+                                 $isComplete =
+                                    $number < $tahapAktif;
 
-                                    $timelineClass = 'active';
-                                    $timelineIcon = $number;
-                                    $timelineStatus = 'Aktif';
+
+                                 /**
+                                  * =========================================
+                                  * TAHAP AKTIF
+                                  * =========================================
+                                  */
+
+                                 $isActive =
+                                    $number === $tahapAktif;
+
+
+                                 /**
+                                  * =========================================
+                                  * TAHAP SUDAH BISA DIAKSES
+                                  *
+                                  * Contoh:
+                                  *
+                                  * tahapAktif = 2
+                                  * tahapAkses = 4
+                                  *
+                                  * maka:
+                                  *
+                                  * 03 = accessible
+                                  * 04 = accessible
+                                  * =========================================
+                                  */
+
+                                 $isAccessible =
+                                    $number <= $tahapAkses;
+
+
+                                 /**
+                                  * =========================================
+                                  * STATUS TIMELINE
+                                  * =========================================
+                                  */
+
+                                 if ($isComplete) {
+
+                                    $timelineClass =
+                                       'complete';
+
+                                    $timelineIcon =
+                                       '✓';
+
+                                    $timelineStatus =
+                                       'Selesai';
+                                 } elseif ($isActive) {
+
+                                    $timelineClass =
+                                       'active';
+
+                                    $timelineIcon =
+                                       $number;
+
+                                    $timelineStatus =
+                                       'Aktif';
+                                 } elseif ($isAccessible) {
+
+                                    /**
+                                     * Sudah boleh dibuka,
+                                     * tetapi belum menjadi
+                                     * tahap aktif utama.
+                                     */
+
+                                    $timelineClass =
+                                       'complete';
+
+                                    $timelineIcon =
+                                       '✓';
+
+                                    $timelineStatus =
+                                       'Tersedia';
                                  } else {
 
-                                    $timelineClass = 'locked';
-                                    $timelineIcon = '🔒';
-                                    $timelineStatus = 'Menunggu';
+                                    $timelineClass =
+                                       'locked';
+
+                                    $timelineIcon =
+                                       '🔒';
+
+                                    $timelineStatus =
+                                       'Menunggu';
                                  }
 
                                  ?>
 
+
                                  <div class="pmb-timeline-item">
 
-                                    <div class="pmb-timeline-number <?= $timelineClass ?>">
+
+                                    <div
+                                       class="
+                        pmb-timeline-number
+                        <?= $timelineClass ?>
+                     ">
 
                                        <?= $timelineIcon ?>
 
                                     </div>
 
 
+
                                     <div>
+
 
                                        <h6 class="mb-1">
 
-                                          <?= htmlspecialchars($stage['name']) ?>
+                                          <?= htmlspecialchars(
+                                             $stage['name'],
+                                             ENT_QUOTES,
+                                             'UTF-8'
+                                          ) ?>
 
                                        </h6>
 
 
-                                       <?php if ($number === $tahapAktif): ?>
 
-                                          <span class="badge bg-soft-primary text-primary rounded-pill">
+                                       <?php if (
+                                          $isActive
+                                       ): ?>
+
+
+                                          <span
+                                             class="
+                              badge
+                              bg-soft-primary
+                              text-primary
+                              rounded-pill
+                           ">
 
                                              Aktif
 
                                           </span>
 
+
+                                       <?php elseif (
+                                          $isAccessible
+                                       ): ?>
+
+
+                                          <span
+                                             class="
+                              badge
+                              bg-soft-success
+                              text-success
+                              rounded-pill
+                           ">
+
+                                             Tersedia
+
+                                          </span>
+
+
                                        <?php else: ?>
 
-                                          <small class="text-muted">
 
-                                             <?= $timelineStatus ?>
+                                          <small
+                                             class="text-muted">
+
+                                             Menunggu
 
                                           </small>
 
+
                                        <?php endif; ?>
+
 
                                     </div>
 
+
                                  </div>
+
 
                               <?php endforeach; ?>
 
+
                            </div>
+
 
                         </div>
 
                      </div>
 
 
-                     <!-- Quick menu -->
+
+                     <!-- =================================================
+        QUICK MENU
+   ================================================== -->
 
                      <div class="card bg-soft-primary border-0">
 
                         <div class="card-body p-5">
 
-                           <span class="text-uppercase text-muted fs-13 fw-bold">
+
+                           <span
+                              class="
+               text-uppercase
+               text-muted
+               fs-13
+               fw-bold
+            ">
 
                               Akses Cepat
 
                            </span>
+
 
                            <h4 class="mt-2 mb-4">
 
@@ -1523,78 +1671,208 @@ if ($statusPendaftaran === 'MAHASISWA') {
                            </h4>
 
 
+
+                           <!-- =============================================
+              DATA & DOKUMEN
+         ============================================== -->
+
                            <div class="pmb-quick-item">
 
-                              <div class="pmb-quick-icon bg-white text-primary">
+
+                              <div
+                                 class="
+                  pmb-quick-icon
+                  bg-white
+                  text-primary
+               ">
 
                                  <i class="uil uil-file-alt"></i>
 
                               </div>
 
+
                               <a
-                                 href="./pages/data-dokumen.php"
+                                 href="./pmb/register-data"
                                  class="text-reset">
 
-                                 Data & Dokumen
+                                 Data &amp; Dokumen
 
                               </a>
+
 
                            </div>
 
 
+
+                           <!-- =============================================
+              KARTU PESERTA
+         ============================================== -->
+
                            <div class="pmb-quick-item">
 
-                              <div class="pmb-quick-icon bg-white text-primary">
+
+                              <div
+                                 class="
+                  pmb-quick-icon
+                  bg-white
+                  text-primary
+               ">
 
                                  <i class="uil uil-credit-card"></i>
 
                               </div>
 
-                              <a
-                                 href="./pages/kartu-peserta.php"
-                                 class="text-reset">
 
-                                 Kartu Peserta
+                              <?php if (
+                                 $tahapAkses >= 3
+                              ): ?>
 
-                              </a>
+
+                                 <a
+                                    href="./pmb/register-card"
+                                    class="text-reset">
+
+                                    Kartu Peserta
+
+                                 </a>
+
+
+                              <?php else: ?>
+
+
+                                 <span class="text-muted">
+
+                                    Kartu Peserta
+
+                                    <i
+                                       class="
+                        uil
+                        uil-lock
+                        ms-1
+                     ">
+                                    </i>
+
+                                 </span>
+
+
+                              <?php endif; ?>
+
 
                            </div>
 
 
+
+                           <!-- =============================================
+              JADWAL SELEKSI
+         ============================================== -->
+
                            <div class="pmb-quick-item">
 
-                              <div class="pmb-quick-icon bg-white text-primary">
+
+                              <div
+                                 class="
+                  pmb-quick-icon
+                  bg-white
+                  text-primary
+               ">
 
                                  <i class="uil uil-calendar-alt"></i>
 
                               </div>
 
-                              <a
-                                 href="./pages/jadwal-seleksi.php"
-                                 class="text-reset">
 
-                                 Jadwal Seleksi
+                              <?php if (
+                                 $tahapAkses >= 4
+                              ): ?>
 
-                              </a>
+
+                                 <a
+                                    href="./pmb/register-schedule"
+                                    class="text-reset">
+
+                                    Jadwal Seleksi
+
+                                 </a>
+
+
+                              <?php else: ?>
+
+
+                                 <span class="text-muted">
+
+                                    Jadwal Seleksi
+
+                                    <i
+                                       class="
+                        uil
+                        uil-lock
+                        ms-1
+                     ">
+                                    </i>
+
+                                 </span>
+
+
+                              <?php endif; ?>
+
 
                            </div>
 
 
+
+                           <!-- =============================================
+              HASIL SELEKSI
+         ============================================== -->
+
                            <div class="pmb-quick-item">
 
-                              <div class="pmb-quick-icon bg-white text-primary">
+
+                              <div
+                                 class="
+                  pmb-quick-icon
+                  bg-white
+                  text-primary
+               ">
 
                                  <i class="uil uil-trophy"></i>
 
                               </div>
 
-                              <a
-                                 href="./pages/hasil-seleksi.php"
-                                 class="text-reset">
 
-                                 Hasil Seleksi
+                              <?php if (
+                                 $tahapAkses >= 6
+                              ): ?>
 
-                              </a>
+
+                                 <a
+                                    href="./pmb/register-final"
+                                    class="text-reset">
+
+                                    Hasil Seleksi
+
+                                 </a>
+
+
+                              <?php else: ?>
+
+
+                                 <span class="text-muted">
+
+                                    Hasil Seleksi
+
+                                    <i
+                                       class="
+                        uil
+                        uil-lock
+                        ms-1
+                     ">
+                                    </i>
+
+                                 </span>
+
+
+                              <?php endif; ?>
+
 
                            </div>
 
@@ -1602,6 +1880,7 @@ if ($statusPendaftaran === 'MAHASISWA') {
                         </div>
 
                      </div>
+
 
                   </div>
 
