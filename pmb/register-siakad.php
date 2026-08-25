@@ -134,7 +134,7 @@ if (
    $statusPendaftaran !== 'MAHASISWA'
 ) {
 
-   header('Location: ./welcome.php');
+   header('Location: ./welcome');
 
    exit;
 }

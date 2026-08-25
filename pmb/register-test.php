@@ -112,7 +112,7 @@ if (
    (int) $pmbUser['tahap_aktif'] < 4
 ) {
 
-   header('Location: ./welcome.php');
+   header('Location: ./welcome');
 
    exit;
 }

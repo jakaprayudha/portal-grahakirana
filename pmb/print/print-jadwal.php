@@ -75,7 +75,7 @@ if (!$pmbUser) {
 
 if ((int) $pmbUser['tahap_aktif'] < 2) {
 
-   header('Location: ./welcome.php');
+   header('Location: ./welcome');
 
    exit;
 }

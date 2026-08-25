@@ -120,7 +120,7 @@ $tahapAktif =
 
 if ($tahapAktif < 6) {
 
-   header('Location: ./welcome.php');
+   header('Location: ./welcome');
 
    exit;
 }
