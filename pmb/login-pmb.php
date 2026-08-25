@@ -455,7 +455,7 @@
 
 
                               <a
-                                 href="#"
+                                 href="pmb/reset-pmb"
                                  class="fs-14">
 
                                  Lupa password?
