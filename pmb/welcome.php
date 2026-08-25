@@ -506,6 +506,30 @@ if ($statusPendaftaran === 'MAHASISWA') {
          font-size: 13px;
       }
 
+      /* =====================================================
+   PMB WELCOME - LOGOUT BUTTON
+===================================================== */
+
+      .pmb-welcome-card .pmb-logout-btn {
+         color: #fff;
+         border-color: rgba(255, 255, 255, 0.8);
+         background: transparent;
+         transition: all 0.2s ease;
+      }
+
+      .pmb-welcome-card .pmb-logout-btn:hover,
+      .pmb-welcome-card .pmb-logout-btn:focus {
+         color: #0d6efd;
+         background-color: #fff;
+         border-color: #fff;
+      }
+
+      .pmb-welcome-card .pmb-logout-btn:active {
+         color: #0d6efd;
+         background-color: #f8f9fa;
+         border-color: #f8f9fa;
+      }
+
 
       /* =========================================================
          PROGRESS
@@ -901,8 +925,8 @@ if ($statusPendaftaran === 'MAHASISWA') {
 
 
             <!-- =====================================================
-              WELCOME
-         ====================================================== -->
+     WELCOME
+====================================================== -->
 
             <div class="card bg-primary text-white shadow-lg pmb-welcome-card mb-6">
 
@@ -913,10 +937,16 @@ if ($statusPendaftaran === 'MAHASISWA') {
                      <div class="row align-items-center">
 
 
+                        <!-- =============================================
+                 PESERTA
+            ============================================== -->
+
                         <div class="col-lg">
 
                            <div class="d-flex align-items-center">
 
+
+                              <!-- AVATAR -->
 
                               <div class="pmb-avatar me-4">
 
@@ -925,56 +955,129 @@ if ($statusPendaftaran === 'MAHASISWA') {
                               </div>
 
 
+                              <!-- INFO -->
+
                               <div>
 
-                                 <span class="text-white opacity-75 text-uppercase fs-13 fw-bold">
+                                 <span
+                                    class="
+                           text-white
+                           opacity-75
+                           text-uppercase
+                           fs-13
+                           fw-bold
+                        ">
 
                                     Peserta PMB
 
                                  </span>
 
-                                 <h3 class="text-white mt-1 mb-2">
 
-                                    <?= htmlspecialchars($pmbUser['fullname']) ?>
+                                 <h3
+                                    class="
+                           text-white
+                           mt-1
+                           mb-2
+                        ">
+
+                                    <?= htmlspecialchars(
+                                       $pmbUser['fullname'] ?? '-',
+                                       ENT_QUOTES,
+                                       'UTF-8'
+                                    ) ?>
 
                                  </h3>
 
 
                                  <div class="pmb-meta">
 
-                                    <span class="pmb-meta-item text-white opacity-75">
 
-                                       <i class="uil uil-card-atm me-1"></i>
+                                    <!-- UID -->
+
+                                    <span
+                                       class="
+                              pmb-meta-item
+                              text-white
+                              opacity-75
+                           ">
+
+                                       <i
+                                          class="
+                                 uil
+                                 uil-card-atm
+                                 me-1
+                              ">
+                                       </i>
 
                                        UID:
 
                                        <strong class="text-white">
 
-                                          <?= htmlspecialchars($pmbUser['register_uid'] ?? '-') ?>
+                                          <?= htmlspecialchars(
+                                             $pmbUser['register_uid'] ?? '-',
+                                             ENT_QUOTES,
+                                             'UTF-8'
+                                          ) ?>
 
                                        </strong>
 
                                     </span>
 
 
-                                    <span class="pmb-meta-item text-white opacity-75">
+                                    <!-- EMAIL -->
 
-                                       <i class="uil uil-envelope me-1"></i>
+                                    <span
+                                       class="
+                              pmb-meta-item
+                              text-white
+                              opacity-75
+                           ">
 
-                                       <?= htmlspecialchars($pmbUser['email_register']) ?>
+                                       <i
+                                          class="
+                                 uil
+                                 uil-envelope
+                                 me-1
+                              ">
+                                       </i>
+
+                                       <?= htmlspecialchars(
+                                          $pmbUser['email_register'] ?? '-',
+                                          ENT_QUOTES,
+                                          'UTF-8'
+                                       ) ?>
 
                                     </span>
 
 
-                                    <span class="pmb-meta-item text-white opacity-75">
+                                    <!-- JALUR -->
 
-                                       <i class="uil uil-sign-alt me-1"></i>
+                                    <span
+                                       class="
+                              pmb-meta-item
+                              text-white
+                              opacity-75
+                           ">
 
-                                       <?= htmlspecialchars($pmbUser['register_type'] ?? '-') ?>
+                                       <i
+                                          class="
+                                 uil
+                                 uil-sign-alt
+                                 me-1
+                              ">
+                                       </i>
+
+                                       <?= htmlspecialchars(
+                                          $pmbUser['register_type'] ?? '-',
+                                          ENT_QUOTES,
+                                          'UTF-8'
+                                       ) ?>
 
                                     </span>
+
 
                                  </div>
+
                               </div>
 
                            </div>
@@ -982,13 +1085,89 @@ if ($statusPendaftaran === 'MAHASISWA') {
                         </div>
 
 
-                        <div class="col-lg-auto mt-4 mt-lg-0">
 
-                           <span class="badge bg-white text-primary rounded-pill px-4 py-2">
+                        <!-- =============================================
+                 STATUS + LOGOUT
+            ============================================== -->
 
-                              AKTIF
+                        <div
+                           class="
+                  col-lg-auto
+                  mt-4
+                  mt-lg-0
+               ">
 
-                           </span>
+                           <div
+                              class="
+                     d-flex
+                     align-items-center
+                     justify-content-lg-end
+                     gap-2
+                  ">
+
+
+                              <!-- ======================================
+                       STATUS AKTIF
+                  ======================================= -->
+
+                              <span
+                                 class="
+                        badge
+                        bg-white
+                        text-primary
+                        rounded-pill
+                        px-4
+                        py-2
+                     ">
+
+                                 <i
+                                    class="
+                           uil
+                           uil-check-circle
+                           me-1
+                        ">
+                                 </i>
+
+                                 AKTIF
+
+                              </span>
+
+
+
+                              <!-- ======================================
+                       LOGOUT
+                  ======================================= -->
+
+                              <a
+                                 href="./controllers/logout-pmb"
+                                 class="
+      btn
+      btn-sm
+      btn-outline-light
+      rounded-pill
+      px-4
+      pmb-logout-btn
+   "
+                                 onclick="
+      return confirm(
+         'Apakah Anda yakin ingin keluar dari Portal PMB?'
+      );
+   ">
+
+                                 <i
+                                    class="
+         uil
+         uil-sign-out-alt
+         me-1
+      ">
+                                 </i>
+
+                                 Keluar
+
+                              </a>
+
+
+                           </div>
 
                         </div>
 
