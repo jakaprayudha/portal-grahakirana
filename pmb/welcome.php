@@ -184,10 +184,40 @@ try {
     *     → Tahap 04 terbuka
     *
     */
+   /**
+    * =========================================================
+    * TAHAP AKSES
+    * =========================================================
+    */
 
-   $tahapAkses =
-      $tahapAktif;
+   $statusPendaftaran =
+      $pmbUser['status_pendaftaran'] ?? 'REGISTRASI';
 
+   $tahapAktif =
+      max(
+         1,
+         min(
+            8,
+            (int) $pmbUser['tahap_aktif']
+         )
+      );
+
+
+   /**
+    * Default mengikuti tahap aktif
+    */
+   $tahapAkses = $tahapAktif;
+
+
+   /**
+    * =========================================================
+    * DOKUMEN LENGKAP
+    * =========================================================
+    *
+    * Dokumen lengkap:
+    * Tahap 03 Kartu Peserta
+    * Tahap 04 Jadwal Seleksi
+    */
 
    if (
       $dokumenLengkap &&
@@ -195,6 +225,101 @@ try {
    ) {
 
       $tahapAkses = 4;
+   }
+
+
+   /**
+    * =========================================================
+    * HASIL SELEKSI
+    * =========================================================
+    *
+    * Hanya peserta LULUS yang boleh
+    * membuka Tahap 06.
+    *
+    */
+   /**
+    * =========================================================
+    * LULUS
+    * =========================================================
+    *
+    * Peserta yang LULUS:
+    *
+    * Tahap 06 Kelulusan   -> TERBUKA
+    * Tahap 07 Daftar Ulang -> TERBUKA
+    *
+    * Tahap 08 SIAKAD masih
+    * menunggu daftar ulang selesai.
+    *
+    */
+
+   if (
+      $statusPendaftaran === 'LULUS'
+   ) {
+
+      $tahapAkses = max(
+         $tahapAkses,
+         7
+      );
+   }
+
+
+   /**
+    * =========================================================
+    * DAFTAR ULANG
+    * =========================================================
+    *
+    * Setelah status menjadi DAFTAR_ULANG,
+    * Tahap 07 dibuka.
+    *
+    */
+
+   if (
+      $statusPendaftaran === 'DAFTAR_ULANG'
+   ) {
+
+      $tahapAkses = max(
+         $tahapAkses,
+         7
+      );
+   }
+
+
+   /**
+    * =========================================================
+    * MAHASISWA
+    * =========================================================
+    *
+    * Setelah daftar ulang selesai,
+    * SIAKAD dibuka.
+    *
+    */
+
+   if (
+      $statusPendaftaran === 'MAHASISWA'
+   ) {
+
+      $tahapAkses = 8;
+   }
+
+
+   /**
+    * =========================================================
+    * TIDAK LULUS
+    * =========================================================
+    *
+    * Peserta tidak boleh membuka
+    * Tahap 06, 07, maupun 08.
+    *
+    */
+
+   if (
+      $statusPendaftaran === 'TIDAK_LULUS'
+   ) {
+
+      $tahapAkses = min(
+         $tahapAkses,
+         5
+      );
    }
 } catch (PDOException $e) {
 
@@ -2285,7 +2410,7 @@ if ($statusPendaftaran === 'MAHASISWA') {
                         ${
                            isCurrent
                            ? 'Tahap ini sedang aktif.'
-                           : 'Tahap ini masih berlangsung.'
+                           : 'Tahap ini sudah selesai.'
                         }
 
                      </p>

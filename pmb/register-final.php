@@ -118,13 +118,61 @@ $tahapAktif =
    );
 
 
-if ($tahapAktif < 6) {
+/**
+ * =========================================================
+ * GUARD TAHAP
+ * =========================================================
+ *
+ * Tahap 06 dapat dibuka apabila:
+ *
+ * 1. tahap_aktif >= 6
+ * ATAU
+ * 2. status_pendaftaran = LULUS
+ *
+ * Peserta TIDAK_LULUS tetap tidak boleh
+ * membuka halaman hasil seleksi.
+ *
+ */
+
+$tahapAktif =
+   (int) (
+      $pmbUser['tahap_aktif']
+      ?? 1
+   );
+
+
+$statusPendaftaran =
+   strtoupper(
+      trim(
+         $pmbUser['status_pendaftaran']
+            ?? ''
+      )
+   );
+
+
+$isLulus =
+   ($statusPendaftaran === 'LULUS');
+
+
+/**
+ * =========================================================
+ * IZIN AKSES TAHAP 06
+ * =========================================================
+ */
+
+$bolehAksesHasilSeleksi =
+   (
+      $tahapAktif >= 6 ||
+      $isLulus
+   );
+
+
+if (!$bolehAksesHasilSeleksi) {
 
    header('Location: ./welcome');
 
    exit;
 }
-
 
 /**
  * =========================================================
@@ -1461,7 +1509,7 @@ $page =
 
                               <?php else: ?>
 
-                                 <a
+                                 <!-- <a
                                     href="./pmb/daftar-ulang.php"
                                     class="btn btn-primary rounded btn-icon btn-icon-end">
 
@@ -1469,7 +1517,7 @@ $page =
 
                                     <i class="uil uil-arrow-right"></i>
 
-                                 </a>
+                                 </a> -->
 
                               <?php endif; ?>
 
@@ -1894,7 +1942,7 @@ $page =
                                  <?php else: ?>
 
                                     <a
-                                       href="./pmb/daftar-ulang.php"
+                                       href="./pmb/register-repeat"
                                        class="btn btn-primary rounded btn-icon btn-icon-end">
 
                                        Daftar Ulang Sekarang
