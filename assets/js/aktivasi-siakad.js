@@ -3,6 +3,10 @@ document.addEventListener("DOMContentLoaded", function () {
   console.log("AKTIVASI SIAKAD JS LOADED");
   console.log("=================================");
 
+  /* =========================================================
+     ELEMENT
+  ========================================================= */
+
   const form = document.getElementById("formAktivasiSiakad");
 
   const button = document.getElementById("btnAktivasiSiakad");
@@ -10,8 +14,10 @@ document.addEventListener("DOMContentLoaded", function () {
   const agreement = document.getElementById("agreement");
 
   console.log("FORM:", form);
+
   console.log("BUTTON:", button);
-  console.log("ACTION:", form ? form.action : null);
+
+  console.log("AGREEMENT:", agreement);
 
   if (!form || !button) {
     console.warn("Form atau button aktivasi tidak ditemukan.");
@@ -19,20 +25,57 @@ document.addEventListener("DOMContentLoaded", function () {
     return;
   }
 
+  /* =========================================================
+     FORM ACTION
+  ========================================================= */
+
+  const actionAttribute = form.getAttribute("action");
+
+  console.log("FORM ACTION ATTRIBUTE:", actionAttribute);
+
+  /*
+   * Jangan menggunakan hard-code:
+   *
+   * /portal-grahakirana/controllers/aktivasi-siakad.php
+   *
+   * Karena project bisa dipindahkan ke folder/domain lain.
+   *
+   * document.baseURI akan mengikuti:
+   *
+   * <base href="../">
+   */
+
+  let controllerURL;
+
+  try {
+    controllerURL = new URL(
+      actionAttribute || "controllers/aktivasi-siakad.php",
+      document.baseURI,
+    ).href;
+  } catch (error) {
+    console.error("GAGAL MEMBUAT CONTROLLER URL:", error);
+
+    controllerURL = form.action;
+  }
+
+  console.log("BASE URI:", document.baseURI);
+
+  console.log("CONTROLLER URL:", controllerURL);
+
+  /* =========================================================
+     SUBMIT
+  ========================================================= */
+
   form.addEventListener("submit", async function (e) {
     e.preventDefault();
 
     console.log("=================================");
-
     console.log("AKTIVASI SIAKAD SUBMIT");
-
     console.log("=================================");
 
-    /**
-     * =================================================
-     * VALIDATION
-     * =================================================
-     */
+    /* =====================================================
+         VALIDATION
+      ===================================================== */
 
     if (agreement && !agreement.checked) {
       showPMBToast(
@@ -45,11 +88,9 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-    /**
-     * =================================================
-     * CONFIRM
-     * =================================================
-     */
+    /* =====================================================
+         CONFIRM
+      ===================================================== */
 
     const confirmed = window.confirm(
       "Apakah Anda yakin ingin mengaktifkan akun SIAKAD?",
@@ -59,98 +100,123 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-    /**
-     * =================================================
-     * LOADING
-     * =================================================
-     */
+    /* =====================================================
+         LOADING
+      ===================================================== */
 
     const originalHTML = button.innerHTML;
 
     button.disabled = true;
 
     button.innerHTML = `
-                <span
-                    class="spinner-border spinner-border-sm me-2"
-                    role="status"
-                    aria-hidden="true">
-                </span>
-
-                Mengaktifkan...
-            `;
+        <span
+          class="spinner-border spinner-border-sm me-2"
+          role="status"
+          aria-hidden="true">
+        </span>
+        Mengaktifkan...
+      `;
 
     try {
-      /**
-       * =============================================
-       * FORM DATA
-       * =============================================
-       */
+      /* ===================================================
+           FORM DATA
+        =================================================== */
 
       const formData = new FormData(form);
 
-      console.log("FORM DATA:");
+      console.log("=================================");
+
+      console.log("FORM DATA");
+
+      console.log("=================================");
 
       for (const [key, value] of formData.entries()) {
         console.log(key, value);
       }
 
-      /**
-       * =============================================
-       * CONTROLLER URL
-       * =============================================
-       */
+      /* ===================================================
+           CONTROLLER URL
+        =================================================== */
 
-      const controllerURL = form.action;
+      console.log("=================================");
+
+      console.log("CONTROLLER REQUEST");
+
+      console.log("=================================");
+
+      console.log("BASE URI:", document.baseURI);
+
+      console.log("ACTION ATTRIBUTE:", form.getAttribute("action"));
 
       console.log("CONTROLLER URL:", controllerURL);
 
-      /**
-       * =============================================
-       * REQUEST
-       * =============================================
-       */
+      /* ===================================================
+           REQUEST
+        =================================================== */
 
       const response = await fetch(controllerURL, {
         method: "POST",
+
         body: formData,
+
         credentials: "same-origin",
+
+        headers: {
+          "X-Requested-With": "XMLHttpRequest",
+
+          Accept: "application/json",
+        },
       });
 
       console.log("HTTP STATUS:", response.status);
 
+      console.log("HTTP STATUS TEXT:", response.statusText);
+
       console.log("CONTENT TYPE:", response.headers.get("content-type"));
 
-      /**
-       * =============================================
-       * RAW RESPONSE
-       * =============================================
-       */
+      console.log("FINAL RESPONSE URL:", response.url);
+
+      /* ===================================================
+           RAW RESPONSE
+        =================================================== */
 
       const text = await response.text();
 
       console.log("=================================");
 
-      console.log("CONTROLLER RESPONSE:");
+      console.log("CONTROLLER RAW RESPONSE");
+
+      console.log("=================================");
 
       console.log(text);
 
       console.log("=================================");
 
-      /**
-       * =============================================
-       * EMPTY RESPONSE
-       * =============================================
-       */
+      /* ===================================================
+           EMPTY RESPONSE
+        =================================================== */
 
       if (!text || !text.trim()) {
         throw new Error("Controller tidak memberikan response.");
       }
 
-      /**
-       * =============================================
-       * JSON PARSE
-       * =============================================
-       */
+      /* ===================================================
+           HTTP 404
+        =================================================== */
+
+      if (response.status === 404) {
+        console.error("CONTROLLER 404");
+
+        console.error("URL:", controllerURL);
+
+        throw new Error(
+          "Controller aktivasi SIAKAD tidak ditemukan (HTTP 404).",
+        );
+      }
+
+      /* ===================================================
+           JSON PARSE
+        =================================================== */
 
       let result;
 
@@ -162,20 +228,27 @@ document.addEventListener("DOMContentLoaded", function () {
         console.error("RAW RESPONSE:", text);
 
         throw new Error(
-          "Controller tidak mengembalikan JSON. " + "HTTP " + response.status,
+          "Controller tidak mengembalikan JSON. HTTP " + response.status,
         );
       }
 
-      console.log("PARSED RESULT:", result);
+      console.log("=================================");
 
-      /**
-       * =============================================
-       * SESSION EXPIRED
-       * =============================================
-       */
+      console.log("PARSED RESULT");
+
+      console.log("=================================");
+
+      console.log(result);
+
+      /* ===================================================
+           SESSION EXPIRED
+        =================================================== */
 
       if (response.status === 401) {
-        showPMBToast("warning", result.message || "Sesi login telah berakhir.");
+        showPMBToast(
+          "warning",
+          result.message || "Sesi login telah berakhir. Silakan login kembali.",
+        );
 
         setTimeout(function () {
           window.location.href = "./pmb/login-pmb.php";
@@ -184,41 +257,64 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
       }
 
-      /**
-       * =============================================
-       * ERROR RESPONSE
-       * =============================================
-       */
+      /* ===================================================
+           VALIDATION / BUSINESS ERROR
+        =================================================== */
 
       if (!result.success) {
         console.error("AKTIVASI ERROR:", result);
 
-        showPMBToast(
-          "danger",
-          result.message || "Gagal mengaktifkan akun SIAKAD.",
-        );
+        let message = result.message || "Gagal mengaktifkan akun SIAKAD.";
+
+        /*
+         * 422
+         */
+
+        if (response.status === 422) {
+          showPMBToast("warning", message);
+        } else if (response.status === 409) {
+
+        /*
+         * 409
+         */
+          showPMBToast("warning", message);
+        } else if (response.status >= 500) {
+
+        /*
+         * 500
+         */
+          showPMBToast("danger", message);
+        } else {
+
+        /*
+         * ERROR UMUM
+         */
+          showPMBToast("danger", message);
+        }
 
         return;
       }
 
-      /**
-       * =============================================
-       * SUCCESS
-       * =============================================
-       */
+      /* ===================================================
+           SUCCESS
+        =================================================== */
 
-      console.log("AKTIVASI BERHASIL");
+      console.log("=================================");
+
+      console.log("AKTIVASI SIAKAD BERHASIL");
+
+      console.log("=================================");
+
+      console.log("DATA:", result.data);
 
       showPMBToast(
         "success",
         result.message || "Akun SIAKAD berhasil diaktifkan.",
       );
 
-      /**
-       * =============================================
-       * REDIRECT
-       * =============================================
-       */
+      /* ===================================================
+           REDIRECT
+        =================================================== */
 
       let redirect = "./pmb/aktivasi-siakad.php";
 
@@ -232,27 +328,33 @@ document.addEventListener("DOMContentLoaded", function () {
         window.location.href = redirect;
       }, 1500);
     } catch (error) {
+      /* ===================================================
+           ERROR
+        =================================================== */
+
       console.error("=================================");
 
-      console.error("AKTIVASI SIAKAD ERROR:");
+      console.error("AKTIVASI SIAKAD ERROR");
+
+      console.error("=================================");
 
       console.error(error);
 
-      console.error("=================================");
-
       showPMBToast("danger", error.message || "Terjadi kesalahan sistem.");
     } finally {
+      /* ===================================================
+           RESTORE BUTTON
+        =================================================== */
+
       button.disabled = false;
 
       button.innerHTML = originalHTML;
     }
   });
 
-  /**
-   * =========================================================
-   * TOAST
-   * =========================================================
-   */
+  /* =========================================================
+     TOAST
+  ========================================================= */
 
   function showPMBToast(type, message) {
     let container = document.getElementById("pmbToastContainer");
@@ -295,19 +397,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
     toast.innerHTML = `
 
-            <div class="d-flex align-items-start">
+      <div class="d-flex align-items-start">
 
-                <i
-                    class="uil ${icon} fs-20 me-2">
-                </i>
+        <i
+          class="uil ${icon} fs-20 me-2">
+        </i>
 
-                <div>
-                    ${escapeHTML(message)}
-                </div>
+        <div>
 
-            </div>
+          ${escapeHTML(message)}
 
-        `;
+        </div>
+
+      </div>
+
+    `;
 
     container.appendChild(toast);
 
@@ -322,16 +426,14 @@ document.addEventListener("DOMContentLoaded", function () {
     }, 3500);
   }
 
-  /**
-   * =========================================================
-   * ESCAPE HTML
-   * =========================================================
-   */
+  /* =========================================================
+     ESCAPE HTML
+  ========================================================= */
 
   function escapeHTML(text) {
     const div = document.createElement("div");
 
-    div.textContent = text;
+    div.textContent = text == null ? "" : String(text);
 
     return div.innerHTML;
   }
