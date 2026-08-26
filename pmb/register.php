@@ -855,16 +855,16 @@
 
 
                            <!-- =================================================
-                                PASSWORD
-                           ================================================== -->
+     PASSWORD
+================================================== -->
 
-                           <div class="form-floating mb-4">
+                           <div class="form-floating mb-4 position-relative">
 
                               <input
                                  type="password"
                                  name="password"
                                  id="password"
-                                 class="form-control"
+                                 class="form-control pe-5"
                                  placeholder="Password"
                                  autocomplete="new-password"
                                  required>
@@ -875,20 +875,30 @@
 
                               </label>
 
+                              <button
+                                 type="button"
+                                 id="togglePassword"
+                                 class="btn btn-link position-absolute end-0 top-50 translate-middle-y text-muted p-0 me-3"
+                                 style="z-index: 5;"
+                                 aria-label="Tampilkan password">
+
+                                 <i class="uil uil-eye"></i>
+
+                              </button>
+
                            </div>
 
-
                            <!-- =================================================
-                                CONFIRM PASSWORD
-                           ================================================== -->
+     CONFIRM PASSWORD
+================================================== -->
 
-                           <div class="form-floating mb-5">
+                           <div class="form-floating mb-5 position-relative">
 
                               <input
                                  type="password"
                                  name="password_confirmation"
                                  id="password_confirmation"
-                                 class="form-control"
+                                 class="form-control pe-5"
                                  placeholder="Konfirmasi Password"
                                  autocomplete="new-password"
                                  required>
@@ -899,8 +909,18 @@
 
                               </label>
 
-                           </div>
+                              <button
+                                 type="button"
+                                 id="togglePasswordConfirmation"
+                                 class="btn btn-link position-absolute end-0 top-50 translate-middle-y text-muted p-0 me-3"
+                                 style="z-index: 5;"
+                                 aria-label="Tampilkan konfirmasi password">
 
+                                 <i class="uil uil-eye"></i>
+
+                              </button>
+
+                           </div>
 
                            <!-- =================================================
                                 AGREEMENT
@@ -1052,6 +1072,167 @@
 
       }
    </script>
+   <script>
+      document.addEventListener(
+         'DOMContentLoaded',
+         function() {
+
+            /**
+             * =====================================================
+             * SHOW / HIDE PASSWORD
+             * =====================================================
+             */
+
+            const password =
+               document.getElementById(
+                  'password'
+               );
+
+            const togglePassword =
+               document.getElementById(
+                  'togglePassword'
+               );
+
+
+            if (
+               password &&
+               togglePassword
+            ) {
+
+               togglePassword.addEventListener(
+                  'click',
+                  function() {
+
+                     const icon =
+                        this.querySelector('i');
+
+
+                     if (
+                        password.type === 'password'
+                     ) {
+
+                        password.type =
+                           'text';
+
+                        icon.classList.remove(
+                           'uil-eye'
+                        );
+
+                        icon.classList.add(
+                           'uil-eye-slash'
+                        );
+
+                        this.setAttribute(
+                           'aria-label',
+                           'Sembunyikan password'
+                        );
+
+                     } else {
+
+                        password.type =
+                           'password';
+
+                        icon.classList.remove(
+                           'uil-eye-slash'
+                        );
+
+                        icon.classList.add(
+                           'uil-eye'
+                        );
+
+                        this.setAttribute(
+                           'aria-label',
+                           'Tampilkan password'
+                        );
+
+                     }
+
+                  }
+               );
+
+            }
+
+
+            /**
+             * =====================================================
+             * SHOW / HIDE CONFIRM PASSWORD
+             * =====================================================
+             */
+
+            const passwordConfirmation =
+               document.getElementById(
+                  'password_confirmation'
+               );
+
+            const togglePasswordConfirmation =
+               document.getElementById(
+                  'togglePasswordConfirmation'
+               );
+
+
+            if (
+               passwordConfirmation &&
+               togglePasswordConfirmation
+            ) {
+
+               togglePasswordConfirmation.addEventListener(
+                  'click',
+                  function() {
+
+                     const icon =
+                        this.querySelector('i');
+
+
+                     if (
+                        passwordConfirmation.type ===
+                        'password'
+                     ) {
+
+                        passwordConfirmation.type =
+                           'text';
+
+                        icon.classList.remove(
+                           'uil-eye'
+                        );
+
+                        icon.classList.add(
+                           'uil-eye-slash'
+                        );
+
+                        this.setAttribute(
+                           'aria-label',
+                           'Sembunyikan konfirmasi password'
+                        );
+
+                     } else {
+
+                        passwordConfirmation.type =
+                           'password';
+
+                        icon.classList.remove(
+                           'uil-eye-slash'
+                        );
+
+                        icon.classList.add(
+                           'uil-eye'
+                        );
+
+                        this.setAttribute(
+                           'aria-label',
+                           'Tampilkan konfirmasi password'
+                        );
+
+                     }
+
+                  }
+               );
+
+            }
+
+         }
+      );
+   </script>
+
    <script src="assets/js/register-pmb.js"></script>
 
 </body>
