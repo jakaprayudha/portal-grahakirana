@@ -722,6 +722,7 @@ try {
             year_graduation = :year_graduation,
             name_mother = :name_mother,
             number_kip = :number_kip,
+            jenis_pembiayaan = :jenis_pembiayaan,
             id_program = :id_program
     ";
 
@@ -797,6 +798,7 @@ try {
       'ukuran_baju' =>
       $ukuranBaju,
 
+
       'id_program' =>
       $id_program,
 
@@ -852,6 +854,10 @@ try {
       $numberKip !== ''
          ? $numberKip
          : null,
+
+      'jenis_pembiayaan' =>
+      $jenisPembiayaan,
+
 
       'id' =>
       $userId
@@ -911,6 +917,7 @@ try {
         kecamatan,
         kelurahan,
         name_mother,
+        jenis_pembiayaan,
         year_graduation,
         file_ktp,
         file_kk,
