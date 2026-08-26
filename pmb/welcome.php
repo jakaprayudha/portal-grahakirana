@@ -1050,8 +1050,8 @@ if ($statusPendaftaran === 'MAHASISWA') {
 
 
             <!-- =====================================================
-     WELCOME
-====================================================== -->
+                              WELCOME
+                           ====================================================== -->
 
             <div class="card bg-primary text-white shadow-lg pmb-welcome-card mb-6">
 
@@ -1063,8 +1063,8 @@ if ($statusPendaftaran === 'MAHASISWA') {
 
 
                         <!-- =============================================
-                 PESERTA
-            ============================================== -->
+                                                                  PESERTA
+                                                               ============================================== -->
 
                         <div class="col-lg">
 
@@ -1086,12 +1086,12 @@ if ($statusPendaftaran === 'MAHASISWA') {
 
                                  <span
                                     class="
-                           text-white
-                           opacity-75
-                           text-uppercase
-                           fs-13
-                           fw-bold
-                        ">
+                                                                              text-white
+                                                                              opacity-75
+                                                                              text-uppercase
+                                                                              fs-13
+                                                                              fw-bold
+                                                                           ">
 
                                     Peserta PMB
 
@@ -1100,10 +1100,10 @@ if ($statusPendaftaran === 'MAHASISWA') {
 
                                  <h3
                                     class="
-                           text-white
-                           mt-1
-                           mb-2
-                        ">
+                                                                              text-white
+                                                                              mt-1
+                                                                              mb-2
+                                                                           ">
 
                                     <?= htmlspecialchars(
                                        $pmbUser['fullname'] ?? '-',
@@ -1121,17 +1121,17 @@ if ($statusPendaftaran === 'MAHASISWA') {
 
                                     <span
                                        class="
-                              pmb-meta-item
-                              text-white
-                              opacity-75
-                           ">
+                                                                                 pmb-meta-item
+                                                                                 text-white
+                                                                                 opacity-75
+                                                                              ">
 
                                        <i
                                           class="
-                                 uil
-                                 uil-card-atm
-                                 me-1
-                              ">
+                                                                                    uil
+                                                                                    uil-card-atm
+                                                                                    me-1
+                                                                                 ">
                                        </i>
 
                                        UID:
@@ -1153,17 +1153,17 @@ if ($statusPendaftaran === 'MAHASISWA') {
 
                                     <span
                                        class="
-                              pmb-meta-item
-                              text-white
-                              opacity-75
-                           ">
+                                                                                 pmb-meta-item
+                                                                                 text-white
+                                                                                 opacity-75
+                                                                              ">
 
                                        <i
                                           class="
-                                 uil
-                                 uil-envelope
-                                 me-1
-                              ">
+                                                                                    uil
+                                                                                    uil-envelope
+                                                                                    me-1
+                                                                                 ">
                                        </i>
 
                                        <?= htmlspecialchars(
@@ -1179,17 +1179,17 @@ if ($statusPendaftaran === 'MAHASISWA') {
 
                                     <span
                                        class="
-                              pmb-meta-item
-                              text-white
-                              opacity-75
-                           ">
+                                                                                 pmb-meta-item
+                                                                                 text-white
+                                                                                 opacity-75
+                                                                              ">
 
                                        <i
                                           class="
-                                 uil
-                                 uil-sign-alt
-                                 me-1
-                              ">
+                                                                                    uil
+                                                                                    uil-sign-alt
+                                                                                    me-1
+                                                                                 ">
                                        </i>
 
                                        <?= htmlspecialchars(
@@ -1212,45 +1212,46 @@ if ($statusPendaftaran === 'MAHASISWA') {
 
 
                         <!-- =============================================
-                 STATUS + LOGOUT
-            ============================================== -->
+     STATUS + ACTION
+============================================== -->
 
                         <div
                            class="
-                  col-lg-auto
-                  mt-4
-                  mt-lg-0
-               ">
+      col-lg-auto
+      mt-4
+      mt-lg-0
+   ">
 
                            <div
                               class="
-                     d-flex
-                     align-items-center
-                     justify-content-lg-end
-                     gap-2
-                  ">
+         d-flex
+         align-items-center
+         justify-content-lg-end
+         gap-2
+         flex-wrap
+      ">
 
 
                               <!-- ======================================
-                       STATUS AKTIF
-                  ======================================= -->
+           STATUS AKTIF
+      ======================================= -->
 
                               <span
                                  class="
-                        badge
-                        bg-white
-                        text-primary
-                        rounded-pill
-                        px-4
-                        py-2
-                     ">
+            badge
+            bg-white
+            text-primary
+            rounded-pill
+            px-4
+            py-2
+         ">
 
                                  <i
                                     class="
-                           uil
-                           uil-check-circle
-                           me-1
-                        ">
+               uil
+               uil-check-circle
+               me-1
+            ">
                                  </i>
 
                                  AKTIF
@@ -1258,33 +1259,62 @@ if ($statusPendaftaran === 'MAHASISWA') {
                               </span>
 
 
+                              <!-- ======================================
+           UBAH PASSWORD
+      ======================================= -->
+
+                              <button
+                                 type="button"
+                                 class="
+            btn
+            btn-sm
+            btn-outline-light
+            rounded-pill
+            px-4
+            pmb-password-btn
+         "
+                                 data-bs-toggle="modal"
+                                 data-bs-target="#modalUbahPassword">
+
+                                 <i
+                                    class="
+               uil
+               uil-lock-access
+               me-1
+            ">
+                                 </i>
+
+                                 Ubah Password
+
+                              </button>
+
 
                               <!-- ======================================
-                       LOGOUT
-                  ======================================= -->
+           LOGOUT
+      ======================================= -->
 
                               <a
                                  href="./controllers/logout-pmb"
                                  class="
-      btn
-      btn-sm
-      btn-outline-light
-      rounded-pill
-      px-4
-      pmb-logout-btn
-   "
+            btn
+            btn-sm
+            btn-outline-light
+            rounded-pill
+            px-4
+            pmb-logout-btn
+         "
                                  onclick="
-      return confirm(
-         'Apakah Anda yakin ingin keluar dari Portal PMB?'
-      );
-   ">
+            return confirm(
+               'Apakah Anda yakin ingin keluar dari Portal PMB?'
+            );
+         ">
 
                                  <i
                                     class="
-         uil
-         uil-sign-out-alt
-         me-1
-      ">
+               uil
+               uil-sign-out-alt
+               me-1
+            ">
                                  </i>
 
                                  Keluar
@@ -2255,7 +2285,295 @@ if ($statusPendaftaran === 'MAHASISWA') {
    <?php
    require '../footer2.php';
    ?>
+   <!-- =====================================================
+     MODAL UBAH PASSWORD
+====================================================== -->
 
+   <div
+      class="modal fade"
+      id="modalUbahPassword"
+      tabindex="-1"
+      aria-labelledby="modalUbahPasswordLabel"
+      aria-hidden="true">
+
+      <div
+         class="
+         modal-dialog
+         modal-dialog-centered
+         modal-md
+      ">
+
+         <div class="modal-content border-0 shadow-lg">
+
+
+            <!-- =============================================
+              HEADER
+         ============================================== -->
+
+            <div class="modal-header">
+
+               <div>
+
+                  <span
+                     class="
+                     text-uppercase
+                     text-muted
+                     fs-13
+                     fw-bold
+                  ">
+
+                     Keamanan Akun
+
+                  </span>
+
+                  <h4
+                     class="modal-title mt-1"
+                     id="modalUbahPasswordLabel">
+
+                     Ubah Password
+
+                  </h4>
+
+               </div>
+
+
+               <button
+                  type="button"
+                  class="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close">
+               </button>
+
+            </div>
+
+
+            <!-- =============================================
+              BODY
+         ============================================== -->
+
+            <div class="modal-body p-5">
+
+
+               <div
+                  class="
+                  alert
+                  alert-primary
+                  alert-icon
+                  fs-14
+                  mb-5
+               ">
+
+                  <i class="uil uil-shield-check"></i>
+
+                  <p class="mb-0">
+
+                     Gunakan password yang kuat dan mudah Anda
+                     ingat. Password baru akan langsung digunakan
+                     untuk login Portal PMB.
+
+                  </p>
+
+               </div>
+
+
+               <!-- =========================================
+                 FORM
+            ========================================== -->
+
+               <form
+                  id="formUbahPassword"
+                  action="./controllers/ubah-password-pmb"
+                  method="POST"
+                  novalidate>
+
+
+                  <!-- ======================================
+                    PASSWORD LAMA
+               ======================================= -->
+
+                  <div
+                     class="
+                     form-floating
+                     mb-4
+                     position-relative
+                  ">
+
+                     <input
+                        type="password"
+                        name="password_lama"
+                        id="passwordLama"
+                        class="form-control pe-5"
+                        placeholder="Password Lama"
+                        autocomplete="current-password"
+                        required>
+
+                     <label for="passwordLama">
+
+                        Password Lama
+
+                     </label>
+
+
+                     <button
+                        type="button"
+                        class="
+                        btn
+                        btn-link
+                        position-absolute
+                        end-0
+                        top-50
+                        translate-middle-y
+                        text-muted
+                        p-0
+                        me-3
+                     "
+                        id="togglePasswordLama"
+                        tabindex="-1"
+                        aria-label="Tampilkan password lama">
+
+                        <i class="uil uil-eye"></i>
+
+                     </button>
+
+                  </div>
+
+
+                  <!-- ======================================
+                    PASSWORD BARU
+               ======================================= -->
+
+                  <div
+                     class="
+                     form-floating
+                     mb-4
+                     position-relative
+                  ">
+
+                     <input
+                        type="password"
+                        name="password_baru"
+                        id="passwordBaru"
+                        class="form-control pe-5"
+                        placeholder="Password Baru"
+                        autocomplete="new-password"
+                        minlength="6"
+                        required>
+
+                     <label for="passwordBaru">
+
+                        Password Baru
+
+                     </label>
+
+
+                     <button
+                        type="button"
+                        class="
+                        btn
+                        btn-link
+                        position-absolute
+                        end-0
+                        top-50
+                        translate-middle-y
+                        text-muted
+                        p-0
+                        me-3
+                     "
+                        id="togglePasswordBaru"
+                        tabindex="-1"
+                        aria-label="Tampilkan password baru">
+
+                        <i class="uil uil-eye"></i>
+
+                     </button>
+
+                  </div>
+
+
+                  <!-- ======================================
+                    KONFIRMASI PASSWORD
+               ======================================= -->
+
+                  <div
+                     class="
+                     form-floating
+                     mb-5
+                     position-relative
+                  ">
+
+                     <input
+                        type="password"
+                        name="password_konfirmasi"
+                        id="passwordKonfirmasi"
+                        class="form-control pe-5"
+                        placeholder="Konfirmasi Password"
+                        autocomplete="new-password"
+                        minlength="6"
+                        required>
+
+                     <label for="passwordKonfirmasi">
+
+                        Konfirmasi Password Baru
+
+                     </label>
+
+
+                     <button
+                        type="button"
+                        class="
+                        btn
+                        btn-link
+                        position-absolute
+                        end-0
+                        top-50
+                        translate-middle-y
+                        text-muted
+                        p-0
+                        me-3
+                     "
+                        id="togglePasswordKonfirmasi"
+                        tabindex="-1"
+                        aria-label="Tampilkan konfirmasi password">
+
+                        <i class="uil uil-eye"></i>
+
+                     </button>
+
+                  </div>
+
+
+                  <!-- ======================================
+                    BUTTON
+               ======================================= -->
+
+                  <button
+                     type="submit"
+                     id="btnUbahPassword"
+                     class="
+                     btn
+                     btn-primary
+                     rounded
+                     w-100
+                     btn-icon
+                     btn-icon-end
+                  ">
+
+                     Simpan Password
+
+                     <i class="uil uil-check"></i>
+
+                  </button>
+
+
+               </form>
+
+            </div>
+
+         </div>
+
+      </div>
+
+   </div>
 
    <!-- =========================================================
      JS
@@ -2264,6 +2582,7 @@ if ($statusPendaftaran === 'MAHASISWA') {
    <script src="./assets/js/plugins.js"></script>
 
    <script src="./assets/js/theme.js"></script>
+   <script src="./assets/js/ubah-password-pmb.js"></script>
 
    <script>
       const PMB_ACTIVE_STAGE =
