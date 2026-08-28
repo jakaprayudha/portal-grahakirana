@@ -412,6 +412,10 @@ $completion =
 
             </div>
 
+            <?php
+            require 'header.php';
+            ?>
+
 
             <!-- =================================================
                  PROGRESS

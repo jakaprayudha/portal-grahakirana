@@ -1212,46 +1212,46 @@ if ($statusPendaftaran === 'MAHASISWA') {
 
 
                         <!-- =============================================
-     STATUS + ACTION
-============================================== -->
+                                 STATUS + ACTION
+                              ============================================== -->
 
                         <div
                            class="
-      col-lg-auto
-      mt-4
-      mt-lg-0
-   ">
+                                    col-lg-auto
+                                    mt-4
+                                    mt-lg-0
+                                 ">
 
                            <div
                               class="
-         d-flex
-         align-items-center
-         justify-content-lg-end
-         gap-2
-         flex-wrap
-      ">
+                                       d-flex
+                                       align-items-center
+                                       justify-content-lg-end
+                                       gap-2
+                                       flex-wrap
+                                    ">
 
 
                               <!-- ======================================
-           STATUS AKTIF
-      ======================================= -->
+                                       STATUS AKTIF
+                                    ======================================= -->
 
                               <span
                                  class="
-            badge
-            bg-white
-            text-primary
-            rounded-pill
-            px-4
-            py-2
-         ">
+                                          badge
+                                          bg-white
+                                          text-primary
+                                          rounded-pill
+                                          px-4
+                                          py-2
+                                       ">
 
                                  <i
                                     class="
-               uil
-               uil-check-circle
-               me-1
-            ">
+                                             uil
+                                             uil-check-circle
+                                             me-1
+                                          ">
                                  </i>
 
                                  AKTIF
@@ -1260,28 +1260,28 @@ if ($statusPendaftaran === 'MAHASISWA') {
 
 
                               <!-- ======================================
-           UBAH PASSWORD
-      ======================================= -->
+                                          UBAH PASSWORD
+                                       ======================================= -->
 
                               <button
                                  type="button"
                                  class="
-            btn
-            btn-sm
-            btn-outline-light
-            rounded-pill
-            px-4
-            pmb-password-btn
-         "
+                                             btn
+                                             btn-sm
+                                             btn-outline-light
+                                             rounded-pill
+                                             px-4
+                                             pmb-password-btn
+                                          "
                                  data-bs-toggle="modal"
                                  data-bs-target="#modalUbahPassword">
 
                                  <i
                                     class="
-               uil
-               uil-lock-access
-               me-1
-            ">
+                                                uil
+                                                uil-lock-access
+                                                me-1
+                                             ">
                                  </i>
 
                                  Ubah Password
@@ -1290,31 +1290,31 @@ if ($statusPendaftaran === 'MAHASISWA') {
 
 
                               <!-- ======================================
-           LOGOUT
-      ======================================= -->
+                                       LOGOUT
+                                    ======================================= -->
 
                               <a
                                  href="./controllers/logout-pmb"
                                  class="
-            btn
-            btn-sm
-            btn-outline-light
-            rounded-pill
-            px-4
-            pmb-logout-btn
-         "
+                                             btn
+                                             btn-sm
+                                             btn-outline-light
+                                             rounded-pill
+                                             px-4
+                                             pmb-logout-btn
+                                          "
                                  onclick="
-            return confirm(
-               'Apakah Anda yakin ingin keluar dari Portal PMB?'
-            );
-         ">
+                                             return confirm(
+                                                'Apakah Anda yakin ingin keluar dari Portal PMB?'
+                                             );
+                                          ">
 
                                  <i
                                     class="
-               uil
-               uil-sign-out-alt
-               me-1
-            ">
+                                                uil
+                                                uil-sign-out-alt
+                                                me-1
+                                             ">
                                  </i>
 
                                  Keluar

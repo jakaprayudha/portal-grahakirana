@@ -577,6 +577,10 @@ $page = 'Kartu Peserta PMB';
 
             </div>
 
+            <?php
+            require 'header.php';
+            ?>
+
 
             <!-- =================================================
                  STATUS
@@ -607,7 +611,7 @@ $page = 'Kartu Peserta PMB';
                               <h4 class="mb-1">
 
                                  <?= htmlspecialchars(
-                                    $pmbUser['status_pendaftaran'] ?: 'DATA_DOKUMEN'
+                                    $pmbUser['status_pendaftaran'] ?: 'DATA DOKUMEN'
                                  ) ?>
 
                               </h4>

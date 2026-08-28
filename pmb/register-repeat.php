@@ -1939,16 +1939,36 @@ $page =
 
                            <?php if ($statusDaftarUlang === 'BELUM_DIAJUKAN'): ?>
 
-                              <button
-                                 type="button"
-                                 id="btnAjukanDaftarUlang"
-                                 class="btn btn-primary btn-lg rounded btn-icon btn-icon-end">
+                              <div class="d-flex flex-wrap align-items-center gap-3">
 
-                                 Ajukan Daftar Ulang
+                                 <!-- BATAL / MENGUNDURKAN DIRI -->
 
-                                 <i class="uil uil-arrow-right"></i>
+                                 <button
+                                    type="button"
+                                    id="btnUndurDiri"
+                                    class="btn btn-outline-danger btn-lg rounded btn-icon btn-icon-end">
 
-                              </button>
+                                    Mengundurkan Diri
+
+                                    <i class="uil uil-times"></i>
+
+                                 </button>
+
+
+                                 <!-- AJUKAN DAFTAR ULANG -->
+
+                                 <button
+                                    type="button"
+                                    id="btnAjukanDaftarUlang"
+                                    class="btn btn-primary btn-lg rounded btn-icon btn-icon-end">
+
+                                    Ajukan Daftar Ulang
+
+                                    <i class="uil uil-arrow-right"></i>
+
+                                 </button>
+
+                              </div>
 
                            <?php elseif ($statusDaftarUlang === 'DIAJUKAN'): ?>
 

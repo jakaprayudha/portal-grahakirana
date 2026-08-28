@@ -1163,114 +1163,9 @@ $page =
      PARTICIPANT
 ================================================== -->
 
-            <div
-               class="card
-          shadow-sm
-          pmb-participant-card
-          mb-7">
-
-               <div class="card-body p-5">
-
-                  <div class="row align-items-center">
-
-
-                     <div class="col-lg">
-
-                        <div class="d-flex align-items-center">
-
-
-                           <div
-                              class="icon
-          btn
-          btn-circle
-          btn-lg
-          btn-soft-primary
-          me-4">
-
-                              <i class="uil uil-user"></i>
-
-                           </div>
-
-
-                           <div>
-
-                              <span
-                                 class="text-uppercase
-          text-muted
-          fs-13
-          fw-bold">
-
-                                 Peserta PMB
-
-                              </span>
-
-
-                              <h4 class="mb-1">
-
-                                 <?= htmlspecialchars(
-                                    $namaPeserta,
-                                    ENT_QUOTES,
-                                    'UTF-8'
-                                 ) ?>
-
-                              </h4>
-
-
-                              <p
-                                 class="mb-0
-          text-muted
-          pmb-participant-id">
-
-                                 ID Pendaftaran:
-
-                                 <span class="text-primary">
-
-                                    <?= htmlspecialchars(
-                                       $idPendaftaran,
-                                       ENT_QUOTES,
-                                       'UTF-8'
-                                    ) ?>
-
-                                 </span>
-
-                              </p>
-
-                           </div>
-
-                        </div>
-
-                     </div>
-
-
-                     <div
-                        class="col-lg-auto
-          mt-4
-          mt-lg-0">
-
-                        <span
-                           class="badge
-          bg-soft-primary
-          text-primary
-          rounded-pill
-          px-4
-          py-2">
-
-                           <?= htmlspecialchars(
-                              $jalur,
-                              ENT_QUOTES,
-                              'UTF-8'
-                           ) ?>
-
-                        </span>
-
-                     </div>
-
-
-                  </div>
-
-               </div>
-
-            </div>
+            <?php
+            require 'header.php';
+            ?>
 
 
             <!-- =================================================
@@ -1279,7 +1174,7 @@ $page =
 
             <div
                class="card
-          bg-primary
+          bg-success
           text-white
           shadow-lg
           pmb-status-card
