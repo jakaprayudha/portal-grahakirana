@@ -109,7 +109,8 @@
                      <ul class="dropdown-menu">
                         <li class="nav-item"><a class="dropdown-item" href="./jalur-pendaftaran">Jalur Pendaftaran</a></li>
                         <li class="nav-item"><a class="dropdown-item" href="./syarat-ketentuan">Syarat & Ketentuan</a></li>
-                        <li class="nav-item"><a class="dropdown-item" href="./biaya-kuliah-beasiswa">Biaya Kuliah & Beasiswa </a></li>
+                        <li class="nav-item"><a class="dropdown-item" href="./biaya-kuliah">Biaya Kuliah</a></li>
+                        <li class="nav-item"><a class="dropdown-item" href="./beasiswa">Beasiswa</a></li>
                         <li class="nav-item"><a class="dropdown-item" href="./jadwal-alur-pendaftaran">Jadwal & Alur Pendaftaran </a></li>
                         <li class="nav-item"><a class="dropdown-item" href="./pmb/register">Daftar</a></li>
                      </ul>
