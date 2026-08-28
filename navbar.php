@@ -41,12 +41,12 @@
                   <li class="nav-item dropdown">
                      <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Tentang</a>
                      <ul class="dropdown-menu">
-                        <li class="dropdown dropdown-submenu dropend"><a class="dropdown-item dropdown-toggle" href="#" data-bs-toggle="dropdown">Kata Sambutan</a>
+                        <!-- <li class="dropdown dropdown-submenu dropend"><a class="dropdown-item dropdown-toggle" href="#" data-bs-toggle="dropdown">Kata Sambutan</a>
                            <ul class="dropdown-menu">
                               <li class="nav-item"><a class="dropdown-item" href="./sambutan-yayasan">Sambutan Yayasan </a></li>
                               <li class="nav-item"><a class="dropdown-item" href="./sambutan-ketua">Sambutan Ketua Sekolah Tinggi</a></li>
                            </ul>
-                        </li>
+                        </li> -->
                         <li class="dropdown dropdown-submenu dropend"><a class="dropdown-item dropdown-toggle" href="#" data-bs-toggle="dropdown">Graha Kirana</a>
                            <ul class="dropdown-menu">
                               <li class="nav-item"><a class="dropdown-item" href="./about-pendiri">Pendiri</a></li>
@@ -55,8 +55,11 @@
                               <li class="nav-item"><a class="dropdown-item" href="./about-identitas">Identitas Kampus</a></li>
                            </ul>
                         </li>
-                        <li class="nav-item"><a class="dropdown-item" href="./dokumentasi">Dokumentasi</a></li>
-                        <li class="nav-item"><a class="dropdown-item" href="./laporan-tahunan">Laporan Tahunan</a></li>
+                        <!-- <li class="nav-item"><a class="dropdown-item" href="./dokumentasi">Dokumentasi</a></li> -->
+                        <!-- <li class="nav-item"><a class="dropdown-item" href="./laporan-tahunan">Laporan Tahunan</a></li> -->
+                        <li class="nav-item"><a class="dropdown-item" href="./sejarah">Sejarah dan Pendirian </a></li>
+                        <li class="nav-item"><a class="dropdown-item" href="./visi-misi">Visi, Misi dan Tujuan </a></li>
+                        <li class="nav-item"><a class="dropdown-item" href="./program-studi">Program Studi </a></li>
                      </ul>
                   </li>
 
@@ -68,9 +71,11 @@
                            <div>
                               <h6 class="dropdown-header">STIH</h6>
                               <ul class="list-unstyled">
-                                 <li><a class="dropdown-item" href="./program-studi">Program Studi</a></li>
-                                 <li><a class="dropdown-item" href="./pengajar">Pengajar</a></li>
-                                 <li><a class="dropdown-item" href="./kurikulum">Kurikulum & Matakuliah</a></li>
+                                 <li><a class="dropdown-item" href="./kebijakan-akademik">Kebijakan Akademik & Kurikulum</a></li>
+                                 <li><a class="dropdown-item" href="./kurikulum">Kurikulum & Mata Kuliah Program Studi</a></li>
+                                 <li><a class="dropdown-item" href="./pengajar">Tenaga Pengajar</a></li>
+                                 <li><a class="dropdown-item" href="./hak-belajar">Hak Belajar Di Luar Prodi</a></li>
+                                 <li><a class="dropdown-item" href="./tenaga-kependidikan">Tenaga Kependidikan</a></li>
                                  <li><a class="dropdown-item" href="./layanan-kemahasiswaan">Layanan Kemahasiswaan</a></li>
                                  <li><a class="dropdown-item" href="./metode-belajar">Metode Belajar</a></li>
                                  <li><a class="dropdown-item" href="./kalender-akademik">Kalender Akademik</a></li>
