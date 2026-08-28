@@ -115,10 +115,11 @@
                      </ul>
                   </li>
                   <li class="nav-item dropdown">
-                     <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Penjamin Mutu</a>
+                     <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Penjaminan Mutu</a>
                      <ul class="dropdown-menu">
                         <li class="nav-item"><a class="dropdown-item" href="./status-akreditasi">Status Akreditasi</a></li>
                         <li class="nav-item"><a class="dropdown-item" href="./spmi">SPMI</a></li>
+                        <li class="nav-item"><a class="dropdown-item" href="./siklus-ppepp">Siklus PPEPP</a></li>
                         <li class="nav-item"><a class="dropdown-item" href="./fakta-angka-kinerja">Fakta & Angka Kinerja</a></li>
                         <li class="nav-item"><a class="dropdown-item" href="./survey-kepuasan">Survey Kepuasan</a></li>
                      </ul>
