@@ -97,11 +97,15 @@
                      </ul>
                   </li>
                   <li class="nav-item dropdown">
-                     <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">P2M</a>
+                     <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">LP2KM</a>
                      <ul class="dropdown-menu">
                         <li class="nav-item"><a class="dropdown-item" href="./ojs-jurnal">OJS Jurnal</a></li>
                         <li class="nav-item"><a class="dropdown-item" href="./kabar-penelitian">Kabar Penelitian</a></li>
                         <li class="nav-item"><a class="dropdown-item" href="./kabar-pengmas">Kabar Pengmas </a></li>
+                        <li class="nav-item"><a class="dropdown-item" href="./renstra-penelitian">Renstra Penelitian</a></li>
+                        <li class="nav-item"><a class="dropdown-item" href="./renstra-pkm">Renstra PkM</a></li>
+                        <li class="nav-item"><a class="dropdown-item" href="./pedoman-penelitian">Pedoman Penelitian</a></li>
+                        <li class="nav-item"><a class="dropdown-item" href="./pedoman-pkm">Pedoman PkM</a></li>
                      </ul>
                   </li>
                   <li class="nav-item dropdown">
@@ -112,6 +116,7 @@
                         <li class="nav-item"><a class="dropdown-item" href="./biaya-kuliah">Biaya Kuliah</a></li>
                         <li class="nav-item"><a class="dropdown-item" href="./beasiswa">Beasiswa</a></li>
                         <li class="nav-item"><a class="dropdown-item" href="./jadwal-alur-pendaftaran">Jadwal & Alur Pendaftaran </a></li>
+                        <li class="nav-item"><a class="dropdown-item" href="./pkkmb">PKKMB </a></li>
                         <li class="nav-item"><a class="dropdown-item" href="./pmb/register">Daftar</a></li>
                      </ul>
                   </li>
