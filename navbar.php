@@ -51,7 +51,7 @@
                            <ul class="dropdown-menu">
                               <li class="nav-item"><a class="dropdown-item" href="./about-pendiri">Pendiri</a></li>
                               <li class="nav-item"><a class="dropdown-item" href="./about-pengurus">Pengurus</a></li>
-                              <li class="nav-item"><a class="dropdown-item" href="./about-struktur">Struktur Organisasi</a></li>
+                              <!-- <li class="nav-item"><a class="dropdown-item" href="./about-struktur">Struktur Organisasi</a></li> -->
                               <li class="nav-item"><a class="dropdown-item" href="./about-identitas">Identitas Kampus</a></li>
                            </ul>
                         </li>
@@ -122,6 +122,17 @@
                         <li class="nav-item"><a class="dropdown-item" href="./siklus-ppepp">Siklus PPEPP</a></li>
                         <li class="nav-item"><a class="dropdown-item" href="./fakta-angka-kinerja">Fakta & Angka Kinerja</a></li>
                         <li class="nav-item"><a class="dropdown-item" href="./survey-kepuasan">Survey Kepuasan</a></li>
+                     </ul>
+                  </li>
+                  <li class="nav-item dropdown">
+                     <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Tata Kelola</a>
+                     <ul class="dropdown-menu">
+                        <li class="nav-item"><a class="dropdown-item" href="./about-struktur">Struktur Organisasi</a></li>
+                        <li class="nav-item"><a class="dropdown-item" href="./praktik-gug">Praktik GUG</a></li>
+                        <li class="nav-item"><a class="dropdown-item" href="./perencanaan">Perencanaan</a></li>
+                        <li class="nav-item"><a class="dropdown-item" href="./kode-etik">Kode Etik</a></li>
+                        <li class="nav-item"><a class="dropdown-item" href="./suasana-akademik">Suasana Akademik</a></li>
+                        <li class="nav-item"><a class="dropdown-item" href="./akuntabilitas">Akuntabilitas</a></li>
                      </ul>
                   </li>
                   <li class="nav-item dropdown">
