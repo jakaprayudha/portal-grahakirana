@@ -164,62 +164,52 @@
                                     <span>SIAKAD</span>
                                  </a>
                               </li>
-                              <li class="col"><a class="dropdown-item" href="./administrasi-akademik">
+                              <li class="col"><a class="dropdown-item" href="#">
                                     <div class="rounded img-svg d-none d-lg-block p-4 mb-lg-2"><img class="rounded-0" src="./assets/img/demos/block14.svg" alt=""></div>
                                     <span>Administrasi Akademik</span>
                                  </a>
                               </li>
-                              <li class="col"><a class="dropdown-item" href="./bimbingan-konseling">
+                              <li class="col"><a class="dropdown-item" href="#">
                                     <div class="rounded img-svg d-none d-lg-block p-4 mb-lg-2"><img class="rounded-0" src="./assets/img/demos/block15.svg" alt=""></div>
                                     <span>Bimbingan Konseling</span>
                                  </a>
                               </li>
-                              <li class="col"><a class="dropdown-item" href="./alumni/">
+                              <li class="col"><a class="dropdown-item" href="#">
                                     <div class="rounded img-svg d-none d-lg-block p-4 mb-lg-2"><img class="rounded-0" src="./assets/img/demos/block13.svg" alt=""></div>
                                     <span>Almuni</span>
                                  </a>
                               </li>
-                              <li class="col"><a class="dropdown-item" href="./karir/">
+                              <li class="col"><a class="dropdown-item" href="#">
                                     <div class="rounded img-svg d-none d-lg-block p-4 mb-lg-2"><img class="rounded-0" src="./assets/img/demos/block3.svg" alt=""></div>
                                     <span>Karir</span>
                                  </a>
                               </li>
-                              <li class="col"><a class="dropdown-item" href="./cbt/">
+                              <li class="col"><a class="dropdown-item" href="#">
                                     <div class="rounded img-svg d-none d-lg-block p-4 mb-lg-2"><img class="rounded-0" src="./assets/img/demos/block4.svg" alt=""></div>
                                     <span>CBT</span>
                                  </a>
                               </li>
-                              <li class="col"><a class="dropdown-item" href="./perpustakaan/">
+                              <li class="col"><a class="dropdown-item" href="#">
                                     <div class="rounded img-svg d-none d-lg-block p-4 mb-lg-2"><img class="rounded-0" src="./assets/img/demos/block5.svg" alt=""></div>
                                     <span>E-Perpustakaan</span>
                                  </a>
                               </li>
-                              <li class="col"><a class="dropdown-item" href="./forum/">
+                              <li class="col"><a class="dropdown-item" href="#">
                                     <div class="rounded img-svg d-none d-lg-block p-4 mb-lg-2"><img class="rounded-0" src="./assets/img/demos/block6.svg" alt=""></div>
                                     <span>Forum</span>
                                  </a>
                               </li>
-                              <li class="col"><a class="dropdown-item" href="./docs/blocks/faq.html">
-                                    <div class="rounded img-svg d-none d-lg-block p-4 mb-lg-2"><img class="rounded-0" src="./assets/img/demos/block7.svg" alt=""></div>
-                                    <span>Jurnal Kampus</span>
-                                 </a>
-                              </li>
-                              <li class="col"><a class="dropdown-item" href="./docs/blocks/features.html">
-                                    <div class="rounded img-svg d-none d-lg-block p-4 mb-lg-2"><img class="rounded-0" src="./assets/img/demos/block8.svg" alt=""></div>
-                                    <span>PRPM</span>
-                                 </a>
-                              </li>
-                              <li class="col"><a class="dropdown-item" href="./docs/blocks/footer.html">
+                              <li class="col"><a class="dropdown-item" href="#">
                                     <div class="rounded img-svg d-none d-lg-block p-4 mb-lg-2"><img class="rounded-0" src="./assets/img/demos/block9.svg" alt=""></div>
                                     <span>Kotak Saran</span>
                                  </a>
                               </li>
-                              <li class="col"><a class="dropdown-item" href="./docs/blocks/hero.html">
+                              <li class="col"><a class="dropdown-item" href="#">
                                     <div class="rounded img-svg d-none d-lg-block p-4 mb-lg-2"><img class="rounded-0" src="./assets/img/demos/block10.svg" alt=""></div>
-                                    <span>Graha Kirana Apps</span>
+                                    <span>Graha Kirana Mobile</span>
                                  </a>
                               </li>
-                              <li class="col"><a class="dropdown-item" href="./docs/blocks/testimonials.html">
+                              <li class="col"><a class="dropdown-item" href="#">
                                     <div class="rounded img-svg d-none d-lg-block p-4 mb-lg-2"><img class="rounded-0" src="./assets/img/demos/block16.svg" alt=""></div>
                                     <span>Testimoni</span>
                                  </a>
