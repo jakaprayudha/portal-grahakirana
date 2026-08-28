@@ -92,6 +92,7 @@
                         <li class="nav-item"><a class="dropdown-item" href="./fasilitas-layanan">Fasilitas Pembelajaran</a></li>
                         <li class="nav-item"><a class="dropdown-item" href="./lab-peradilan">Laboratorium Peradilan Semu</a></li>
                         <li class="nav-item"><a class="dropdown-item" href="./library">Perpustakaan </a></li>
+                        <li class="nav-item"><a class="dropdown-item" href="./lab-komputer">Laboratorium Komputer </a></li>
                         <li class="nav-item"><a class="dropdown-item" href="./organisasi-kemahasiswaan">Organisasi Kemahasiswaan</a></li>
                         <li class="nav-item"><a class="dropdown-item" href="./kabar-mahasiswa-alumni">Kabar Mahasiswa & Alumni</a></li>
                      </ul>
