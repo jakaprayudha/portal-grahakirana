@@ -87,9 +87,11 @@
                      </div>
                   </li>
                   <li class="nav-item dropdown">
-                     <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Kehidupan Kampus</a>
+                     <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Fasilitas Kampus</a>
                      <ul class="dropdown-menu">
-                        <li class="nav-item"><a class="dropdown-item" href="./fasilitas-layanan">Fasilitas & Layanan</a></li>
+                        <li class="nav-item"><a class="dropdown-item" href="./fasilitas-layanan">Fasilitas Pembelajaran</a></li>
+                        <li class="nav-item"><a class="dropdown-item" href="./lab-peradilan">Laboratorium Peradilan Semu</a></li>
+                        <li class="nav-item"><a class="dropdown-item" href="./library">Perpustakaan </a></li>
                         <li class="nav-item"><a class="dropdown-item" href="./organisasi-kemahasiswaan">Organisasi Kemahasiswaan</a></li>
                         <li class="nav-item"><a class="dropdown-item" href="./kabar-mahasiswa-alumni">Kabar Mahasiswa & Alumni</a></li>
                      </ul>
@@ -134,13 +136,28 @@
                      <ul class="dropdown-menu mega-menu mega-menu-dark mega-menu-img">
                         <li class="mega-menu-content">
                            <ul class="row row-cols-1 row-cols-lg-6 gx-0 gx-lg-6 gy-lg-4 list-unstyled">
-                              <li class="col"><a class="dropdown-item" href="./pmb/">
+                              <li class="col"><a class="dropdown-item" href="pmb/">
                                     <div class="rounded img-svg d-none d-lg-block p-4 mb-lg-2"><img class="rounded-0" src="./assets/img/demos/block1.svg" alt=""></div>
                                     <span>PMB</span>
                                  </a>
                               </li>
+                              <li class="col"><a class="dropdown-item" href="https://siakad.info/" target="_blank">
+                                    <div class="rounded img-svg d-none d-lg-block p-4 mb-lg-2"><img class="rounded-0" src="./assets/img/demos/block10.svg" alt=""></div>
+                                    <span>SIAKAD</span>
+                                 </a>
+                              </li>
+                              <li class="col"><a class="dropdown-item" href="./administrasi-akademik">
+                                    <div class="rounded img-svg d-none d-lg-block p-4 mb-lg-2"><img class="rounded-0" src="./assets/img/demos/block14.svg" alt=""></div>
+                                    <span>Administrasi Akademik</span>
+                                 </a>
+                              </li>
+                              <li class="col"><a class="dropdown-item" href="./bimbingan-konseling">
+                                    <div class="rounded img-svg d-none d-lg-block p-4 mb-lg-2"><img class="rounded-0" src="./assets/img/demos/block15.svg" alt=""></div>
+                                    <span>Bimbingan Konseling</span>
+                                 </a>
+                              </li>
                               <li class="col"><a class="dropdown-item" href="./alumni/">
-                                    <div class="rounded img-svg d-none d-lg-block p-4 mb-lg-2"><img class="rounded-0" src="./assets/img/demos/block2.svg" alt=""></div>
+                                    <div class="rounded img-svg d-none d-lg-block p-4 mb-lg-2"><img class="rounded-0" src="./assets/img/demos/block13.svg" alt=""></div>
                                     <span>Almuni</span>
                                  </a>
                               </li>
