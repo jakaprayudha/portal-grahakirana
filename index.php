@@ -18,10 +18,64 @@ require 'head.php';
           <div class="card-body py-14 px-0">
             <div class="container">
               <div class="row gx-md-8 gx-xl-12 gy-10 align-items-center text-center text-lg-start">
-                <div class="col-lg-6" data-cues="slideInDown" data-group="page-title" data-delay="900">
-                  <h1 class="display-2 mb-4 me-xl-5 me-xxl-0">Sekolah Tinggi Ilmu Hukum <span class="text-gradient gradient-1">Graha Kirana</span></h1>
-                  <p class="lead fs-23 lh-sm mb-7 pe-xxl-15">Portal resmi informasi kepada seluruh sivitas akademika STIH Graha Kirana yang berkaitan dengan kegiatan akademik</p>
-                  <div><a href="pmb/register" class="btn btn-lg btn-gradient gradient-1 rounded">Daftar Sekarang</a></div>
+                <div class="col-lg-6"
+                  data-cues="slideInDown"
+                  data-group="page-title"
+                  data-delay="900">
+
+                  <span class="badge bg-soft-primary text-primary rounded-pill mb-4">
+                    Selamat Datang di STIH Graha Kirana
+                  </span>
+
+                  <h1 class="display-2 mb-4 me-xl-5 me-xxl-0">
+
+                    Kampus Calon
+                    <span class="text-gradient gradient-1">
+                      Praktisi Hukum
+                    </span>
+
+                  </h1>
+
+                  <p class="lead fs-21 lh-sm mb-6 pe-xl-5">
+
+                    Kampusnya calon praktisi hukum
+                    <strong>berkualitas dan berintegritas tinggi.</strong>
+
+                  </p>
+
+                  <p class="fs-18 lh-lg mb-7 pe-xl-5">
+
+                    Program Studi Ilmu Hukum STIH Graha Kirana
+                    menyediakan <strong>Kelas Reguler</strong> dan
+                    <strong>Kelas Eksekutif</strong> dengan pengalaman
+                    belajar yang komprehensif dan interaktif,
+                    didukung tenaga pengajar akademisi serta
+                    profesional hukum.
+
+                  </p>
+
+                  <div class="d-flex flex-wrap align-items-center gap-3">
+
+                    <a href="pmb/register"
+                      class="btn btn-lg btn-gradient gradient-1 rounded">
+
+                      Daftar Sekarang
+
+                      <i class="uil uil-arrow-right ms-2"></i>
+
+                    </a>
+
+                    <!-- <a href="#program"
+                      class="btn btn-lg btn-outline-primary rounded">
+
+                      Lihat Program
+
+                      <i class="uil uil-angle-down ms-2"></i>
+
+                    </a> -->
+
+                  </div>
+
                 </div>
                 <!--/column -->
                 <div class="col-lg-6">
