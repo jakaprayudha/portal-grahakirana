@@ -16,6 +16,7 @@ if (
    $_SESSION['admin_logged_in'] !== true ||
    empty($_SESSION['admin_user_id'])
 ) {
+
    header('Location: ./index.php');
    exit;
 }
@@ -32,6 +33,7 @@ $adminName =
    ?? $_SESSION['admin_username']
    ?? 'Administrator';
 
+
 $adminRole =
    $_SESSION['admin_roles']
    ?? 'admin';
@@ -45,6 +47,7 @@ $adminRole =
 
 function h($value): string
 {
+
    return htmlspecialchars(
       (string) $value,
       ENT_QUOTES,
@@ -59,273 +62,7 @@ function h($value): string
  * =========================================================
  */
 
-$successMessage = '';
 $errorMessage = '';
-
-
-/**
- * =========================================================
- * POST ACTION
- * =========================================================
- */
-
-if (
-   $_SERVER['REQUEST_METHOD'] === 'POST'
-) {
-
-   $action =
-      $_POST['action'] ?? '';
-
-   $id =
-      filter_input(
-         INPUT_POST,
-         'id',
-         FILTER_VALIDATE_INT
-      );
-
-
-   if (
-      !$id ||
-      $id < 1
-   ) {
-
-      $errorMessage =
-         'ID peserta tidak valid.';
-   } else {
-
-      try {
-
-         /**
-          * =================================================
-          * AMBIL PESERTA
-          * =================================================
-          */
-
-         $check =
-            $pdo->prepare("
-
-                    SELECT
-
-                        id,
-                        fullname,
-                        register_uid,
-                        status_pendaftaran,
-                        status_kelulusan,
-                        tahap_aktif
-
-                    FROM register_pmb
-
-                    WHERE id = :id
-
-                    LIMIT 1
-
-                ");
-
-
-         $check->execute([
-            'id' => $id
-         ]);
-
-
-         $peserta =
-            $check->fetch(
-               PDO::FETCH_ASSOC
-            );
-
-
-         if (!$peserta) {
-
-            throw new Exception(
-               'Peserta tidak ditemukan.'
-            );
-         }
-
-
-         /**
-          * =================================================
-          * LULUS → DAFTAR ULANG
-          * =================================================
-          */
-
-         if (
-            $action ===
-            'proses_daftar_ulang'
-         ) {
-
-
-            if (
-               $peserta['status_kelulusan'] !== 'LULUS'
-            ) {
-
-               throw new Exception(
-                  'Peserta belum berstatus LULUS.'
-               );
-            }
-
-
-            $stmt =
-               $pdo->prepare("
-
-                        UPDATE register_pmb
-
-                        SET
-
-                            status_pendaftaran =
-                                'DAFTAR_ULANG',
-
-                            tahap_aktif =
-                                6,
-
-                            updated_at =
-                                NOW()
-
-                        WHERE id = :id
-
-                        LIMIT 1
-
-                    ");
-
-
-            $stmt->execute([
-               'id' => $id
-            ]);
-
-
-            $successMessage =
-               'Peserta '
-               .
-               $peserta['fullname']
-               .
-               ' berhasil dipindahkan ke tahap daftar ulang.';
-
-
-            /**
-             * =================================================
-             * DAFTAR ULANG → MAHASISWA
-             * =================================================
-             */
-         } elseif (
-            $action ===
-            'konfirmasi_mahasiswa'
-         ) {
-
-
-            if (
-               $peserta['status_pendaftaran'] !== 'DAFTAR_ULANG'
-            ) {
-
-               throw new Exception(
-                  'Peserta belum berada pada tahap daftar ulang.'
-               );
-            }
-
-
-            $stmt =
-               $pdo->prepare("
-
-                        UPDATE register_pmb
-
-                        SET
-
-                            status_pendaftaran =
-                                'MAHASISWA',
-
-                            tahap_aktif =
-                                7,
-
-                            updated_at =
-                                NOW()
-
-                        WHERE id = :id
-
-                        LIMIT 1
-
-                    ");
-
-
-            $stmt->execute([
-               'id' => $id
-            ]);
-
-
-            $successMessage =
-               'Peserta '
-               .
-               $peserta['fullname']
-               .
-               ' berhasil dikonfirmasi sebagai mahasiswa.';
-
-
-            /**
-             * =================================================
-             * DAFTAR ULANG → LULUS
-             * =================================================
-             */
-         } elseif (
-            $action ===
-            'kembalikan_lulus'
-         ) {
-
-
-            if (
-               $peserta['status_pendaftaran'] !== 'DAFTAR_ULANG'
-            ) {
-
-               throw new Exception(
-                  'Peserta bukan berada pada status daftar ulang.'
-               );
-            }
-
-
-            $stmt =
-               $pdo->prepare("
-
-                        UPDATE register_pmb
-
-                        SET
-
-                            status_pendaftaran =
-                                'LULUS',
-
-                            tahap_aktif =
-                                5,
-
-                            updated_at =
-                                NOW()
-
-                        WHERE id = :id
-
-                        LIMIT 1
-
-                    ");
-
-
-            $stmt->execute([
-               'id' => $id
-            ]);
-
-
-            $successMessage =
-               'Status peserta '
-               .
-               $peserta['fullname']
-               .
-               ' dikembalikan menjadi LULUS.';
-         } else {
-
-            throw new Exception(
-               'Aksi tidak dikenali.'
-            );
-         }
-      } catch (
-         Throwable $e
-      ) {
-
-         $errorMessage =
-            $e->getMessage();
-      }
-   }
-}
 
 
 /**
@@ -337,11 +74,6 @@ if (
 $search =
    trim(
       $_GET['search'] ?? ''
-   );
-
-$status =
-   trim(
-      $_GET['status'] ?? ''
    );
 
 
@@ -357,27 +89,23 @@ $params = [];
 
 
 /**
- * Hanya peserta yang sudah
- * lulus dan proses setelahnya.
+ * =========================================================
+ * HANYA MAHASISWA
+ * =========================================================
  */
 
 $where[] = "
 
-    (
-
-        status_kelulusan = 'LULUS'
-
-        OR
-
-        status_pendaftaran IN (
-            'DAFTAR_ULANG',
-            'MAHASISWA'
-        )
-
-    )
+   status_pendaftaran = 'MAHASISWA'
 
 ";
 
+
+/**
+ * =========================================================
+ * SEARCH
+ * =========================================================
+ */
 
 if (
    $search !== ''
@@ -385,38 +113,31 @@ if (
 
    $where[] = "
 
-        (
+      (
 
-            fullname LIKE :search
+         fullname LIKE :search
 
-            OR register_uid LIKE :search
+         OR register_uid LIKE :search
 
-            OR number_id LIKE :search
+         OR nim LIKE :search
 
-            OR email_register LIKE :search
+         OR number_id LIKE :search
 
-        )
+         OR email_register LIKE :search
 
-    ";
+         OR phone_number LIKE :search
+
+      )
+
+   ";
 
 
    $params['search'] =
-      '%' .
-      $search .
+      '%'
+      .
+      $search
+      .
       '%';
-}
-
-
-if (
-   $status !== ''
-) {
-
-   $where[] =
-      "status_pendaftaran = :status";
-
-
-   $params['status'] =
-      $status;
 }
 
 
@@ -431,11 +152,11 @@ $whereSql =
 
 /**
  * =========================================================
- * GET DATA
+ * GET DATA MAHASISWA
  * =========================================================
  */
 
-$peserta = [];
+$mahasiswa = [];
 
 
 try {
@@ -443,79 +164,51 @@ try {
    $stmt =
       $pdo->prepare("
 
-            SELECT
+         SELECT
 
-                id,
+            id,
 
-                register_uid,
+            register_uid,
 
-                fullname,
+            fullname,
 
-                number_id,
+            number_id,
 
-                phone_number,
+            nim,
 
-                email_register,
+            phone_number,
 
-                register_type,
+            email_register,
 
-                id_program,
+            register_type,
 
-                jenis_pembiayaan,
+            id_program,
 
-                tahap_aktif,
+            jenis_pembiayaan,
 
-                status_pendaftaran,
+            tahap_aktif,
 
-                status_kelulusan,
+            status_pendaftaran,
 
-                nilai_tpa,
+            status_kelulusan,
 
-                nilai_wawancara,
+            status_daftar_ulang,
 
-                nilai_akhir,
+            siakad_status,
 
-                catatan_hasil,
+            created_at,
 
-                hasil_diumumkan_at,
+            updated_at
 
-                created_at,
+         FROM register_pmb
 
-                updated_at
+         $whereSql
 
-            FROM register_pmb
+         ORDER BY
 
-            $whereSql
+            fullname ASC
 
-            ORDER BY
-
-                CASE
-
-                    WHEN
-                        status_pendaftaran =
-                        'DAFTAR_ULANG'
-
-                    THEN 1
-
-                    WHEN
-                        status_pendaftaran =
-                        'LULUS'
-
-                    THEN 2
-
-                    WHEN
-                        status_pendaftaran =
-                        'MAHASISWA'
-
-                    THEN 3
-
-                    ELSE 4
-
-                END,
-
-                id DESC
-
-        ");
+      ");
 
 
    $stmt->execute(
@@ -523,7 +216,7 @@ try {
    );
 
 
-   $peserta =
+   $mahasiswa =
       $stmt->fetchAll(
          PDO::FETCH_ASSOC
       );
@@ -542,44 +235,21 @@ try {
  * =========================================================
  */
 
-$totalLulus = 0;
-$totalDaftarUlang = 0;
 $totalMahasiswa = 0;
+
+$totalSiakadAktif = 0;
+
+$totalSiakadBelumAktif = 0;
 
 
 try {
 
-   $totalLulus =
-      (int) $pdo
-         ->query("
 
-            SELECT COUNT(*)
-
-            FROM register_pmb
-
-            WHERE
-                status_pendaftaran =
-                'LULUS'
-
-        ")
-         ->fetchColumn();
-
-
-   $totalDaftarUlang =
-      (int) $pdo
-         ->query("
-
-            SELECT COUNT(*)
-
-            FROM register_pmb
-
-            WHERE
-                status_pendaftaran =
-                'DAFTAR_ULANG'
-
-        ")
-         ->fetchColumn();
-
+   /**
+    * =====================================================
+    * TOTAL MAHASISWA
+    * =====================================================
+    */
 
    $totalMahasiswa =
       (int) $pdo
@@ -590,10 +260,77 @@ try {
             FROM register_pmb
 
             WHERE
-                status_pendaftaran =
-                'MAHASISWA'
+               status_pendaftaran = 'MAHASISWA'
 
-        ")
+         ")
+         ->fetchColumn();
+
+
+
+   /**
+    * =====================================================
+    * SIAKAD AKTIF
+    * =====================================================
+    */
+
+   $totalSiakadAktif =
+      (int) $pdo
+         ->query("
+
+            SELECT COUNT(*)
+
+            FROM register_pmb
+
+            WHERE
+
+               status_pendaftaran = 'MAHASISWA'
+
+               AND
+
+               UPPER(
+                  COALESCE(
+                     siakad_status,
+                     ''
+                  )
+               ) = 'AKTIF'
+
+         ")
+         ->fetchColumn();
+
+
+
+   /**
+    * =====================================================
+    * BELUM AKTIF
+    * =====================================================
+    */
+
+   $totalSiakadBelumAktif =
+      (int) $pdo
+         ->query("
+
+            SELECT COUNT(*)
+
+            FROM register_pmb
+
+            WHERE
+
+               status_pendaftaran = 'MAHASISWA'
+
+               AND
+
+               (
+                  siakad_status IS NULL
+
+                  OR
+
+                  UPPER(
+                     siakad_status
+                  ) <> 'AKTIF'
+
+               )
+
+         ")
          ->fetchColumn();
 } catch (
    Throwable $e
@@ -608,9 +345,10 @@ try {
  */
 
 $pageTitle =
-   'Daftar Ulang';
+   'KTM Mahasiswa';
 
 ?>
+
 <!DOCTYPE html>
 
 <html lang="id">
@@ -618,6 +356,7 @@ $pageTitle =
 <head>
 
    <meta charset="UTF-8">
+
 
    <meta
       name="viewport"
@@ -633,9 +372,14 @@ $pageTitle =
    </title>
 
 
+   <!-- =====================================================
+        CSS
+   ====================================================== -->
+
    <link
       rel="stylesheet"
       href="../assets/css/plugins.css">
+
 
    <link
       rel="stylesheet"
@@ -648,14 +392,21 @@ $pageTitle =
 
 
    <style>
+      /* =====================================================
+         BODY
+      ===================================================== */
+
       body {
+
          background: #f6f8fb;
+
       }
 
 
+
       /* =====================================================
-           SIDEBAR
-        ===================================================== */
+         SIDEBAR
+      ===================================================== */
 
       .admin-sidebar {
 
@@ -685,200 +436,10 @@ $pageTitle =
       }
 
 
-      .admin-brand {
-
-         height: 82px;
-
-         padding: 20px 24px;
-
-         display: flex;
-
-         align-items: center;
-
-         border-bottom:
-            1px solid #edf0f3;
-
-      }
-
-
-      .admin-brand-icon {
-
-         width: 42px;
-
-         height: 42px;
-
-         min-width: 42px;
-
-         border-radius: 10px;
-
-         background:
-            linear-gradient(135deg,
-               #173f75,
-               #0d6efd);
-
-         color: #fff;
-
-         display: flex;
-
-         align-items: center;
-
-         justify-content: center;
-
-         margin-right: 12px;
-
-      }
-
-
-      .admin-brand-icon i {
-         font-size: 21px;
-      }
-
-
-      .admin-brand-name {
-
-         font-weight: 800;
-
-         font-size: 14px;
-
-         color: #20252b;
-
-      }
-
-
-      .admin-brand-sub {
-
-         color: #9299a3;
-
-         font-size: 10px;
-
-      }
-
-
-      .admin-nav {
-
-         padding: 24px 15px;
-
-         flex: 1;
-
-      }
-
-
-      .admin-nav-label {
-
-         font-size: 10px;
-
-         font-weight: 800;
-
-         color: #9aa1aa;
-
-         letter-spacing: 1px;
-
-         text-transform: uppercase;
-
-         padding: 0 12px;
-
-         margin-bottom: 10px;
-
-      }
-
-
-      .admin-nav-link {
-
-         display: flex;
-
-         align-items: center;
-
-         gap: 12px;
-
-         padding: 11px 13px;
-
-         margin-bottom: 4px;
-
-         border-radius: 9px;
-
-         color: #68717c;
-
-         text-decoration: none;
-
-         font-size: 13px;
-
-         font-weight: 600;
-
-      }
-
-
-      .admin-nav-link i {
-         font-size: 19px;
-      }
-
-
-      .admin-nav-link:hover {
-
-         background: #f1f6ff;
-
-         color: #0d6efd;
-
-      }
-
-
-      .admin-nav-link.active {
-
-         background: #eaf2ff;
-
-         color: #0d6efd;
-
-      }
-
-
-      .admin-sidebar-footer {
-
-         padding: 18px;
-
-         border-top:
-            1px solid #edf0f3;
-
-      }
-
-
-      .admin-user-mini {
-
-         display: flex;
-
-         align-items: center;
-
-         margin-bottom: 12px;
-
-      }
-
-
-      .admin-avatar {
-
-         width: 38px;
-
-         height: 38px;
-
-         border-radius: 50%;
-
-         background: #eaf2ff;
-
-         color: #0d6efd;
-
-         display: flex;
-
-         align-items: center;
-
-         justify-content: center;
-
-         margin-right: 10px;
-
-         font-weight: 800;
-
-      }
-
 
       /* =====================================================
-           MAIN
-        ===================================================== */
+         MAIN
+      ===================================================== */
 
       .admin-main {
 
@@ -888,6 +449,11 @@ $pageTitle =
 
       }
 
+
+
+      /* =====================================================
+         TOPBAR
+      ===================================================== */
 
       .admin-topbar {
 
@@ -934,6 +500,11 @@ $pageTitle =
       }
 
 
+
+      /* =====================================================
+         CONTENT
+      ===================================================== */
+
       .admin-content {
 
          padding: 35px;
@@ -941,9 +512,38 @@ $pageTitle =
       }
 
 
+
       /* =====================================================
-           STATS
-        ===================================================== */
+         AVATAR
+      ===================================================== */
+
+      .admin-avatar {
+
+         width: 40px;
+
+         height: 40px;
+
+         border-radius: 50%;
+
+         background: #eaf2ff;
+
+         color: #0d6efd;
+
+         display: flex;
+
+         align-items: center;
+
+         justify-content: center;
+
+         font-weight: 800;
+
+      }
+
+
+
+      /* =====================================================
+         STATS
+      ===================================================== */
 
       .stat-card {
 
@@ -981,7 +581,9 @@ $pageTitle =
 
 
       .stat-icon i {
+
          font-size: 21px;
+
       }
 
 
@@ -1009,9 +611,10 @@ $pageTitle =
       }
 
 
+
       /* =====================================================
-           DATA CARD
-        ===================================================== */
+         DATA CARD
+      ===================================================== */
 
       .data-card {
 
@@ -1037,12 +640,15 @@ $pageTitle =
       }
 
 
+
       /* =====================================================
-           FILTER
-        ===================================================== */
+         SEARCH
+      ===================================================== */
 
       .search-wrapper {
+
          position: relative;
+
       }
 
 
@@ -1080,26 +686,15 @@ $pageTitle =
       }
 
 
-      .filter-select {
-
-         height: 44px;
-
-         border:
-            1px solid #e1e5ea;
-
-         border-radius: 9px;
-
-         font-size: 13px;
-
-      }
-
 
       /* =====================================================
-           TABLE
-        ===================================================== */
+         TABLE
+      ===================================================== */
 
       .data-table {
+
          margin: 0;
+
       }
 
 
@@ -1142,7 +737,7 @@ $pageTitle =
       }
 
 
-      .participant-name {
+      .student-name {
 
          font-weight: 700;
 
@@ -1151,7 +746,7 @@ $pageTitle =
       }
 
 
-      .participant-id {
+      .student-meta {
 
          color: #9299a3;
 
@@ -1162,7 +757,7 @@ $pageTitle =
       }
 
 
-      .score-final {
+      .npm-value {
 
          color: #0d6efd;
 
@@ -1170,8 +765,15 @@ $pageTitle =
 
          font-weight: 800;
 
+         letter-spacing: .3px;
+
       }
 
+
+
+      /* =====================================================
+         ACTION
+      ===================================================== */
 
       .action-group {
 
@@ -1181,35 +783,59 @@ $pageTitle =
 
          justify-content: center;
 
-         gap: 5px;
+         gap: 6px;
 
       }
 
 
+      .btn-action {
+
+         width: 34px;
+
+         height: 34px;
+
+         display: inline-flex;
+
+         align-items: center;
+
+         justify-content: center;
+
+      }
+
+
+
       /* =====================================================
-           RESPONSIVE
-        ===================================================== */
+         RESPONSIVE
+      ===================================================== */
 
       @media (max-width: 991.98px) {
 
+
          .admin-sidebar {
+
             width: 220px;
+
          }
 
 
          .admin-main {
+
             margin-left: 220px;
+
          }
 
 
          .admin-content {
+
             padding: 25px;
+
          }
 
       }
 
 
       @media (max-width: 767.98px) {
+
 
          .admin-sidebar {
 
@@ -1223,29 +849,39 @@ $pageTitle =
 
 
          .admin-main {
+
             margin-left: 0;
+
          }
 
 
          .admin-nav {
+
             display: none;
+
          }
 
 
          .admin-sidebar-footer {
+
             display: none;
+
          }
 
 
          .admin-topbar {
+
             padding:
                18px 20px;
+
          }
 
 
          .admin-content {
+
             padding:
                20px 15px;
+
          }
 
       }
@@ -1257,60 +893,73 @@ $pageTitle =
 <body>
 
 
-   <!-- =========================================================
-     SIDEBAR
-========================================================== -->
+   <!-- =====================================================
+        SIDEBAR
+   ====================================================== -->
+
    <?php
+
    require 'sidebar.php';
+
    ?>
 
 
-   <!-- =========================================================
-     MAIN
-========================================================== -->
+   <!-- =====================================================
+        MAIN
+   ====================================================== -->
 
    <main class="admin-main">
 
 
-      <!-- TOPBAR -->
+      <!-- ==================================================
+           TOPBAR
+      =================================================== -->
 
       <header class="admin-topbar">
 
 
          <div>
 
+
             <h1 class="admin-page-title">
 
-               Daftar Ulang
+               KTM Mahasiswa
 
             </h1>
 
 
             <div class="admin-page-subtitle">
 
-               Pengelolaan peserta lulus menuju mahasiswa
+               Daftar mahasiswa dan pengelolaan Kartu Tanda Mahasiswa
 
             </div>
+
 
          </div>
 
 
          <div
-            class="d-flex align-items-center">
+            class="d-flex align-items-center gap-3">
 
 
             <div
                class="admin-avatar">
 
+
                <?= h(
+
                   strtoupper(
+
                      substr(
                         $adminName,
                         0,
                         1
                      )
+
                   )
+
                ) ?>
+
 
             </div>
 
@@ -1322,9 +971,11 @@ $pageTitle =
                <div
                   class="fw-bold fs-13">
 
+
                   <?= h(
                      $adminName
                   ) ?>
+
 
                </div>
 
@@ -1346,36 +997,17 @@ $pageTitle =
       </header>
 
 
-      <!-- CONTENT -->
+
+      <!-- ==================================================
+           CONTENT
+      =================================================== -->
 
       <div class="admin-content">
 
 
-         <!-- =================================================
-             ALERT
-        ================================================== -->
-
-         <?php if (
-            $successMessage !== ''
-         ): ?>
-
-
-            <div
-               class="alert alert-success alert-icon mb-4">
-
-               <i
-                  class="uil uil-check-circle">
-               </i>
-
-               <?= h(
-                  $successMessage
-               ) ?>
-
-            </div>
-
-
-         <?php endif; ?>
-
+         <!-- ================================================
+              ERROR
+         ================================================= -->
 
          <?php if (
             $errorMessage !== ''
@@ -1385,13 +1017,16 @@ $pageTitle =
             <div
                class="alert alert-danger alert-icon mb-4">
 
+
                <i
                   class="uil uil-times-circle">
                </i>
 
+
                <?= h(
                   $errorMessage
                ) ?>
+
 
             </div>
 
@@ -1399,108 +1034,44 @@ $pageTitle =
          <?php endif; ?>
 
 
-         <!-- =================================================
-             STATS
-        ================================================== -->
 
-         <div class="row g-4 mb-5">
+         <!-- ================================================
+              STATISTICS
+         ================================================= -->
+
+         <div
+            class="row g-4 mb-5">
 
 
-            <div class="col-6 col-xl-3">
+            <!-- TOTAL MAHASISWA -->
+
+            <div
+               class="col-6 col-xl-4">
 
 
-               <div class="stat-card">
+               <div
+                  class="stat-card">
 
 
                   <div
-                     class="stat-icon bg-soft-primary text-primary">
+                     class="
+                        stat-icon
+                        bg-soft-primary
+                        text-primary
+                     ">
+
 
                      <i
-                        class="uil uil-award">
+                        class="uil uil-users-alt">
                      </i>
+
 
                   </div>
 
 
                   <div class="stat-label">
 
-                     Peserta Lulus
-
-                  </div>
-
-
-                  <div class="stat-value">
-
-                     <?= number_format(
-                        $totalLulus
-                     ) ?>
-
-                  </div>
-
-
-               </div>
-
-
-            </div>
-
-
-            <div class="col-6 col-xl-3">
-
-
-               <div class="stat-card">
-
-
-                  <div
-                     class="stat-icon bg-soft-yellow text-yellow">
-
-                     <i
-                        class="uil uil-clock">
-                     </i>
-
-                  </div>
-
-
-                  <div class="stat-label">
-
-                     Proses Daftar Ulang
-
-                  </div>
-
-
-                  <div class="stat-value">
-
-                     <?= number_format(
-                        $totalDaftarUlang
-                     ) ?>
-
-                  </div>
-
-
-               </div>
-
-
-            </div>
-
-
-            <div class="col-6 col-xl-3">
-
-
-               <div class="stat-card">
-
-
-                  <div
-                     class="stat-icon bg-soft-green text-green">
-
-                     <i
-                        class="uil uil-graduation-cap">
-                     </i>
-
-                  </div>
-
-
-                  <div class="stat-label">
-
-                     Mahasiswa
+                     Total Mahasiswa
 
                   </div>
 
@@ -1520,25 +1091,36 @@ $pageTitle =
             </div>
 
 
-            <div class="col-6 col-xl-3">
+
+            <!-- SIAKAD AKTIF -->
+
+            <div
+               class="col-6 col-xl-4">
 
 
-               <div class="stat-card">
+               <div
+                  class="stat-card">
 
 
                   <div
-                     class="stat-icon bg-soft-primary text-primary">
+                     class="
+                        stat-icon
+                        bg-soft-green
+                        text-green
+                     ">
+
 
                      <i
-                        class="uil uil-user-check">
+                        class="uil uil-check-circle">
                      </i>
+
 
                   </div>
 
 
                   <div class="stat-label">
 
-                     Total Proses
+                     SIAKAD Aktif
 
                   </div>
 
@@ -1546,9 +1128,56 @@ $pageTitle =
                   <div class="stat-value">
 
                      <?= number_format(
-                        $totalDaftarUlang
-                           +
-                           $totalMahasiswa
+                        $totalSiakadAktif
+                     ) ?>
+
+                  </div>
+
+
+               </div>
+
+
+            </div>
+
+
+
+            <!-- BELUM AKTIF -->
+
+            <div
+               class="col-6 col-xl-4">
+
+
+               <div
+                  class="stat-card">
+
+
+                  <div
+                     class="
+                        stat-icon
+                        bg-soft-yellow
+                        text-yellow
+                     ">
+
+
+                     <i
+                        class="uil uil-clock">
+                     </i>
+
+
+                  </div>
+
+
+                  <div class="stat-label">
+
+                     Belum Aktivasi SIAKAD
+
+                  </div>
+
+
+                  <div class="stat-value">
+
+                     <?= number_format(
+                        $totalSiakadBelumAktif
                      ) ?>
 
                   </div>
@@ -1563,9 +1192,10 @@ $pageTitle =
          </div>
 
 
-         <!-- =================================================
-             INFO
-        ================================================== -->
+
+         <!-- ================================================
+              INFO
+         ================================================= -->
 
          <div
             class="alert alert-primary alert-icon mb-5">
@@ -1581,7 +1211,7 @@ $pageTitle =
 
                <strong>
 
-                  Alur Daftar Ulang
+                  Kartu Tanda Mahasiswa
 
                </strong>
 
@@ -1589,14 +1219,15 @@ $pageTitle =
                <div
                   class="mt-1 fs-13">
 
-                  Peserta dengan hasil
-                  <strong>LULUS</strong>
-                  dipindahkan ke tahap
-                  <strong>DAFTAR ULANG</strong>.
 
-                  Setelah proses daftar ulang dinyatakan lengkap,
-                  admin dapat mengonfirmasi peserta menjadi
+                  Halaman ini menampilkan seluruh peserta PMB
+                  yang telah resmi berstatus
                   <strong>MAHASISWA</strong>.
+
+                  Data mahasiswa dapat digunakan untuk melihat
+                  informasi akademik dan mencetak
+                  <strong>Kartu Tanda Mahasiswa (KTM)</strong>.
+
 
                </div>
 
@@ -1607,24 +1238,30 @@ $pageTitle =
          </div>
 
 
-         <!-- =================================================
-             DATA CARD
-        ================================================== -->
 
-         <div class="data-card">
+         <!-- ================================================
+              DATA CARD
+         ================================================= -->
+
+         <div
+            class="data-card">
 
 
-            <!-- HEADER -->
+            <!-- =============================================
+                 HEADER
+            ============================================== -->
 
-            <div class="data-card-header">
+            <div
+               class="data-card-header">
 
 
                <div
                   class="
-                    d-flex
-                    justify-content-between
-                    align-items-center
-                    mb-4">
+                     d-flex
+                     justify-content-between
+                     align-items-center
+                     mb-4
+                  ">
 
 
                   <div>
@@ -1633,19 +1270,27 @@ $pageTitle =
                      <h4
                         class="mb-1"
                         style="
-                                font-size:17px;
-                                font-weight:800;
-                            ">
+                           font-size:17px;
+                           font-weight:800;
+                        ">
 
-                        Peserta Daftar Ulang
+
+                        Daftar Mahasiswa
+
 
                      </h4>
 
 
                      <p
-                        class="text-muted mb-0 fs-12">
+                        class="
+                           text-muted
+                           mb-0
+                           fs-12
+                        ">
 
-                        Kelola status peserta setelah dinyatakan lulus.
+
+                        Kelola data dan Kartu Tanda Mahasiswa.
+
 
                      </p>
 
@@ -1654,12 +1299,21 @@ $pageTitle =
 
 
                   <a
-                     href="./daftar-ulang.php"
-                     class="btn btn-sm btn-outline-secondary rounded">
+                     href="./ktm-mahasiswa.php"
+                     class="
+                        btn
+                        btn-sm
+                        btn-outline-secondary
+                        rounded
+                     ">
 
 
                      <i
-                        class="uil uil-refresh me-1">
+                        class="
+                           uil
+                           uil-refresh
+                           me-1
+                        ">
                      </i>
 
 
@@ -1672,11 +1326,14 @@ $pageTitle =
                </div>
 
 
-               <!-- FILTER -->
+
+               <!-- ==========================================
+                    SEARCH
+               =========================================== -->
 
                <form
                   method="GET"
-                  action="./daftar-ulang.php">
+                  action="./ktm-mahasiswa.php">
 
 
                   <div
@@ -1684,7 +1341,7 @@ $pageTitle =
 
 
                      <div
-                        class="col-lg-7">
+                        class="col-lg-10">
 
 
                         <div
@@ -1702,8 +1359,13 @@ $pageTitle =
                               value="<?= h(
                                           $search
                                        ) ?>"
-                              class="form-control search-input"
-                              placeholder="Cari nama, ID pendaftaran, NIK atau email...">
+                              class="
+                                 form-control
+                                 search-input
+                              "
+                              placeholder="
+                                 Cari nama, NPM, UID, NIK, email atau nomor HP...
+                              ">
 
 
                         </div>
@@ -1712,64 +1374,6 @@ $pageTitle =
                      </div>
 
 
-                     <div
-                        class="col-lg-3">
-
-
-                        <select
-                           name="status"
-                           class="form-select filter-select">
-
-
-                           <option
-                              value="">
-
-                              Semua Status
-
-                           </option>
-
-
-                           <option
-                              value="LULUS"
-                              <?= $status ===
-                                 'LULUS'
-                                 ? 'selected'
-                                 : '' ?>>
-
-                              Lulus
-
-                           </option>
-
-
-                           <option
-                              value="DAFTAR_ULANG"
-                              <?= $status ===
-                                 'DAFTAR_ULANG'
-                                 ? 'selected'
-                                 : '' ?>>
-
-                              Daftar Ulang
-
-                           </option>
-
-
-                           <option
-                              value="MAHASISWA"
-                              <?= $status ===
-                                 'MAHASISWA'
-                                 ? 'selected'
-                                 : '' ?>>
-
-                              Mahasiswa
-
-                           </option>
-
-
-                        </select>
-
-
-                     </div>
-
 
                      <div
                         class="col-lg-2">
@@ -1777,14 +1381,23 @@ $pageTitle =
 
                         <button
                            type="submit"
-                           class="btn btn-primary rounded w-100"
+                           class="
+                              btn
+                              btn-primary
+                              rounded
+                              w-100
+                           "
                            style="
-                                    height:44px;
-                                ">
+                              height:44px;
+                           ">
 
 
                            <i
-                              class="uil uil-search me-1">
+                              class="
+                                 uil
+                                 uil-search
+                                 me-1
+                              ">
                            </i>
 
 
@@ -1806,16 +1419,20 @@ $pageTitle =
             </div>
 
 
-            <!-- =================================================
+
+            <!-- =============================================
                  TABLE
-            ================================================== -->
+            ============================================== -->
 
             <div
                class="table-responsive">
 
 
                <table
-                  class="table data-table">
+                  class="
+                     table
+                     data-table
+                  ">
 
 
                   <thead>
@@ -1825,32 +1442,52 @@ $pageTitle =
 
 
                         <th>
+
                            #
+
                         </th>
 
 
                         <th>
-                           Peserta
+
+                           Mahasiswa
+
                         </th>
 
 
                         <th>
+
+                           NPM
+
+                        </th>
+
+
+                        <th>
+
                            Program
+
                         </th>
 
 
                         <th>
-                           Nilai Akhir
+
+                           Kontak
+
                         </th>
 
 
                         <th>
-                           Status
+
+                           Status SIAKAD
+
                         </th>
 
 
-                        <th>
-                           Tahap
+                        <th
+                           class="text-center">
+
+                           KTM
+
                         </th>
 
 
@@ -1868,11 +1505,12 @@ $pageTitle =
                   </thead>
 
 
+
                   <tbody>
 
 
                      <?php if (
-                        empty($peserta)
+                        empty($mahasiswa)
                      ): ?>
 
 
@@ -1880,8 +1518,11 @@ $pageTitle =
 
 
                            <td
-                              colspan="7"
-                              class="text-center py-6">
+                              colspan="8"
+                              class="
+                                 text-center
+                                 py-6
+                              ">
 
 
                               <div
@@ -1889,19 +1530,23 @@ $pageTitle =
 
 
                                  <i
-                                    class="uil uil-user-check"
+                                    class="
+                                       uil
+                                       uil-graduation-cap
+                                    "
                                     style="
-                                            font-size:42px;
-                                            opacity:.35;
-                                        ">
+                                       font-size:42px;
+                                       opacity:.35;
+                                    ">
                                  </i>
 
 
                                  <div
                                     class="mt-2">
 
-                                    Belum ada peserta
-                                    pada proses daftar ulang.
+
+                                    Belum ada data mahasiswa.
+
 
                                  </div>
 
@@ -1926,43 +1571,45 @@ $pageTitle =
 
 
                         <?php foreach (
-                           $peserta
+                           $mahasiswa
                            as $row
                         ): ?>
 
 
                            <?php
 
-                           $statusRow =
-                              $row['status_pendaftaran']
-                              ?: 'LULUS';
 
+                           /**
+                            * ==================================
+                            * STATUS SIAKAD
+                            * ==================================
+                            */
 
-                           $statusColor =
-                              'secondary';
+                           $siakadStatus =
+                              strtoupper(
+                                 trim(
+                                    $row['siakad_status']
+                                       ?? ''
+                                 )
+                              );
 
 
                            if (
-                              $statusRow ===
-                              'LULUS'
+                              $siakadStatus === 'AKTIF'
                            ) {
 
-                              $statusColor =
-                                 'primary';
-                           } elseif (
-                              $statusRow ===
-                              'DAFTAR_ULANG'
-                           ) {
-
-                              $statusColor =
-                                 'warning';
-                           } elseif (
-                              $statusRow ===
-                              'MAHASISWA'
-                           ) {
-
-                              $statusColor =
+                              $siakadColor =
                                  'success';
+
+                              $siakadLabel =
+                                 'Aktif';
+                           } else {
+
+                              $siakadColor =
+                                 'warning';
+
+                              $siakadLabel =
+                                 'Belum Aktif';
                            }
 
 
@@ -1981,44 +1628,100 @@ $pageTitle =
                               </td>
 
 
-                              <!-- PESERTA -->
+
+                              <!-- MAHASISWA -->
 
                               <td>
 
 
                                  <div
-                                    class="participant-name">
+                                    class="student-name">
+
 
                                     <?= h(
                                        $row['fullname']
                                     ) ?>
 
+
                                  </div>
 
 
                                  <div
-                                    class="participant-id">
+                                    class="student-meta">
+
+
+                                    UID:
 
                                     <?= h(
+
                                        $row['register_uid']
                                           ?: '-'
+
                                     ) ?>
+
 
                                  </div>
 
 
                                  <div
-                                    class="participant-id">
+                                    class="student-meta">
+
+
+                                    NIK:
 
                                     <?= h(
-                                       $row['phone_number']
+
+                                       $row['number_id']
                                           ?: '-'
+
                                     ) ?>
+
 
                                  </div>
 
 
                               </td>
+
+
+
+                              <!-- NPM -->
+
+                              <td>
+
+
+                                 <div
+                                    class="npm-value">
+
+
+                                    <?= h(
+
+                                       $row['nim']
+                                          ?: '-'
+
+                                    ) ?>
+
+
+                                 </div>
+
+
+                                 <div
+                                    class="student-meta">
+
+
+                                    Tahap
+
+                                    <?= (int)
+
+                                    $row['tahap_aktif']
+
+                                    ?>
+
+
+                                 </div>
+
+
+                              </td>
+
 
 
                               <!-- PROGRAM -->
@@ -2027,21 +1730,32 @@ $pageTitle =
 
 
                                  <div
-                                    class="participant-name">
+                                    class="student-name">
 
-                                    Program #<?= (int)
-                                             $row['id_program'] ?>
+
+                                    Program
+
+                                    #<?= (int)
+
+                                       $row['id_program']
+
+                                       ?>
+
 
                                  </div>
 
 
                                  <div
-                                    class="participant-id">
+                                    class="student-meta">
+
 
                                     <?= h(
+
                                        $row['register_type']
                                           ?: '-'
+
                                     ) ?>
+
 
                                  </div>
 
@@ -2049,92 +1763,124 @@ $pageTitle =
                               </td>
 
 
-                              <!-- NILAI -->
+
+                              <!-- KONTAK -->
 
                               <td>
 
 
-                                 <span
-                                    class="score-final">
+                                 <div
+                                    class="student-name"
+                                    style="
+                                       font-size:12px;
+                                    ">
 
 
-                                    <?= $row['nilai_akhir'] !== null
+                                    <?= h(
 
-                                       ? number_format(
-                                          (float)
-                                          $row['nilai_akhir'],
-                                          2,
-                                          ',',
-                                          '.'
-                                       )
+                                       $row['phone_number']
+                                          ?: '-'
 
-                                       : '-'
-                                    ?>
+                                    ) ?>
 
 
-                                 </span>
+                                 </div>
+
+
+                                 <div
+                                    class="student-meta">
+
+
+                                    <?= h(
+
+                                       $row['email_register']
+                                          ?: '-'
+
+                                    ) ?>
+
+
+                                 </div>
 
 
                               </td>
 
 
-                              <!-- STATUS -->
 
-                              <td>
-
-
-                                 <span
-                                    class="
-                                        badge
-                                        bg-soft-<?= $statusColor ?>
-                                        text-<?= $statusColor ?>">
-
-                                    <?php
-
-                                    if (
-                                       $statusRow ===
-                                       'DAFTAR_ULANG'
-                                    ) {
-
-                                       echo 'Daftar Ulang';
-                                    } elseif (
-                                       $statusRow ===
-                                       'MAHASISWA'
-                                    ) {
-
-                                       echo 'Mahasiswa';
-                                    } else {
-
-                                       echo 'Lulus';
-                                    }
-
-                                    ?>
-
-                                 </span>
-
-
-                              </td>
-
-
-                              <!-- TAHAP -->
+                              <!-- SIAKAD -->
 
                               <td>
 
 
                                  <span
                                     class="
-                                        badge
-                                        bg-soft-primary
-                                        text-primary">
+                                       badge
+                                       bg-soft-<?= h(
+                                                   $siakadColor
+                                                ) ?>
+                                       text-<?= h(
+                                                $siakadColor
+                                             ) ?>
+                                    ">
 
-                                    Tahap
-                                    <?= (int)
-                                    $row['tahap_aktif'] ?>
+
+                                    <i
+                                       class="
+                                          uil
+                                          <?= $siakadStatus === 'AKTIF'
+
+                                             ? 'uil-check-circle'
+
+                                             : 'uil-clock'
+
+                                          ?>
+                                          me-1
+                                       ">
+                                    </i>
+
+
+                                    <?= h(
+                                       $siakadLabel
+                                    ) ?>
+
 
                                  </span>
 
 
                               </td>
+
+
+
+                              <!-- KTM -->
+
+                              <td
+                                 class="text-center">
+
+
+                                 <span
+                                    class="
+                                       badge
+                                       bg-soft-success
+                                       text-success
+                                    ">
+
+
+                                    <i
+                                       class="
+                                          uil
+                                          uil-credit-card
+                                          me-1
+                                       ">
+                                    </i>
+
+
+                                    Tersedia
+
+
+                                 </span>
+
+
+                              </td>
+
 
 
                               <!-- ACTION -->
@@ -2144,202 +1890,72 @@ $pageTitle =
 
 
                                  <div
-                                    class="action-group">
+                                    class="
+                                       action-group
+                                    ">
 
 
                                     <!-- DETAIL -->
 
                                     <a
                                        href="./peserta-detail.php?id=<?= (int)
-                                                                     $row['id'] ?>"
+
+                                                                     $row['id']
+
+                                                                     ?>"
                                        class="
-                                            btn
-                                            btn-sm
-                                            btn-soft-primary
-                                            rounded"
-                                       title="Lihat Detail">
+                                          btn
+                                          btn-sm
+                                          btn-soft-primary
+                                          rounded
+                                          btn-action
+                                       "
+                                       title="
+                                          Lihat Detail Mahasiswa
+                                       ">
 
 
                                        <i
-                                          class="uil uil-eye">
+                                          class="
+                                             uil
+                                             uil-eye
+                                          ">
                                        </i>
 
 
                                     </a>
 
 
-                                    <!-- LULUS → DAFTAR ULANG -->
 
-                                    <?php if (
-                                       $statusRow ===
-                                       'LULUS'
-                                    ): ?>
+                                    <!-- KTM -->
 
+                                    <a
+                                       href="./ktm-cetak.php?id=<?= (int)
 
-                                       <form
-                                          method="POST"
-                                          action="./daftar-ulang.php"
-                                          onsubmit="
-                                                    return confirm(
-                                                        'Pindahkan peserta ini ke tahap daftar ulang?'
-                                                    );
-                                                ">
+                                                                  $row['id']
 
-
-                                          <input
-                                             type="hidden"
-                                             name="action"
-                                             value="proses_daftar_ulang">
+                                                                  ?>"
+                                       class="
+                                          btn
+                                          btn-sm
+                                          btn-primary
+                                          rounded
+                                          btn-action
+                                       "
+                                       title="
+                                          Lihat / Cetak KTM
+                                       ">
 
 
-                                          <input
-                                             type="hidden"
-                                             name="id"
-                                             value="<?= (int)
-                                                      $row['id'] ?>">
-
-
-                                          <button
-                                             type="submit"
-                                             class="
-                                                    btn
-                                                    btn-sm
-                                                    btn-primary
-                                                    rounded"
-                                             title="Proses Daftar Ulang">
-
-
-                                             <i
-                                                class="uil uil-arrow-right">
-                                             </i>
-
-
-                                          </button>
-
-
-                                       </form>
-
-
-                                       <!-- DAFTAR ULANG → MAHASISWA -->
-
-                                    <?php elseif (
-                                       $statusRow ===
-                                       'DAFTAR_ULANG'
-                                    ): ?>
-
-
-                                       <form
-                                          method="POST"
-                                          action="./daftar-ulang.php"
-                                          onsubmit="
-                                                    return confirm(
-                                                        'Konfirmasi peserta ini menjadi mahasiswa?'
-                                                    );
-                                                ">
-
-
-                                          <input
-                                             type="hidden"
-                                             name="action"
-                                             value="konfirmasi_mahasiswa">
-
-
-                                          <input
-                                             type="hidden"
-                                             name="id"
-                                             value="<?= (int)
-                                                      $row['id'] ?>">
-
-
-                                          <button
-                                             type="submit"
-                                             class="
-                                                    btn
-                                                    btn-sm
-                                                    btn-success
-                                                    rounded"
-                                             title="Konfirmasi Mahasiswa">
-
-
-                                             <i
-                                                class="uil uil-graduation-cap">
-                                             </i>
-
-
-                                          </button>
-
-
-                                       </form>
-
-
-                                       <!-- KEMBALIKAN -->
-
-                                       <form
-                                          method="POST"
-                                          action="./daftar-ulang.php"
-                                          onsubmit="
-                                                    return confirm(
-                                                        'Kembalikan status peserta menjadi LULUS?'
-                                                    );
-                                                ">
-
-
-                                          <input
-                                             type="hidden"
-                                             name="action"
-                                             value="kembalikan_lulus">
-
-
-                                          <input
-                                             type="hidden"
-                                             name="id"
-                                             value="<?= (int)
-                                                      $row['id'] ?>">
-
-
-                                          <button
-                                             type="submit"
-                                             class="
-                                                    btn
-                                                    btn-sm
-                                                    btn-soft-secondary
-                                                    rounded"
-                                             title="Kembalikan ke Lulus">
-
-
-                                             <i
-                                                class="uil uil-arrow-left">
-                                             </i>
-
-
-                                          </button>
-
-
-                                       </form>
-
-
-                                    <?php else: ?>
-
-
-                                       <span
+                                       <i
                                           class="
-                                                badge
-                                                bg-soft-green
-                                                text-green">
+                                             uil
+                                             uil-credit-card
+                                          ">
+                                       </i>
 
 
-                                          <i
-                                             class="uil uil-check-circle me-1">
-                                          </i>
-
-
-                                          Selesai
-
-
-                                       </span>
-
-
-                                    <?php endif; ?>
+                                    </a>
 
 
                                  </div>

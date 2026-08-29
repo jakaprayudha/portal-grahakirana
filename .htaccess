@@ -6,7 +6,7 @@ RewriteRule ^(.*)$ $1.php
 Options -Indexes
 ErrorDocument 403 localhost/portal-grahakirana
 
-php_value display_errors 0
+php_value display_errors 1
 php_value memory_limit 512M
 
 # Redirect to HTTP when accessing via IP address
