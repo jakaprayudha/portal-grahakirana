@@ -289,21 +289,6 @@ $adminRole =
 
 
 
-      <!-- KRS -->
-
-      <a
-         href="./krs"
-         class="admin-nav-link <?= isAdminActive(
-                                    'krs',
-                                    $currentPage
-                                 ) ?>">
-
-         <i class="uil uil-book-open"></i>
-
-         KRS
-
-      </a>
-
 
 
    </nav>
