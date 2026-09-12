@@ -984,26 +984,21 @@ $page =
 
                <div class="card-body p-5 p-md-6">
 
-                  <div class="pmb-rereg-hero-content">
+                  <div class="pmb-rereg-hero-content d-flex align-items-center justify-content-between">
 
+                     <!-- STATUS -->
                      <div class="d-flex align-items-center">
 
-
                         <div class="pmb-rereg-icon text-green me-4">
-
                            <i class="uil uil-file-check-alt fs-30"></i>
-
                         </div>
 
-
                         <div>
-
                            <span class="text-white opacity-75 text-uppercase fs-13 fw-bold">
                               Status Penerimaan
                            </span>
 
                            <h3 class="text-white mt-1 mb-2">
-
                               <?php if ($statusDaftarUlang === 'DITERIMA'): ?>
 
                                  Daftar Ulang Telah Diterima
@@ -1017,11 +1012,9 @@ $page =
                                  Selamat! Anda Berhak Daftar Ulang
 
                               <?php endif; ?>
-
                            </h3>
 
                            <p class="text-white opacity-75 mb-0">
-
                               <?php if ($statusDaftarUlang === 'DITERIMA'): ?>
 
                                  Seluruh proses daftar ulang Anda telah
@@ -1038,15 +1031,25 @@ $page =
                                  batas waktu yang ditentukan oleh panitia PMB.
 
                               <?php endif; ?>
-
                            </p>
-
                         </div>
-
 
                      </div>
 
+
+                     <!-- LOGOUT -->
+                     <a
+                        href="./controllers/logout-pmb"
+                        class="btn btn-sm btn-outline-light rounded-pill px-4 pmb-logout-btn ms-4"
+                        onclick="return confirm(
+            'Apakah Anda yakin ingin keluar dari Portal PMB?'
+        );">
+                        <i class="uil uil-sign-out-alt me-1"></i>
+                        Keluar
+                     </a>
+
                   </div>
+
 
                </div>
 
