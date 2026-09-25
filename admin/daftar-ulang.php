@@ -111,7 +111,8 @@ if (
                         register_uid,
                         status_pendaftaran,
                         status_kelulusan,
-                        tahap_aktif
+                        tahap_aktif,
+                        npm_sementara
 
                     FROM register_pmb
 
@@ -395,6 +396,8 @@ if (
 
             OR email_register LIKE :search
 
+            OR npm_sementara LIKE :search
+
         )
 
     ";
@@ -445,45 +448,67 @@ try {
 
             SELECT
 
-                id,
+                rp.id,
 
-                register_uid,
+                rp.register_uid,
 
-                fullname,
+                rp.fullname,
 
-                number_id,
+                rp.number_id,
 
-                phone_number,
+                rp.phone_number,
 
-                email_register,
+                rp.npm_sementara,
 
-                register_type,
+                rp.email_register,
 
-                id_program,
+                rp.register_type,
 
-                jenis_pembiayaan,
+                rp.id_program,
 
-                tahap_aktif,
+                rp.jenis_pembiayaan,
 
-                status_pendaftaran,
+                rp.tahap_aktif,
 
-                status_kelulusan,
+                rp.status_pendaftaran,
 
-                nilai_tpa,
+                rp.status_kelulusan,
 
-                nilai_wawancara,
+                rp.nilai_tpa,
 
-                nilai_akhir,
+                rp.nilai_wawancara,
 
-                catatan_hasil,
+                rp.nilai_akhir,
 
-                hasil_diumumkan_at,
+                rp.catatan_hasil,
 
-                created_at,
+                rp.hasil_diumumkan_at,
 
-                updated_at
+                rp.created_at,
 
-            FROM register_pmb
+                rp.updated_at,
+
+                mp.program_name,
+
+                mp.program_degree,
+
+                CASE
+                    WHEN ms.id_student IS NOT NULL THEN 1
+                    ELSE 0
+                END AS siswa_match,
+
+                ms.id_student AS matched_student_id,
+                ms.student_npm AS matched_student_npm,
+                ms.student_name AS matched_student_name,
+                ms.student_status AS matched_student_status
+
+            FROM register_pmb rp
+
+            LEFT JOIN ms_student ms
+                ON TRIM(ms.student_npm) = TRIM(rp.npm_sementara)
+                AND LOWER(TRIM(ms.student_name)) = LOWER(TRIM(rp.fullname))
+                AND ms.student_status = 1
+            LEFT JOIN ms_program_studi mp ON mp.id_program = rp.id_program
 
             $whereSql
 
@@ -492,19 +517,19 @@ try {
                 CASE
 
                     WHEN
-                        status_pendaftaran =
+                        rp.status_pendaftaran =
                         'DAFTAR_ULANG'
 
                     THEN 1
 
                     WHEN
-                        status_pendaftaran =
+                        rp.status_pendaftaran =
                         'LULUS'
 
                     THEN 2
 
                     WHEN
-                        status_pendaftaran =
+                        rp.status_pendaftaran =
                         'MAHASISWA'
 
                     THEN 3
@@ -513,7 +538,7 @@ try {
 
                 END,
 
-                id DESC
+                rp.id DESC
 
         ");
 
@@ -1703,7 +1728,7 @@ $pageTitle =
                                           $search
                                        ) ?>"
                               class="form-control search-input"
-                              placeholder="Cari nama, ID pendaftaran, NIK atau email...">
+                              placeholder="Cari nama, ID pendaftaran, NIK, email atau NPM...">
 
 
                         </div>
@@ -1833,6 +1858,10 @@ $pageTitle =
                            Peserta
                         </th>
 
+                        <th>
+                           NPM
+                        </th>
+
 
                         <th>
                            Program
@@ -1880,7 +1909,7 @@ $pageTitle =
 
 
                            <td
-                              colspan="7"
+                              colspan="8"
                               class="text-center py-6">
 
 
@@ -2020,6 +2049,59 @@ $pageTitle =
 
                               </td>
 
+                              <!-- NPM -->
+
+                              <td>
+
+                                 <?php if (
+                                    !empty($row['npm_sementara'])
+                                 ): ?>
+
+                                    <div class="participant-name">
+                                       <?= h($row['npm_sementara']) ?>
+                                    </div>
+
+                                    <?php if (
+                                       (int)($row['siswa_match'] ?? 0) === 1
+                                    ): ?>
+
+                                       <div
+                                          class="student-match text-success">
+
+                                          <i class="uil uil-check-circle"></i>
+
+                                          Match Siswa Aktif
+
+                                       </div>
+
+                                       <?php if (
+                                          !empty($row['matched_student_id'])
+                                       ): ?>
+
+                                          <div class="student-match-id">
+                                             ID Student:
+                                             <?= (int)$row['matched_student_id'] ?>
+                                          </div>
+
+                                       <?php endif; ?>
+
+                                    <?php else: ?>
+
+                                       <div
+                                          class="student-match text-warning">
+
+                                          <i class="uil uil-exclamation-triangle"></i>
+
+                                          Belum Match
+
+                                       </div>
+
+                                    <?php endif; ?>
+
+                                 <?php endif; ?>
+
+                              </td>
+
 
                               <!-- PROGRAM -->
 
@@ -2029,8 +2111,7 @@ $pageTitle =
                                  <div
                                     class="participant-name">
 
-                                    Program #<?= (int)
-                                             $row['id_program'] ?>
+                                    <?= h($row['program_degree']) ?> - <?= h($row['program_name']) ?>
 
                                  </div>
 
@@ -2166,6 +2247,39 @@ $pageTitle =
 
 
                                     </a>
+
+
+
+                                    <!-- GENERATE NPM -->
+
+                                    <?php if (
+                                       empty(trim((string)($row['npm_sementara'] ?? '')))
+                                    ): ?>
+
+                                       <a
+                                          href="./generate-npm.php?id=<?= (int)
+                                                                        $row['id'] ?>"
+                                          class="
+                                               btn
+                                               btn-sm
+                                               btn-primary
+                                               rounded"
+                                          title="Generate NPM"
+                                          onclick="
+                                               return confirm(
+                                                   'Generate NPM untuk peserta ini?'
+                                               );
+                                           ">
+
+
+                                          <i
+                                             class="uil uil-user-plus">
+                                          </i>
+
+
+                                       </a>
+
+                                    <?php endif; ?>
 
 
                                     <!-- LULUS → DAFTAR ULANG -->
