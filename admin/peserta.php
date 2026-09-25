@@ -1471,17 +1471,34 @@ $pageTitle =
                      </div>
 
 
-                     <a
-                        href="./peserta.php"
-                        class="btn btn-sm btn-outline-secondary rounded">
+                     <div class="d-flex gap-2">
 
-                        <i
-                           class="uil uil-refresh me-1">
-                        </i>
+                        <a
+                           href="./peserta-add.php"
+                           class="btn btn-sm btn-primary rounded">
 
-                        Refresh
+                           <i
+                              class="uil uil-plus me-1">
+                           </i>
 
-                     </a>
+                           Tambah Peserta
+
+                        </a>
+
+
+                        <a
+                           href="./peserta.php"
+                           class="btn btn-sm btn-outline-secondary rounded">
+
+                           <i
+                              class="uil uil-refresh me-1">
+                           </i>
+
+                           Refresh
+
+                        </a>
+
+                     </div>
 
 
                   </div>
