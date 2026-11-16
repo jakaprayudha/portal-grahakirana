@@ -218,7 +218,7 @@ if (
 if (
    !in_array(
       $registerType,
-      ['Reguler', 'Eksekutif', 'Pindahan'],
+      ['Reguler', 'Reguler Sore', 'Eksekutif', 'Pindahan'],
       true
    )
 ) {

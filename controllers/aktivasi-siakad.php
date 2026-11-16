@@ -464,6 +464,8 @@ try {
             break;
 
 
+         // Reguler Sore & Eksekutif sama-sama kode 02
+         case 'REGULER SORE':
          case 'EKSEKUTIF':
 
             $kodeJalur =
@@ -532,9 +534,21 @@ try {
        * Tahun
        * Kampus
        * Prodi
-       * Jalur
+       *
+       * Jalur (01/02/03) TIDAK ikut, supaya nomor urut
+       * berlanjut lintas jalur (sama dengan admin/generate-npm.php):
+       *   26-69-74-01-050 (Reguler)
+       *   26-69-74-02-051 (Eksekutif) -> lanjut, bukan 001
        *
        */
+
+      $sequencePrefix =
+         $kodeTahun .
+         '-' .
+         $kodeKampus .
+         '-' .
+         $kodeProdi .
+         '-';
 
       $sequenceStmt =
          $pdo->prepare("
@@ -556,7 +570,7 @@ try {
       $sequenceStmt->execute(
          [
             'prefix' =>
-            $prefix . '%'
+            $sequencePrefix . '%'
          ]
       );
 
@@ -596,7 +610,7 @@ try {
 
          responseJSON(
             false,
-            'Nomor urut NPM untuk jalur ini sudah mencapai batas 999.',
+            'Nomor urut NPM untuk prodi ini sudah mencapai batas 999.',
             422
          );
       }

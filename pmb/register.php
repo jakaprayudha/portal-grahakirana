@@ -129,6 +129,20 @@
 
 
       /* ==================================================
+   REGULER SORE SELECTED
+   ================================================== */
+
+      #jalur_reguler_sore:checked+.form-check-label .pmb-path-card {
+         border: 2px solid var(--bs-warning) !important;
+         background-color: rgba(var(--bs-warning-rgb), 0.06);
+
+         box-shadow:
+            0 0 0 3px rgba(var(--bs-warning-rgb), 0.12),
+            0 6px 18px rgba(0, 0, 0, 0.08);
+      }
+
+
+      /* ==================================================
    EKSEKUTIF SELECTED
    ================================================== */
 
@@ -670,7 +684,7 @@
                                       REGULER
                                  ================================================== -->
 
-                                 <div class="col-4 pmb-path-col">
+                                 <div class="col-6 col-md-3 pmb-path-col">
 
                                     <div class="form-check custom-control custom-radio p-0">
 
@@ -728,10 +742,71 @@
 
 
                                  <!-- =================================================
+                                      REGULER SORE
+                                 ================================================== -->
+
+                                 <div class="col-6 col-md-3 pmb-path-col">
+
+                                    <div class="form-check custom-control custom-radio p-0">
+
+
+                                       <input
+                                          class="form-check-input"
+                                          type="radio"
+                                          name="jalur_pendaftaran"
+                                          id="jalur_reguler_sore"
+                                          value="Reguler Sore"
+                                          required>
+
+
+                                       <label
+                                          class="form-check-label w-100"
+                                          for="jalur_reguler_sore">
+
+
+                                          <div class="card card-border-start border-warning h-100 pmb-path-card">
+
+
+                                             <div class="card-body p-4 text-center">
+
+
+                                                <div class="icon btn btn-circle btn-sm btn-soft-warning mb-3">
+
+                                                   <i class="uil uil-moon"></i>
+
+                                                </div>
+
+
+                                                <h5 class="mb-1">
+
+                                                   Reguler Sore
+
+                                                </h5>
+
+
+                                                <p class="fs-14 mb-0 text-muted">
+
+                                                   Kelas sore
+
+                                                </p>
+
+
+                                             </div>
+
+                                          </div>
+
+                                       </label>
+
+                                    </div>
+
+                                 </div>
+
+
+                                 <!-- =================================================
                                       EKSEKUTIF
                                  ================================================== -->
 
-                                 <div class="col-4 pmb-path-col">
+                                 <div class="col-6 col-md-3 pmb-path-col">
 
                                     <div class="form-check custom-control custom-radio p-0">
 
@@ -792,7 +867,7 @@
                                       PINDAHAN
                                  ================================================== -->
 
-                                 <div class="col-4 pmb-path-col">
+                                 <div class="col-6 col-md-3 pmb-path-col">
 
                                     <div class="form-check custom-control custom-radio p-0">
 

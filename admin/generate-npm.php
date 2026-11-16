@@ -408,6 +408,10 @@ try {
          break;
 
 
+      /**
+       * Reguler Sore & Eksekutif sama-sama memakai kode 02.
+       */
+      case 'reguler sore':
       case 'eksekutif':
 
          $kodeTipe = '02';
@@ -622,6 +626,65 @@ try {
 
    /**
     * =====================================================
+    * 10b. NPM TERTINGGI DARI SETTING NPM
+    * =====================================================
+    *
+    * Diatur admin pada menu Setting NPM
+    * (admin/setting-npm.php) per program studi.
+    *
+    * Hanya dipakai jika tahun + kampus + prodi
+    * pada NPM setting sama dengan prefix peserta.
+    */
+
+   $maxUrutSetting = 0;
+
+   try {
+
+      $stmtSetting = $pdo->prepare("
+
+           SELECT npm_tertinggi
+
+           FROM setting_npm
+
+           WHERE id_program = :id_program
+
+           LIMIT 1
+
+       ");
+
+      $stmtSetting->execute([
+         'id_program' =>
+         $peserta['id_program']
+      ]);
+
+      $npmSetting =
+         trim(
+            (string)
+            ($stmtSetting->fetchColumn() ?: '')
+         );
+
+      if (
+         strlen($npmSetting) === $panjangNpm
+         && ctype_digit($npmSetting)
+         && strpos($npmSetting, $prefixUrut) === 0
+      ) {
+
+         $maxUrutSetting =
+            (int) substr($npmSetting, -4);
+      }
+   } catch (PDOException $e) {
+
+      /**
+       * Tabel setting_npm belum dibuat
+       * (menu Setting NPM belum pernah dibuka).
+       */
+
+      $maxUrutSetting = 0;
+   }
+
+
+   /**
+    * =====================================================
     * 11. NOMOR BERIKUTNYA
     * =====================================================
     */
@@ -631,7 +694,8 @@ try {
 
       max(
          $maxUrutRegister,
-         $maxUrutStudent
+         $maxUrutStudent,
+         $maxUrutSetting
       )
 
       + 1;
@@ -839,7 +903,7 @@ try {
                 :student_emergency_relasi,
 
                 :student_tipe_mahasiswa,
-                1,
+                :student_session,
                 1
 
             )
@@ -903,8 +967,20 @@ try {
       'student_emergency_relasi' =>
       $peserta['emergency_relasi'],
 
+      /**
+       * Di SIAKAD: student_tipe_mahasiswa 1 = Reguler, 2 = Transfer.
+       * Jangan isi dengan kode tengah NPM (01/02/03), karena '02'
+       * (Eksekutif) akan terbaca sebagai Transfer.
+       */
       'student_tipe_mahasiswa' =>
-      $kodeTipe
+      $kodeTipe === '03' ? '2' : '1',
+
+      /**
+       * student_session: 1 = Reguler Pagi, 2 = Reguler Sore A.
+       * Kode 02 (Reguler Sore / Eksekutif) masuk jadwal sore.
+       */
+      'student_session' =>
+      $kodeTipe === '02' ? 2 : 1
 
    ]);
 

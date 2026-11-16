@@ -289,6 +289,35 @@ $adminRole =
 
 
 
+      <!-- =================================================
+           PENGATURAN
+      ================================================== -->
+
+      <div class="admin-nav-label mt-5">
+
+         Pengaturan
+
+      </div>
+
+
+
+      <!-- SETTING NPM -->
+
+      <a
+         href="./setting-npm"
+         class="admin-nav-link <?= isAdminActive(
+                                    'setting-npm',
+                                    $currentPage
+                                 ) ?>">
+
+         <i class="uil uil-setting"></i>
+
+         Setting NPM
+
+      </a>
+
+
+
 
 
    </nav>
