@@ -472,6 +472,32 @@ try {
 
    /**
     * =====================================================
+    * PREFIX NOMOR URUT
+    * =====================================================
+    *
+    * Nomor urut 4 digit terakhir berlanjut untuk semua
+    * jenis pendaftaran (01 / 02 / 03) dalam
+    * tahun + kampus + prodi yang sama.
+    *
+    * Contoh:
+    *   26 69 01 01 0050  (REGULER)
+    *   26 69 01 02 0051  (EKSEKUTIF) -> lanjut, bukan 0001
+    *
+    * Karena itu kode tipe TIDAK ikut dalam pencarian
+    * nomor urut, hanya YY + COLLEGE + PROGRAM.
+    */
+
+   $prefixUrut =
+      $tahunCode
+      . $collegeCode
+      . $programCode;
+
+   $panjangNpm =
+      strlen($prefix) + 4;
+
+
+   /**
+    * =====================================================
     * 9. CARI NOMOR URUT DI register_pmb
     * =====================================================
     */
@@ -497,6 +523,10 @@ try {
 
           AND TRIM(npm_sementara) <> ''
 
+          AND CHAR_LENGTH(TRIM(npm_sementara)) = :npm_length
+
+          AND TRIM(npm_sementara) REGEXP '^[0-9]+$'
+
           AND LEFT(
                 TRIM(npm_sementara),
                 :prefix_length
@@ -507,11 +537,14 @@ try {
 
    $stmtMaxRegister->execute([
 
+      'npm_length' =>
+      $panjangNpm,
+
       'prefix_length' =>
-      strlen($prefix),
+      strlen($prefixUrut),
 
       'prefix' =>
-      $prefix
+      $prefixUrut
 
    ]);
 
@@ -552,6 +585,10 @@ try {
 
           AND TRIM(student_npm) <> ''
 
+          AND CHAR_LENGTH(TRIM(student_npm)) = :npm_length
+
+          AND TRIM(student_npm) REGEXP '^[0-9]+$'
+
           AND LEFT(
                 TRIM(student_npm),
                 :prefix_length
@@ -562,11 +599,14 @@ try {
 
    $stmtMaxStudent->execute([
 
+      'npm_length' =>
+      $panjangNpm,
+
       'prefix_length' =>
-      strlen($prefix),
+      strlen($prefixUrut),
 
       'prefix' =>
-      $prefix
+      $prefixUrut
 
    ]);
 
